@@ -291,10 +291,10 @@ const AnimatedLogo = ({ className = "" }: { className?: string }) => {
 
 const FullwidthIconNavbar = ({
   menu = [
-    { title: "Find Skills", url: "/find-skills" },
+    { title: "Find Skills", url: "/skills" },
     { title: "Offer Skills", url: "/offer-skills" },
     { title: "How It Works", url: "/how-it-works" },
-    { title: "Community", url: "/community" },
+    { title: "About Us", url: "/about" },
   ],
   auth = {
     login: { title: "Login", url: "/login" },

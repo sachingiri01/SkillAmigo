@@ -127,3 +127,161 @@
     opacity: 0.85;
   }
 }
+
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-jet-stream-950);
+    color: white;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-conic {
+    background: conic-gradient(var(--tw-gradient-stops));
+  }
+
+  .animate-spin-slow {
+    animation: spin 20s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .duration-2000 {
+    transition-duration: 2s;
+  }
+
+  .duration-3000 {
+    transition-duration: 3s;
+  }
+
+  .delay-1000 {
+    animation-delay: 1000ms;
+    transition-delay: 1000ms;
+  }
+
+  .delay-1500 {
+    animation-delay: 1500ms;
+    transition-delay: 1500ms;
+  }
+
+  .delay-2000 {
+    animation-delay: 2000ms;
+    transition-delay: 2000ms;
+  }
+
+  .delay-2500 {
+    animation-delay: 2500ms;
+    transition-delay: 2500ms;
+  }
+
+  .-translate-z-2 {
+    transform: translateZ(-8px);
+  }
+
+  .-translate-z-3 {
+    transform: translateZ(-12px);
+  }
+
+  .-translate-z-4 {
+    transform: translateZ(-16px);
+  }
+
+  .-translate-z-6 {
+    transform: translateZ(-24px);
+  }
+
+  .-translate-z-8 {
+    transform: translateZ(-32px);
+  }
+
+  .-translate-z-10 {
+    transform: translateZ(-40px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
