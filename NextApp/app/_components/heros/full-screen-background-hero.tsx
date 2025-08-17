@@ -1,96 +1,4 @@
-// "use client"
 
-// import { motion } from "motion/react";
-// import { Button } from "../ui/button";
-// import React from "react";
-
-// const FullScreenBackgroundHero = () => {
-//   return (
-//     <section className="relative h-svh max-h-[1400px] w-full overflow-hidden bg-jet-stream-950">
-//       {/* Video Background - Made more visible */}
-//       <video
-//         className="absolute inset-0 h-full w-full object-cover z-10"
-//         autoPlay
-//         muted
-//         loop
-//         playsInline
-//         preload="auto"
-//       >
-//         {/* <source src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/e4f0325f-5958-42aa-a841-f191ceb5b1cc/generated_videos/indian-urban-cityscape-at-golden-hour-wi-7b6adbdf-20250816125159.mp4" type="video/mp4" /> */}
-
-//          <source src="https://v3.fal.media/files/lion/oILpeJgOgmvPl2-ATCAwd_output.mp4" type="video/mp4" />
-//          {/* <source
-//             src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/173bb7ec-efaf-42d2-b4d7-76dea66df861/generated_videos/indian-urban-society-skill-exchange%3a-p-558eadc7-20250816121339.mp4"
-//             type="video/mp4"
-//           /> */}
-//         Your browser does not support the video tag.
-//       </video>
-      
-//       {/* Lighter Jet-Stream Gradient Overlays for better video visibility */}
-//       <div className="absolute inset-0 bg-jet-stream-950/40 z-20"></div>
-//       <div className="absolute inset-0 bg-gradient-to-t from-jet-stream-950/80 via-jet-stream-900/20 to-transparent z-20"></div>
-      
-//       {/* Abstract Pattern Overlay with reduced opacity */}
-//       <div className="absolute inset-0 pattern-dots opacity-10 z-20"></div>
-      
-//       <div className="container relative z-30 h-full w-full max-w-[85rem] mx-auto">
-//         <div className="flex h-full w-full flex-col justify-center items-start pl-0 md:pl-12">
-//           <div className="flex max-w-[61.375rem] flex-col gap-6">
-//             <motion.h1 
-//               initial={{ opacity: 0, x: -100 }}
-//               animate={{ opacity: 1, x: 0 }}
-//               transition={{ duration: 0.8, delay: 0.2 }}
-//               className="font-display text-white text-4xl md:text-5xl lg:text-7xl font-bold leading-tight"
-//               style={{ textShadow: '3px 3px 12px rgba(0,0,0,0.8)' }}
-//             >
-//               Connect. Learn. Earn.<br />
-//               <span className="bg-gradient-to-r from-jet-stream-300 to-jet-stream-400 bg-clip-text text-transparen">
-//                 Locally.
-//               </span>
-//             </motion.h1>
-//           </div>
-          
-//           <motion.p 
-//             initial={{ opacity: 0, x: 100 }}
-//             animate={{ opacity: 1, x: 0 }}
-//             transition={{ duration: 0.8, delay: 0.4 }}
-//             className="font-body text-jet-stream-100 max-w-[42rem] text-lg md:text-xl mt-6 leading-relaxed"
-//             style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.8)' }}
-//           >
-//             India's premier hyperlocal skill-sharing platform connecting communities through knowledge and opportunity
-//           </motion.p>
-          
-//           <motion.div 
-//             initial={{ opacity: 0, y: 50 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.8, delay: 0.6 }}
-//             className="mt-8 flex gap-4"
-//           >
-//             <Button
-//               asChild
-//               className="bg-gradient-to-r from-jet-stream-500 to-jet-stream-400 hover:from-jet-stream-600 hover:to-jet-stream-500 text-white font-body font-semibold px-8 py-4 text-lg shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 border-0"
-//             >
-//               <a href="#">
-//                 Start Sharing Skills
-//               </a>
-//             </Button>
-//             <Button
-//               variant="outline"
-//               asChild
-//               className="border-jet-stream-400/60 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 font-body font-semibold px-8 py-4 text-lg transition-all duration-300 hover:scale-105"
-//             >
-//               <a href="#">
-//                 Explore Skills
-//               </a>
-//             </Button>
-//           </motion.div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export { FullScreenBackgroundHero };
 
 "use client"
 
@@ -101,7 +9,7 @@ import React from "react";
 
 const FullScreenBackgroundHero = () => {
   return (
-    <section className="relative h-svh max-h-[1400px] w-full overflow-hidden bg-jet-stream-950">
+    <section className="relative h-svh max-h-[1400px] w-full overflow-hidden bg-jet-stream-1000">
       {/* Video Background - More faded */}
       <video
         className="absolute inset-0 h-full w-full object-cover z-10 opacity-80"
@@ -116,9 +24,9 @@ const FullScreenBackgroundHero = () => {
       </video>
       
       {/* Enhanced Multi-layer Gradient Overlays */}
-      <div className="absolute inset-0 bg-jet-stream-950/60 z-20"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-jet-stream-950/90 via-jet-stream-900/40 to-jet-stream-950/30 z-20"></div>
-      <div className="absolute inset-0 bg-gradient-to-r from-jet-stream-950/50 via-transparent to-jet-stream-950/30 z-20"></div>
+      <div className="absolute inset-0 bg-jet-stream-1000/60 z-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-jet-stream-1000/90 via-jet-stream-900/40 to-jet-stream-1000/30 z-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-jet-stream-1000/50 via-transparent to-jet-stream-1000/30 z-20"></div>
       
       {/* Subtle Pattern Overlay */}
       <div className="absolute inset-0 pattern-dots opacity-90 z-20"></div>
@@ -230,7 +138,7 @@ const FullScreenBackgroundHero = () => {
       </div>
 
       {/* Bottom fade for seamless transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-jet-stream-950 to-transparent z-20"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-jet-stream-1000 to-transparent z-20"></div>
     </section>
   );
 };

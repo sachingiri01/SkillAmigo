@@ -54,7 +54,7 @@ export const NewsletterFooter = () => {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   return (
-    <section className="bg-jet-stream-900 py-12 sm:py-16 md:py-24 border-t border-jet-stream-400/20">
+    <section className="bg-jet-stream-975 py-12 sm:py-16 md:py-24 border-t border-jet-stream-400/20">
       <div className="container mx-auto max-w-6xl px-5 md:px-6">
         {/* Logo and platform information section */}
         <div className="mb-10 flex flex-col items-start justify-between gap-10 border-b border-jet-stream-400/20 pb-10 sm:mb-16 sm:pb-12 md:flex-row">
@@ -156,7 +156,7 @@ export const NewsletterFooter = () => {
       {/* Floating Help Button */}
       <button
         onClick={() => setIsHelpOpen(!isHelpOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-saffron text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:glow-md focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-jet-stream-900"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-saffron text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:glow-md focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-jet-stream-975"
         aria-label="Open help chat"
       >
         <MessageCircle className="h-6 w-6" />
@@ -164,7 +164,7 @@ export const NewsletterFooter = () => {
 
       {/* Help Chat Tooltip */}
       {isHelpOpen && (
-        <div className="fixed bottom-20 right-6 z-40 rounded-sm bg-jet-stream-900 border border-jet-stream-400/20 p-4 shadow-xl max-w-xs">
+        <div className="fixed bottom-20 right-6 z-40 rounded-sm bg-jet-stream-975 border border-jet-stream-400/20 p-4 shadow-xl max-w-xs">
           <p className="text-sm text-white font-body mb-2">
             Need help? We're here for you!
           </p>

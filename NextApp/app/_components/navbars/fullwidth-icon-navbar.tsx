@@ -54,7 +54,7 @@
 //   },
 // }: FullwidthIconNavbarProps) => {
 //   return (
-//     <section className="fixed top-0 left-0 right-0 z-50 bg-jet-stream-950/80 backdrop-blur-md border-b border-jet-stream-400/20">
+//     <section className="fixed top-0 left-0 right-0 z-50 bg-jet-stream-975/80 backdrop-blur-md border-b border-jet-stream-400/20">
 //       <div className="container mx-auto">
 //         {/* Desktop Menu */}
 //         <nav className="hidden justify-between lg:flex items-center py-4">
@@ -121,7 +121,7 @@
 //                   </svg>
 //                 </Button>
 //               </SheetTrigger>
-//               <SheetContent className="bg-jet-stream-950/95 backdrop-blur-md border-jet-stream-400/20 overflow-y-auto">
+//               <SheetContent className="bg-jet-stream-975/95 backdrop-blur-md border-jet-stream-400/20 overflow-y-auto">
 //                 <SheetHeader>
 //                   <SheetTitle>
 //                     <a href="/" className="flex items-center gap-2">
@@ -317,8 +317,8 @@ const FullwidthIconNavbar = ({
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
         isScrolled 
-          ? "bg-jet-stream-950/95 backdrop-blur-lg border-b border-jet-stream-400/30 shadow-lg shadow-black/20" 
-          : "bg-jet-stream-950/80 backdrop-blur-md border-b border-jet-stream-400/20"
+          ? "bg-jet-stream-975/95 backdrop-blur-lg border-b border-jet-stream-400/30 shadow-lg shadow-black/20" 
+          : "bg-jet-stream-975/80 backdrop-blur-md border-b border-jet-stream-400/20"
       )}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -422,7 +422,7 @@ const FullwidthIconNavbar = ({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent className="bg-jet-stream-950/98 backdrop-blur-lg border-jet-stream-400/30 w-80 flex flex-col">
+            <SheetContent className="bg-jet-stream-975/98 backdrop-blur-lg border-jet-stream-400/30 w-80 flex flex-col">
               <SheetHeader className="border-b border-jet-stream-400/20 pb-4 mb-6">
                 <SheetTitle className="flex justify-center">
                   <a href="/" className="flex items-center gap-3 group">
@@ -509,7 +509,7 @@ const FullwidthIconNavbar = ({
             </SheetTrigger>
             <SheetContent 
               side="right" 
-              className="bg-jet-stream-950/98 backdrop-blur-lg border-jet-stream-400/30 w-full sm:w-80 flex flex-col p-0"
+              className="bg-jet-stream-975/98 backdrop-blur-lg border-jet-stream-400/30 w-full sm:w-80 flex flex-col p-0"
             >
               {/* Close Button */}
               <div className="absolute top-4 right-4 z-10">

@@ -115,7 +115,7 @@
 //   {
 //     icon: Zap,
 //     title: "Earn Credits",
-//     description: "Share your skills and earn 50-200 credits per session based on complexity and duration.",
+//     description: "Share your skills and earn 50-950 credits per session based on complexity and duration.",
 //     color: "text-saffron"
 //   },
 //   {
@@ -133,7 +133,7 @@
 //   {
 //     icon: Users,
 //     title: "Referral Rewards",
-//     description: "Invite friends and earn 200 credits for each successful referral who completes a session.",
+//     description: "Invite friends and earn 950 credits for each successful referral who completes a session.",
 //     color: "text-jet-stream-400"
 //   }
 // ]
@@ -186,7 +186,7 @@
 //   useEffect(() => {
 //     const timer = setInterval(() => {
 //       setVisibleItems(prev => prev < 10 ? prev + 1 : 10)
-//     }, 200)
+//     }, 950)
 
 //     return () => clearInterval(timer)
 //   }, [])
@@ -500,7 +500,7 @@ const creditFeatures = [
   {
     icon: Zap,
     title: "Earn Credits",
-    description: "Share your skills and earn 50-200 credits per session based on complexity and duration.",
+    description: "Share your skills and earn 50-950 credits per session based on complexity and duration.",
     color: "text-jet-stream-300",
     bgGradient: "from-jet-stream-300/20 via-jet-stream-300/10 to-transparent"
   },
@@ -521,7 +521,7 @@ const creditFeatures = [
   {
     icon: Users,
     title: "Referral Rewards",
-    description: "Invite friends and earn 200 credits for each successful referral who completes a session.",
+    description: "Invite friends and earn 950 credits for each successful referral who completes a session.",
     color: "text-jet-stream-400",
     bgGradient: "from-jet-stream-400/20 via-jet-stream-400/10 to-transparent"
   }
@@ -776,7 +776,7 @@ export default function LeaderboardCredits() {
                               <Badge
                                 key={skillIndex}
                                 variant="outline"
-                                className="text-xs px-2 py-0 bg-jet-stream-950/50 text-gray-300 border-jet-stream-400/30 hover:border-jet-stream-400/60 transition-colors duration-200"
+                                className="text-xs px-2 py-0 bg-jet-stream-950/50 text-gray-300 border-jet-stream-400/30 hover:border-jet-stream-400/60 transition-colors duration-950"
                               >
                                 {skill}
                               </Badge>

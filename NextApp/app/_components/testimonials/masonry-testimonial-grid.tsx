@@ -158,7 +158,7 @@
 
 // const MasonryTestimonialGrid = () => {
 //   return (
-//     <section className="bg-jet-stream-950 py-32 relative overflow-hidden">
+//     <section className="bg-jet-stream-975 py-32 relative overflow-hidden">
 //       {/* Background Video */}
 //       <video
 //         className="absolute inset-0 h-full w-full object-cover opacity-60"
@@ -171,7 +171,7 @@
 //       </video>
       
 //       {/* Overlay */}
-//       <div className="absolute inset-0 bg-jet-stream-950/90" />
+//       <div className="absolute inset-0 bg-jet-stream-975/90" />
       
 //       {/* Pattern */}
 //       <div className="absolute inset-0 pattern-cross-dots opacity-60" />
@@ -463,7 +463,7 @@ const TestimonialCard = ({ testimonial, index }: { testimonial: DataItem; index:
 
 const MasonryTestimonialGrid = () => {
   return (
-    <section className="bg-jet-stream-950 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 relative overflow-hidden">
+    <section className="bg-jet-stream-975 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 relative overflow-hidden">
       {/* Background Video */}
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-60"
@@ -477,7 +477,7 @@ const MasonryTestimonialGrid = () => {
       </video>
       
       {/* Overlay */}
-      <div className="absolute inset-0 bg-jet-stream-950/90" />
+      <div className="absolute inset-0 bg-jet-stream-975/90" />
       
       {/* Unique Neural Network Pattern */}
       <div className="absolute inset-0 opacity-30">

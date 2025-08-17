@@ -18,6 +18,10 @@
   --color-jet-stream-800: #3a5050;
   --color-jet-stream-900: #344545;
   --color-jet-stream-950: #1f2c2d;
+  --color-jet-stream-975: #141919;
+--color-jet-stream-1000: #111111;
+  /* --color-jet-stream-1100: #1a1a1a;
+  --color-jet-stream-1200: #262626; */
 
   --color-primary: var(--color-jet-stream-600);
   --color-primary-foreground: var(--color-jet-stream-50);
