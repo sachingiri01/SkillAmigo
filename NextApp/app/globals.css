@@ -1,26 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-jet-stream-50: #f3f8f8;
+  --color-jet-stream-100: #e1ecea;
+  --color-jet-stream-200: #bbd3d0;
+  --color-jet-stream-300: #9fc1bd;
+  --color-jet-stream-400: #719f9a;
+  --color-jet-stream-500: #558581;
+  --color-jet-stream-600: #4a706e;
+  --color-jet-stream-700: #405e5e;
+  --color-jet-stream-800: #3a5050;
+  --color-jet-stream-900: #344545;
+  --color-jet-stream-950: #1f2c2d;
+
+  --color-primary: var(--color-jet-stream-600);
+  --color-primary-foreground: var(--color-jet-stream-50);
+  --color-secondary: var(--color-jet-stream-200);
+  --color-secondary-foreground: var(--color-jet-stream-900);
+  --color-accent: var(--color-jet-stream-400);
+  --color-accent-foreground: var(--color-jet-stream-950);
+  --color-muted: var(--color-jet-stream-100);
+  --color-muted-foreground: var(--color-jet-stream-700);
+  --color-background: var(--color-jet-stream-50);
+  --color-foreground: var(--color-jet-stream-950);
+  --color-card: var(--color-jet-stream-50);
+  --color-card-foreground: var(--color-jet-stream-950);
+  --color-popover: var(--color-jet-stream-50);
+  --color-popover-foreground: var(--color-jet-stream-950);
+  --color-border: var(--color-jet-stream-300);
+  --color-input: var(--color-jet-stream-300);
+  --color-ring: var(--color-jet-stream-600);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: var(--color-jet-stream-50);
+
+  --radius: 0rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --color-primary: var(--color-jet-stream-400);
+  --color-primary-foreground: var(--color-jet-stream-950);
+  --color-secondary: var(--color-jet-stream-800);
+  --color-secondary-foreground: var(--color-jet-stream-200);
+  --color-accent: var(--color-jet-stream-600);
+  --color-accent-foreground: var(--color-jet-stream-100);
+  --color-muted: var(--color-jet-stream-900);
+  --color-muted-foreground: var(--color-jet-stream-400);
+  --color-background: var(--color-jet-stream-950);
+  --color-foreground: var(--color-jet-stream-100);
+  --color-card: var(--color-jet-stream-900);
+  --color-card-foreground: var(--color-jet-stream-100);
+  --color-popover: var(--color-jet-stream-900);
+  --color-popover-foreground: var(--color-jet-stream-100);
+  --color-border: var(--color-jet-stream-700);
+  --color-input: var(--color-jet-stream-700);
+  --color-ring: var(--color-jet-stream-400);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
   }
-}
+  
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .pattern-dots {
+    background-image: radial-gradient(circle, var(--color-jet-stream-400) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .pattern-grid {
+    background-image: 
+      linear-gradient(var(--color-jet-stream-600) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-jet-stream-600) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.1;
+  }
+
+  .pattern-diagonal {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      var(--color-jet-stream-500) 10px,
+      var(--color-jet-stream-500) 11px
+    );
+    opacity: 0.1;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-jet-stream-400), var(--color-jet-stream-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .video-overlay {
+    background: linear-gradient(
+      135deg,
+      var(--color-jet-stream-950) 0%,
+      var(--color-jet-stream-900) 25%,
+      var(--color-jet-stream-800) 50%,
+      var(--color-jet-stream-700) 75%,
+      var(--color-jet-stream-600) 100%
+    );
+    opacity: 0.85;
+  }
 }
