@@ -645,11 +645,11 @@ export default function FindSkillsFeed() {
         
         /* Animation Classes */
         .animate-float {
-          animation: float 4s ease-in-out infinite;
+          animation: float 2s ease-in-out infinite;
         }
         
         .animate-pulse-glow {
-          animation: pulse-glow 3s ease-in-out infinite;
+          animation: pulse-glow 2s ease-in-out infinite;
         }
         
         .animate-shimmer {
@@ -657,7 +657,7 @@ export default function FindSkillsFeed() {
         }
         
         .animate-fade-in-up {
-          animation: fadeInUp 0.6s ease-out;
+          animation: fadeInUp 0.4s ease-out;
         }
         
         /* Utility Classes */
@@ -830,7 +830,7 @@ export default function FindSkillsFeed() {
             rgba(159, 193, 189, 0.1) 100%
           );
           background-size: 200% 100%;
-          animation: shimmer 1.5s infinite;
+          animation: shimmer 1s infinite;
         }
 
         /* Grid Pattern Utility */

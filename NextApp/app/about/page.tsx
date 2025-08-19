@@ -667,30 +667,30 @@ const SectionSeparator = () => {
 export default function AboutPage() {
   const teamMembers = [
     {
-      name: "Arjun Sharma",
-      role: "Co-Founder & CEO",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+      name: "Aman Kumar",
+      role: "“Ctrl+C, Ctrl+Zen – The Chill Code Whisperer.”",
+      image: "/am.jpg",
       linkedin: "#",
       github: "#"
     },
     {
-      name: "Priya Patel",
-      role: "Co-Founder & CTO",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      name: "Sachin Giri",
+      role: "“Algorithm Alchemist – turning data into predictions like magic.”",
+      image: "/sa.jpg",
       linkedin: "#",
       github: "#"
     },
     {
-      name: "Rohit Gupta",
-      role: "Lead Developer",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+      name: "Ashish Ranjan",
+      role: "“Bug Slayer 4040 – powered by coffee and sarcasm.”",
+      image: "/as.jpg",
       linkedin: "#",
       github: "#"
     },
     {
-      name: "Sneha Reddy",
-      role: "Head of Design",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+      name: "Ajeet Kumar",
+      role: "“Future on speed-dial – The Vision Hacker.",
+      image: "/aj.jpg",
       linkedin: "#",
       github: "#"
     }
