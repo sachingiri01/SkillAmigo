@@ -6,18 +6,27 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate:create": "node-pg-migrate create",
+    "migrate:up": "node-pg-migrate -c migration.config.js up",
+    "migrate:down": "node-pg-migrate -c migration.config.js down"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
+    "dotenv": "^17.2.1",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.539.0",
     "motion": "^12.23.12",
     "next": "15.4.6",
+    "next-auth": "^4.24.11",
+    "node-pg-migrate": "^8.0.3",
+    "pg": "^8.16.3",
     "radix-ui": "^1.4.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-bg-patterns": "^0.3.0"
   },
