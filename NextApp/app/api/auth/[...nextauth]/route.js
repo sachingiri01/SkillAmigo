@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
+import pool from "../../db"; // adjust if db file path differs
 
 export const authOptions = {
   providers: [
@@ -8,38 +8,47 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    }),
   ],
-
-  session: {
-    strategy: "jwt",
-  },
-
+  session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET_KEY,
-
   callbacks: {
     async jwt({ token, account, profile }) {
-      // Add profile info only on first login
-      if (account && profile) {
-        token.id = profile.sub || profile.id;
-        token.name = profile.name;
-        token.email = profile.email;
-        token.picture = profile.picture;
+      if (!token.email) return token;
+
+      // check user
+      const { rows } = await pool.query(
+        "SELECT * FROM users WHERE email = $1 LIMIT 1",
+        [token.email]
+      );
+
+      if (rows.length === 0) {
+        // insert new user
+        const result = await pool.query(
+          `INSERT INTO users (
+            name, email, phone, profile_picture, bio, merit_credits, is_verified, role
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          RETURNING user_id, name, email, profile_picture, role, is_verified, merit_credits`,
+          [
+            token.name || profile?.name || "Unnamed",
+            token.email,
+            null,
+            token.picture || null,
+            null,
+            0,
+            false,
+            "user",
+          ]
+        );
+        token.id = result.rows[0].user_id;
+      } else {
+        token.id = rows[0].user_id;
       }
+
       return token;
     },
-
     async session({ session, token }) {
-      // Attach token data to session
-      if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
-      }
+      session.user.id = token.id;
       return session;
     },
   },

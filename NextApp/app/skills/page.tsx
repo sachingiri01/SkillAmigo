@@ -12,6 +12,23 @@ import { Badge as BadgeComponent } from "../_components/ui/badge";
 import { FullwidthIconNavbar } from "../_components/navbars/fullwidth-icon-navbar";
 import { NewsletterFooter } from "../_components/footers/newsletter-footer";
 
+
+interface Gig {
+  id: string;                 // from g.gig_id AS id
+  title: string;
+  description: string;
+  provider: string;           // from u.name
+  providerPhoto: string;      // from u.profile_picture
+  image: string;              // from g.picture
+  price: string;              // formatted: `₹${gig.min_price}`
+  priceType: string;          // e.g., "per project"
+  rating: number;
+  reviews: number;
+  distance: string;           // placeholder or computed
+  availability: string;
+  tags: string[];
+  isVerified: boolean;
+}
 // Smooth Floating Elements with better performance
 const FloatingElement = ({ children, delay = 0, duration = 4 }) => (
   <div 
@@ -77,8 +94,18 @@ const WireframeElement = ({ index, scrollY }) => {
 
 // Enhanced GigCard with jet-stream colors and removed elements
 const GigCard = ({ gig, index }) => {
+  console.log("gig acceted",gig);
+  
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hh, h] = useState([
+    {
+
+    },{
+      
+    }
+  ]);
+  
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -110,9 +137,13 @@ const GigCard = ({ gig, index }) => {
 
   const tiltX = (scrollProgress - 0.5) * 6;
   const tiltY = Math.sin(scrollProgress * Math.PI) * 3;
-
+     console.log(
+      "kkk",gig
+     );
+     
   return (
     <Card
+   
       ref={cardRef}
       className={`bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden group hover:shadow-2xl hover:shadow-jet-stream-500/15 transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.02] will-change-transform ${
         isVisible ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-6 rotate-1'
@@ -227,200 +258,6 @@ const GigCard = ({ gig, index }) => {
 };
 
 // Extended mock data with more variety
-const mockGigs = [
-  {
-    id: 1,
-    title: "Professional Website Development & Design",
-    description: "I create modern, responsive websites using React, Next.js, and Tailwind CSS. Perfect for small businesses and startups looking to establish their online presence.",
-    provider: "Rahul Sharma",
-    providerPhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop",
-    price: "₹5,000",
-    priceType: "per project",
-    rating: 4.9,
-    reviews: 127,
-    distance: "2.3 km",
-    availability: "Available now",
-    tags: ["React", "Web Design", "Frontend"],
-    isVerified: true
-  },
-  {
-    id: 2,
-    title: "Home-cooked North Indian Meals",
-    description: "Authentic North Indian cuisine made with fresh ingredients. Specializing in Dal Makhani, Butter Chicken, and fresh rotis. Perfect for busy professionals.",
-    provider: "Priya Gupta",
-    providerPhoto: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop",
-    price: "₹150",
-    priceType: "per meal",
-    rating: 4.8,
-    reviews: 89,
-    distance: "1.1 km",
-    availability: "Mon-Fri 6-8 PM",
-    tags: ["Cooking", "North Indian", "Home Food"],
-    isVerified: true
-  },
-  {
-    id: 3,
-    title: "IELTS & English Speaking Coaching",
-    description: "Certified IELTS trainer with 8+ years experience. Helped 200+ students achieve band 7+. One-on-one sessions and group classes available.",
-    provider: "Anjali Mehta",
-    providerPhoto: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop",
-    price: "₹800",
-    priceType: "per hour",
-    rating: 4.9,
-    reviews: 234,
-    distance: "3.7 km",
-    availability: "Evenings & Weekends",
-    tags: ["IELTS", "English", "Teaching"],
-    isVerified: true
-  },
-  {
-    id: 4,
-    title: "Bike & Scooter Repair Service",
-    description: "Mobile motorcycle repair service. I come to your location with all tools. Specializing in Royal Enfield, Hero, and Honda bikes. Quick and reliable service.",
-    provider: "Vikram Singh",
-    providerPhoto: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-    price: "₹300",
-    priceType: "service charge",
-    rating: 4.7,
-    reviews: 156,
-    distance: "4.2 km",
-    availability: "9 AM - 6 PM",
-    tags: ["Bike Repair", "Mobile Service", "Mechanical"],
-    isVerified: false
-  },
-  {
-    id: 5,
-    title: "Bharatanatyam Dance Classes",
-    description: "Traditional Bharatanatyam lessons for all ages. Certified from Kalakshetra Foundation. Teaching classical dance with proper technique and cultural context.",
-    provider: "Lakshmi Iyer",
-    providerPhoto: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop",
-    price: "₹1,200",
-    priceType: "per month",
-    rating: 4.9,
-    reviews: 78,
-    distance: "2.8 km",
-    availability: "Tue, Thu, Sat",
-    tags: ["Dance", "Bharatanatyam", "Classical"],
-    isVerified: true
-  },
-  {
-    id: 6,
-    title: "Solar Panel Installation & Maintenance",
-    description: "Professional solar panel installation and maintenance services. Certified electrician with 10 years experience. Complete rooftop solar solutions.",
-    provider: "Amit Patel",
-    providerPhoto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=300&fit=crop",
-    price: "₹15,000",
-    priceType: "per installation",
-    rating: 4.8,
-    reviews: 92,
-    distance: "5.1 km",
-    availability: "Mon-Sat 8-6",
-    tags: ["Solar", "Electrical", "Installation"],
-    isVerified: true
-  },
-  {
-    id: 7,
-    title: "Guitar Lessons for Beginners",
-    description: "Learn acoustic and electric guitar from basics. 15 years of teaching experience. Individual and group sessions available. All genres covered.",
-    provider: "Arjun Kumar",
-    providerPhoto: "https://images.unsplash.com/photo-1507038772120-7fff76f79d79?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-    price: "₹600",
-    priceType: "per hour",
-    rating: 4.7,
-    reviews: 143,
-    distance: "1.9 km",
-    availability: "After 5 PM",
-    tags: ["Music", "Guitar", "Teaching"],
-    isVerified: true
-  },
-  {
-    id: 8,
-    title: "Professional Photography Services",
-    description: "Portrait, event, and product photography. High-quality images with quick turnaround. Professional editing included. Perfect for social media and business needs.",
-    provider: "Meera Joshi",
-    providerPhoto: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1554048612-b6a482b22bb0?w=400&h=300&fit=crop",
-    price: "₹2,500",
-    priceType: "per session",
-    rating: 4.9,
-    reviews: 201,
-    distance: "3.2 km",
-    availability: "Weekends",
-    tags: ["Photography", "Portraits", "Events"],
-    isVerified: true
-  },
-  {
-    id: 9,
-    title: "Yoga & Meditation Classes",
-    description: "Hatha and Vinyasa yoga classes for all levels. Certified instructor with 12 years experience. Focus on breathing techniques and mindfulness practices.",
-    provider: "Sunita Rao",
-    providerPhoto: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68e71?w=400&h=300&fit=crop",
-    price: "₹1,000",
-    priceType: "per month",
-    rating: 4.8,
-    reviews: 167,
-    distance: "1.5 km",
-    availability: "Morning 6-8 AM",
-    tags: ["Yoga", "Meditation", "Wellness"],
-    isVerified: true
-  },
-  {
-    id: 10,
-    title: "Home Tutoring - Mathematics",
-    description: "Expert math tutor for grades 6-12 and competitive exams. Strong focus on concept building and problem-solving techniques. Proven track record.",
-    provider: "Dr. Rajesh Gupta",
-    providerPhoto: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=400&h=300&fit=crop",
-    price: "₹500",
-    priceType: "per hour",
-    rating: 4.9,
-    reviews: 298,
-    distance: "2.1 km",
-    availability: "Evenings 4-8 PM",
-    tags: ["Mathematics", "Tutoring", "Education"],
-    isVerified: true
-  },
-  {
-    id: 11,
-    title: "Car Detailing & Cleaning Service",
-    description: "Complete car detailing service at your doorstep. Interior and exterior cleaning, waxing, and protection. Eco-friendly products used.",
-    provider: "Karan Singh",
-    providerPhoto: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400&h=300&fit=crop",
-    price: "₹800",
-    priceType: "per car",
-    rating: 4.6,
-    reviews: 124,
-    distance: "6.3 km",
-    availability: "10 AM - 5 PM",
-    tags: ["Car Care", "Detailing", "Mobile Service"],
-    isVerified: false
-  },
-  {
-    id: 12,
-    title: "Interior Design Consultation",
-    description: "Transform your space with professional interior design advice. Specializing in modern and traditional Indian aesthetics. Budget-friendly solutions.",
-    provider: "Neha Kapoor",
-    providerPhoto: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&h=100&fit=crop&crop=face",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-    price: "₹1,500",
-    priceType: "per consultation",
-    rating: 4.8,
-    reviews: 87,
-    distance: "4.7 km",
-    availability: "By appointment",
-    tags: ["Interior Design", "Consultation", "Home Decor"],
-    isVerified: true
-  }
-];
 
 const categories = [
   { id: "all", name: "All", icon: TrendingUp },
@@ -435,8 +272,26 @@ const categories = [
 export default function FindSkillsFeed() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [filteredGigs, setFilteredGigs] = useState(mockGigs);
+  const [filteredGigs, setFilteredGigs] = useState<Gig[]>([]);
   const [scrollY, setScrollY] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    async function fetchGigs() {
+      try {
+        const res = await fetch("/api/gigs");
+        const data = await res.json();
+        console.log("data",data);
+        
+        setFilteredGigs(data); // Initially show all gigs
+      } catch (err) {
+        console.error("Failed to load gigs:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchGigs();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -447,23 +302,40 @@ export default function FindSkillsFeed() {
   }, []);
 
   useEffect(() => {
-    let filtered = mockGigs;
+    async function applyFilters() {
+      try {
+        const res = await fetch("/api/gigs");
+        let gigs = await res.json();
 
-    if (searchTerm) {
-      filtered = filtered.filter(gig =>
-        gig.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        gig.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        gig.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+        if (searchTerm) {
+          gigs = gigs.filter(gig =>
+            gig.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            gig.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (gig.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+
+        if (selectedCategory !== "all") {
+          gigs = gigs.filter(gig => gig.category === selectedCategory);
+        }
+
+        setFilteredGigs(gigs);
+      } catch (err) {
+        console.error("Filter error:", err);
+      }
     }
 
-    setFilteredGigs(filtered);
+    applyFilters();
   }, [searchTerm, selectedCategory]);
 
+  if (loading) return <p>Loading gigs...</p>;
+
   // Split gigs into chunks for section separators
-  const gigChunks = [];
+  const gigChunks: Gig[][] = [];
   const chunkSize = 6;
   for (let i = 0; i < filteredGigs.length; i += chunkSize) {
+    
+    
     gigChunks.push(filteredGigs.slice(i, i + chunkSize));
   }
 
