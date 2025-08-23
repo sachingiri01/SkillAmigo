@@ -1,0 +1,2640 @@
+// 'use client'
+// import React, { useState, useEffect } from 'react';
+// import { 
+//   Home, 
+//   Plus, 
+//   Calendar, 
+//   Settings, 
+//   Coins, 
+//   HelpCircle, 
+//   Menu, 
+//   X, 
+//   User,
+//   LogOut,
+//   TrendingUp,
+//   Trophy,
+//   DollarSign,
+//   Clock,
+//   CheckCircle,
+//   XCircle,
+//   Eye,
+//   Upload,
+//   Gift
+// } from 'lucide-react';
+
+// // Skeleton Loader Component
+// const SkeletonLoader = ({ className = "", type = "text" }) => {
+//   if (type === "card") {
+//     return (
+//       <div className={`bg-white rounded-2xl shadow-md p-6 ${className}`}>
+//         <div className="animate-pulse">
+//           <div className="h-4 bg-slate-200 rounded mb-3"></div>
+//           <div className="h-8 bg-slate-200 rounded mb-4"></div>
+//           <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+//         </div>
+//       </div>
+//     );
+//   }
+  
+//   if (type === "chart") {
+//     return (
+//       <div className={`bg-white rounded-2xl shadow-md p-6 ${className}`}>
+//         <div className="animate-pulse">
+//           <div className="h-4 bg-slate-200 rounded mb-4"></div>
+//           <div className="h-32 bg-slate-200 rounded"></div>
+//         </div>
+//       </div>
+//     );
+//   }
+  
+//   return (
+//     <div className={`animate-pulse bg-slate-200 rounded ${className}`}></div>
+//   );
+// };
+
+// // Header Component - Full width
+// const Header = ({ user, onLogout }) => {
+//   return (
+//     <header className="bg-white shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30">
+//       <div className="px-4 sm:px-6 py-4">
+//         <div className="flex items-center justify-between">
+//           <div className="flex items-center space-x-3 ml-16 lg:ml-0">
+//             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-teal-900 to-teal-600 rounded-full flex items-center justify-center">
+//               <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+//             </div>
+//             <div>
+//               <h1 className="text-lg sm:text-xl font-bold text-slate-800">Welcome, {user.name}!</h1>
+//               <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Ready to manage your gigs?</p>
+//             </div>
+//           </div>
+//           <button
+//             onClick={onLogout}
+//             className="flex items-center space-x-2 px-3 py-2 sm:px-4 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-200"
+//             aria-label="Logout"
+//           >
+//             <LogOut className="w-4 h-4 text-slate-600" />
+//             <span className="text-sm text-slate-600 hidden sm:block">Logout</span>
+//           </button>
+//         </div>
+//       </div>
+//     </header>
+//   );
+// };
+
+// // Sidebar Component - Better mobile handling
+// const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
+//   const menuItems = [
+//     { id: 'overview', icon: Home, label: 'Overview' },
+//     { id: 'post-gig', icon: Plus, label: 'Post Gig' },
+//     { id: 'booked-gigs', icon: Calendar, label: 'Booked Gigs' },
+//     { id: 'profile', icon: Settings, label: 'Profile Settings' },
+//     { id: 'add-coins', icon: Coins, label: 'Add Coins' },
+//     { id: 'redeem-coins', icon: Gift, label: 'Redeem Coins' },
+//     { id: 'help', icon: HelpCircle, label: 'Help / FAQs' },
+//   ];
+
+//   return (
+//     <>
+//       {/* Mobile Hamburger Button - Fixed position */}
+//       <button
+//         onClick={() => setIsOpen(!isOpen)}
+//         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-teal-900 text-white rounded-xl shadow-lg"
+//         aria-label="Toggle menu"
+//         aria-expanded={isOpen}
+//       >
+//         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+//       </button>
+
+//       {/* Sidebar - Fixed position, below header on desktop */}
+//       <aside className={`
+//         fixed h-full bg-teal-900 text-white shadow-2xl z-40 transition-transform duration-300 ease-in-out
+//         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+//         lg:translate-x-0 lg:w-64 w-64
+//         top-0 lg:top-20
+//       `}>
+//         <div className="p-4 pt-20 lg:pt-6">
+//           <div className="flex items-center space-x-3 mb-8">
+//             <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+//               <span className="text-white font-bold text-sm">SA</span>
+//             </div>
+//             <h2 className="text-xl font-bold">SkillsAmigo</h2>
+//           </div>
+
+//           <nav className="space-y-2">
+//             {menuItems.map((item) => {
+//               const Icon = item.icon;
+//               const isActive = activeSection === item.id;
+              
+//               return (
+//                 <button
+//                   key={item.id}
+//                   onClick={() => {
+//                     setActiveSection(item.id);
+//                     setIsOpen(false);
+//                   }}
+//                   className={`
+//                     w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-left
+//                     ${isActive 
+//                       ? 'bg-orange-600 text-white shadow-lg' 
+//                       : 'text-teal-100 hover:bg-teal-800 hover:text-white'
+//                     }
+//                   `}
+//                   aria-current={isActive ? 'page' : undefined}
+//                 >
+//                   <Icon className="w-5 h-5 flex-shrink-0" />
+//                   <span className="font-medium">{item.label}</span>
+//                 </button>
+//               );
+//             })}
+//           </nav>
+//         </div>
+//       </aside>
+
+//       {/* Overlay for mobile */}
+//       {isOpen && (
+//         <div
+//           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+//           onClick={() => setIsOpen(false)}
+//         />
+//       )}
+//     </>
+//   );
+// };
+
+// // Overview Component
+// const Overview = ({ loading }) => {
+//   const stats = [
+//     { 
+//       title: 'Total Spent Coins', 
+//       value: '1,250', 
+//       icon: DollarSign, 
+//       color: 'from-red-500 to-red-600',
+//       change: '-5.2%'
+//     },
+//     { 
+//       title: 'Total Gained Coins', 
+//       value: '2,840', 
+//       icon: TrendingUp, 
+//       color: 'from-green-500 to-green-600',
+//       change: '+12.3%'
+//     },
+//     { 
+//       title: 'Leaderboard Rank', 
+//       value: '#47', 
+//       icon: Trophy, 
+//       color: 'from-orange-500 to-orange-600',
+//       change: '↑3'
+//     },
+//   ];
+
+//   if (loading) {
+//     return (
+//       <div className="space-y-6">
+//         <SkeletonLoader className="h-8 w-48" />
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+//           {[1, 2, 3].map((i) => (
+//             <SkeletonLoader key={i} type="card" />
+//           ))}
+//         </div>
+//         <SkeletonLoader type="chart" className="h-64" />
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Dashboard Overview</h2>
+      
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+//         {stats.map((stat) => {
+//           const Icon = stat.icon;
+//           return (
+//             <div key={stat.title} className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200">
+//               <div className="flex items-center justify-between mb-4">
+//                 <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color}`}>
+//                   <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+//                 </div>
+//                 <span className={`text-sm font-semibold ${stat.change.startsWith('+') || stat.change.startsWith('↑') ? 'text-green-600' : 'text-red-600'}`}>
+//                   {stat.change}
+//                 </span>
+//               </div>
+//               <h3 className="text-sm font-medium text-slate-600 mb-1">{stat.title}</h3>
+//               <p className="text-2xl sm:text-3xl font-bold text-slate-800">{stat.value}</p>
+//             </div>
+//           );
+//         })}
+//       </div>
+
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-4">Activity Overview</h3>
+//         <div className="h-32 bg-gradient-to-r from-teal-100 to-orange-100 rounded-xl flex items-center justify-center">
+//           <p className="text-slate-600 text-center text-sm sm:text-base">Chart placeholder - Activity trends would appear here</p>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Enhanced Post Gig Form Component with thumbnail and price range
+// const PostGigForm = ({ onSubmit }) => {
+//   const [formData, setFormData] = useState({
+//     title: '',
+//     description: '',
+//     minPrice: '',
+//     maxPrice: '',
+//     deadline: '',
+//     thumbnail: null
+//   });
+//   const [loading, setLoading] = useState(false);
+//   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+
+//   const handleThumbnailChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setFormData({...formData, thumbnail: file});
+//       const reader = new FileReader();
+//       reader.onload = (e) => setThumbnailPreview(e.target.result);
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+//     onSubmit(formData);
+//     setFormData({ title: '', description: '', minPrice: '', maxPrice: '', deadline: '', thumbnail: null });
+//     setThumbnailPreview(null);
+//     setLoading(false);
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Post New Gig</h2>
+      
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <form onSubmit={handleSubmit} className="space-y-6">
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Gig Title
+//             </label>
+//             <input
+//               type="text"
+//               value={formData.title}
+//               onChange={(e) => setFormData({...formData, title: e.target.value})}
+//               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//               placeholder="Enter gig title..."
+//               required
+//             />
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Thumbnail Image
+//             </label>
+//             <div className="flex flex-col space-y-4">
+//               <input
+//                 type="file"
+//                 accept="image/*"
+//                 onChange={handleThumbnailChange}
+//                 className="hidden"
+//                 id="thumbnail-upload"
+//               />
+//               <label
+//                 htmlFor="thumbnail-upload"
+//                 className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors duration-200"
+//               >
+//                 {thumbnailPreview ? (
+//                   <img
+//                     src={thumbnailPreview}
+//                     alt="Thumbnail preview"
+//                     className="h-full w-full object-cover rounded-xl"
+//                   />
+//                 ) : (
+//                   <div className="flex flex-col items-center">
+//                     <Upload className="w-8 h-8 text-slate-400 mb-2" />
+//                     <p className="text-sm text-slate-500">Click to upload thumbnail</p>
+//                   </div>
+//                 )}
+//               </label>
+//             </div>
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Description
+//             </label>
+//             <textarea
+//               value={formData.description}
+//               onChange={(e) => setFormData({...formData, description: e.target.value})}
+//               rows={4}
+//               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//               placeholder="Describe your gig requirements..."
+//               required
+//             />
+//           </div>
+
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Minimum Price (Coins)
+//               </label>
+//               <input
+//                 type="number"
+//                 value={formData.minPrice}
+//                 onChange={(e) => setFormData({...formData, minPrice: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 placeholder="0"
+//                 required
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Maximum Price (Coins)
+//               </label>
+//               <input
+//                 type="number"
+//                 value={formData.maxPrice}
+//                 onChange={(e) => setFormData({...formData, maxPrice: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 placeholder="0"
+//                 required
+//               />
+//             </div>
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Deadline
+//             </label>
+//             <input
+//               type="date"
+//               value={formData.deadline}
+//               onChange={(e) => setFormData({...formData, deadline: e.target.value})}
+//               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//               required
+//             />
+//           </div>
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="w-full bg-gradient-to-r from-teal-900 to-teal-600 text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+//           >
+//             {loading ? (
+//               <div className="flex items-center justify-center space-x-2">
+//                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+//                 <span>Posting Gig...</span>
+//               </div>
+//             ) : (
+//               'Post Gig'
+//             )}
+//           </button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Booked Gigs Component
+// const BookedGigs = ({ loading }) => {
+//   const gigs = [
+//     {
+//       id: 1,
+//       title: 'Website Design for Startup',
+//       client: 'TechCorp Inc.',
+//       budget: 500,
+//       status: 'active',
+//       deadline: '2025-09-15'
+//     },
+//     {
+//       id: 2,
+//       title: 'Logo Design Package',
+//       client: 'Creative Studio',
+//       budget: 150,
+//       status: 'completed',
+//       deadline: '2025-08-20'
+//     },
+//     {
+//       id: 3,
+//       title: 'Mobile App Development',
+//       client: 'StartupXYZ',
+//       budget: 1200,
+//       status: 'pending',
+//       deadline: '2025-10-01'
+//     },
+//     {
+//       id: 4,
+//       title: 'Content Writing',
+//       client: 'BlogCorp',
+//       budget: 80,
+//       status: 'cancelled',
+//       deadline: '2025-08-25'
+//     }
+//   ];
+
+//   const getStatusIcon = (status) => {
+//     switch (status) {
+//       case 'active':
+//         return <Clock className="w-4 h-4" />;
+//       case 'completed':
+//         return <CheckCircle className="w-4 h-4" />;
+//       case 'pending':
+//         return <Eye className="w-4 h-4" />;
+//       case 'cancelled':
+//         return <XCircle className="w-4 h-4" />;
+//       default:
+//         return <Clock className="w-4 h-4" />;
+//     }
+//   };
+
+//   const getStatusColor = (status) => {
+//     switch (status) {
+//       case 'active':
+//         return 'bg-blue-100 text-blue-800';
+//       case 'completed':
+//         return 'bg-green-100 text-green-800';
+//       case 'pending':
+//         return 'bg-yellow-100 text-yellow-800';
+//       case 'cancelled':
+//         return 'bg-red-100 text-red-800';
+//       default:
+//         return 'bg-gray-100 text-gray-800';
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="space-y-6">
+//         <SkeletonLoader className="h-8 w-48" />
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+//           {[1, 2, 3, 4].map((i) => (
+//             <SkeletonLoader key={i} type="card" />
+//           ))}
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Booked Gigs</h2>
+      
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//         {gigs.map((gig) => (
+//           <div key={gig.id} className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200">
+//             <div className="flex items-start justify-between mb-4">
+//               <h3 className="text-lg font-semibold text-slate-800 flex-1 mr-2">{gig.title}</h3>
+//               <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(gig.status)}`}>
+//                 {getStatusIcon(gig.status)}
+//                 <span className="capitalize">{gig.status}</span>
+//               </span>
+//             </div>
+            
+//             <div className="space-y-2">
+//               <p className="text-sm text-slate-600">
+//                 <span className="font-medium">Client:</span> {gig.client}
+//               </p>
+//               <p className="text-sm text-slate-600">
+//                 <span className="font-medium">Budget:</span> {gig.budget} coins
+//               </p>
+//               <p className="text-sm text-slate-600">
+//                 <span className="font-medium">Deadline:</span> {gig.deadline}
+//               </p>
+//             </div>
+            
+//             <div className="mt-4 pt-4 border-t border-slate-200">
+//               <button className="text-teal-600 hover:text-teal-800 text-sm font-medium">
+//                 View Details →
+//               </button>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Simplified Profile Settings Component (no password)
+// const ProfileSettings = ({ user, onSave }) => {
+//   const [formData, setFormData] = useState({
+//     name: user.name,
+//     email: user.email,
+//     bio: user.bio || '',
+//     phone: user.phone || '',
+//     skills: user.skills || ''
+//   });
+//   const [loading, setLoading] = useState(false);
+//   const [showSuccess, setShowSuccess] = useState(false);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 1500));
+    
+//     onSave(formData);
+//     setLoading(false);
+//     setShowSuccess(true);
+    
+//     setTimeout(() => setShowSuccess(false), 3000);
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Profile Settings</h2>
+      
+//       {showSuccess && (
+//         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl">
+//           Profile updated successfully!
+//         </div>
+//       )}
+      
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <form onSubmit={handleSubmit} className="space-y-6">
+//           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Full Name
+//               </label>
+//               <input
+//                 type="text"
+//                 value={formData.name}
+//                 onChange={(e) => setFormData({...formData, name: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 required
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Email Address
+//               </label>
+//               <input
+//                 type="email"
+//                 value={formData.email}
+//                 onChange={(e) => setFormData({...formData, email: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 required
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Phone Number
+//               </label>
+//               <input
+//                 type="tel"
+//                 value={formData.phone}
+//                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 placeholder="+1 234 567 8900"
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-2">
+//                 Skills (comma separated)
+//               </label>
+//               <input
+//                 type="text"
+//                 value={formData.skills}
+//                 onChange={(e) => setFormData({...formData, skills: e.target.value})}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//                 placeholder="React, Node.js, Design, etc."
+//               />
+//             </div>
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Bio
+//             </label>
+//             <textarea
+//               value={formData.bio}
+//               onChange={(e) => setFormData({...formData, bio: e.target.value})}
+//               rows={4}
+//               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//               placeholder="Tell us about yourself and your expertise..."
+//             />
+//           </div>
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="bg-gradient-to-r from-teal-900 to-teal-600 text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50"
+//           >
+//             {loading ? (
+//               <div className="flex items-center space-x-2">
+//                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+//                 <span>Saving...</span>
+//               </div>
+//             ) : (
+//               'Save Changes'
+//             )}
+//           </button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Add Coins Component
+// const AddCoins = ({ currentBalance, onAddCoins }) => {
+//   const [amount, setAmount] = useState('');
+//   const [loading, setLoading] = useState(false);
+
+//   const predefinedAmounts = [50, 100, 250, 500, 1000];
+
+//   const handleAddCoins = async (coinAmount) => {
+//     setLoading(true);
+    
+//     // Simulate payment processing
+//     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+//     onAddCoins(coinAmount);
+//     setAmount('');
+//     setLoading(false);
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Add Coins</h2>
+      
+//       <div className="bg-gradient-to-r from-teal-900 to-teal-600 rounded-2xl p-4 sm:p-6 text-white">
+//         <h3 className="text-lg font-semibold mb-2">Current Balance</h3>
+//         <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
+//       </div>
+
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <h3 className="text-xl font-semibold text-slate-800 mb-6">Quick Add</h3>
+//         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+//           {predefinedAmounts.map((coins) => (
+//             <button
+//               key={coins}
+//               onClick={() => handleAddCoins(coins)}
+//               disabled={loading}
+//               className="bg-slate-100 hover:bg-teal-600 hover:text-white p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 text-sm sm:text-base"
+//             >
+//               {coins} Coins
+//             </button>
+//           ))}
+//         </div>
+
+//         <div className="border-t pt-6">
+//           <h3 className="text-lg font-semibold text-slate-800 mb-4">Custom Amount</h3>
+//           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+//             <input
+//               type="number"
+//               value={amount}
+//               onChange={(e) => setAmount(e.target.value)}
+//               placeholder="Enter amount..."
+//               className="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+//             />
+//             <button
+//               onClick={() => amount && handleAddCoins(parseInt(amount))}
+//               disabled={loading || !amount}
+//               className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
+//             >
+//               {loading ? (
+//                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+//               ) : (
+//                 'Add Coins'
+//               )}
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // New Redeem Coins Component
+// const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
+//   const [amount, setAmount] = useState('');
+//   const [method, setMethod] = useState('bank');
+//   const [loading, setLoading] = useState(false);
+
+//   const redeemOptions = [
+//     { value: 100, label: '100 Coins = $10', rate: 0.10 },
+//     { value: 500, label: '500 Coins = $50', rate: 0.10 },
+//     { value: 1000, label: '1000 Coins = $100', rate: 0.10 },
+//     { value: 2500, label: '2500 Coins = $250', rate: 0.10 }
+//   ];
+
+//   const handleRedeemCoins = async (coinAmount) => {
+//     if (coinAmount > currentBalance) {
+//       alert('Insufficient balance!');
+//       return;
+//     }
+
+//     setLoading(true);
+    
+//     // Simulate redemption processing
+//     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+//     onRedeemCoins(coinAmount);
+//     setAmount('');
+//     setLoading(false);
+//   };
+
+//   const calculateCashValue = (coins) => {
+//     return (coins * 0.10).toFixed(2);
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Redeem Coins</h2>
+      
+//       <div className="bg-gradient-to-r from-orange-600 to-orange-500 rounded-2xl p-4 sm:p-6 text-white">
+//         <h3 className="text-lg font-semibold mb-2">Available Balance</h3>
+//         <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
+//         <p className="text-orange-100 mt-2">≈ ${calculateCashValue(currentBalance)} USD</p>
+//       </div>
+
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <h3 className="text-xl font-semibold text-slate-800 mb-6">Quick Redeem</h3>
+//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+//           {redeemOptions.map((option) => (
+//             <button
+//               key={option.value}
+//               onClick={() => handleRedeemCoins(option.value)}
+//               disabled={loading || option.value > currentBalance}
+//               className="bg-slate-100 hover:bg-orange-600 hover:text-white p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+//             >
+//               {option.label}
+//             </button>
+//           ))}
+//         </div>
+
+//         <div className="border-t pt-6 space-y-4">
+//           <h3 className="text-lg font-semibold text-slate-800">Custom Amount</h3>
+          
+//           <div>
+//             <label className="block text-sm font-medium text-slate-700 mb-2">
+//               Redemption Method
+//             </label>
+//             <select
+//               value={method}
+//               onChange={(e) => setMethod(e.target.value)}
+//               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-600 focus:border-transparent"
+//             >
+//               <option value="bank">Bank Transfer</option>
+//               <option value="paypal">PayPal</option>
+//               <option value="crypto">Cryptocurrency</option>
+//             </select>
+//           </div>
+          
+//           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+//             <div className="flex-1">
+//               <input
+//                 type="number"
+//                 value={amount}
+//                 onChange={(e) => setAmount(e.target.value)}
+//                 placeholder="Enter coins to redeem..."
+//                 max={currentBalance}
+//                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-600 focus:border-transparent"
+//               />
+//               {amount && (
+//                 <p className="text-sm text-slate-600 mt-1">
+//                   ≈ ${calculateCashValue(amount)} USD
+//                 </p>
+//               )}
+//             </div>
+//             <button
+//               onClick={() => amount && handleRedeemCoins(parseInt(amount))}
+//               disabled={loading || !amount || parseInt(amount) > currentBalance}
+//               className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
+//             >
+//               {loading ? (
+//                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+//               ) : (
+//                 'Redeem Now'
+//               )}
+//             </button>
+//           </div>
+          
+//           <div className="bg-slate-50 p-4 rounded-xl">
+//             <h4 className="font-semibold text-slate-800 mb-2">Redemption Info:</h4>
+//             <ul className="text-sm text-slate-600 space-y-1">
+//               <li>• Minimum redemption: 100 coins</li>
+//               <li>• Rate: 1 coin = $0.10 USD</li>
+//               <li>• Processing time: 2-5 business days</li>
+//               <li>• No redemption fees</li>
+//             </ul>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Help/FAQs Component
+// const HelpFAQs = () => {
+//   const [openFAQ, setOpenFAQ] = useState(null);
+
+//   const faqs = [
+//     {
+//       question: "How do coins work on SkillsAmigo?",
+//       answer: "Coins are our virtual currency. You can purchase coins to pay for gigs and earn coins by completing work for others. 1 coin = $0.10 USD when redeeming."
+//     },
+//     {
+//       question: "How do I post a gig?",
+//       answer: "Navigate to the 'Post Gig' section, fill out the form with your requirements, budget range, thumbnail image, and deadline, then submit."
+//     },
+//     {
+//       question: "What happens if there's a dispute?",
+//       answer: "We have a dispute resolution system where our team reviews the case and makes fair decisions based on the evidence provided."
+//     },
+//     {
+//       question: "How do I redeem my coins?",
+//       answer: "Go to the 'Redeem Coins' section and choose your preferred method (Bank Transfer, PayPal, or Crypto). Minimum redemption is 100 coins."
+//     },
+//     {
+//       question: "Is there a fee for using SkillsAmigo?",
+//       answer: "We charge a small platform fee of 5% on completed transactions to maintain and improve our services. No fees for adding or redeeming coins."
+//     },
+//     {
+//       question: "How long does coin redemption take?",
+//       answer: "Coin redemptions typically process within 2-5 business days depending on your chosen method."
+//     }
+//   ];
+
+//   return (
+//     <div className="space-y-6">
+//       <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Help & FAQs</h2>
+      
+//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+//         <div className="space-y-4">
+//           {faqs.map((faq, index) => (
+//             <div key={index} className="border border-slate-200 rounded-xl">
+//               <button
+//                 onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+//                 className="w-full px-4 sm:px-6 py-4 text-left font-semibold text-slate-800 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+//                 aria-expanded={openFAQ === index}
+//               >
+//                 <div className="flex items-center justify-between">
+//                   <span className="text-sm sm:text-base">{faq.question}</span>
+//                   <span className="text-slate-400 ml-2">
+//                     {openFAQ === index ? '−' : '+'}
+//                   </span>
+//                 </div>
+//               </button>
+//               {openFAQ === index && (
+//                 <div className="px-4 sm:px-6 pb-4 text-slate-600 text-sm sm:text-base">
+//                   {faq.answer}
+//                 </div>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+
+//       <div className="bg-teal-50 rounded-2xl p-4 sm:p-6 border border-teal-200">
+//         <h3 className="text-lg font-semibold text-teal-800 mb-2">Need More Help?</h3>
+//         <p className="text-teal-700 mb-4 text-sm sm:text-base">Can't find what you're looking for? Our support team is here to help!</p>
+//         <button className="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200">
+//           Contact Support
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Footer Component - Full width
+// const Footer = () => {
+//   return (
+//     <footer className="bg-white border-t border-slate-200 mt-8 w-full">
+//       <div className="px-4 sm:px-6 py-4">
+//         <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+//           <p className="text-xs sm:text-sm text-slate-600 text-center sm:text-left">
+//             © 2025 SkillsAmigo. All rights reserved.
+//           </p>
+//           <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
+//             <a href="#" className="text-xs sm:text-sm text-slate-600 hover:text-teal-600 transition-colors duration-200">Privacy Policy</a>
+//             <a href="#" className="text-xs sm:text-sm text-slate-600 hover:text-teal-600 transition-colors duration-200">Terms of Service</a>
+//             <a href="#" className="text-xs sm:text-sm text-slate-600 hover:text-teal-600 transition-colors duration-200">Support</a>
+//           </div>
+//         </div>
+//       </div>
+//     </footer>
+//   );
+// };
+
+// // Main Dashboard Component
+// const UserDashboard = () => {
+//   const [activeSection, setActiveSection] = useState('overview');
+//   const [sidebarOpen, setSidebarOpen] = useState(false);
+//   const [loading, setLoading] = useState(true);
+//   const [user, setUser] = useState({
+//     name: 'John Doe',
+//     email: 'john@example.com',
+//     bio: 'Full-stack developer with 5 years of experience',
+//     phone: '+1 234 567 8900',
+//     skills: 'React, Node.js, Python, UI/UX Design'
+//   });
+//   const [coinBalance, setCoinBalance] = useState(1590);
+
+//   useEffect(() => {
+//     // Simulate initial data loading
+//     const timer = setTimeout(() => {
+//       setLoading(false);
+//     }, 1500);
+
+//     return () => clearTimeout(timer);
+//   }, []);
+
+//   const handleLogout = () => {
+//     alert('Logout functionality would be implemented here');
+//   };
+
+//   const handlePostGig = (gigData) => {
+//     alert(`Gig "${gigData.title}" posted successfully!`);
+//   };
+
+//   const handleSaveProfile = (profileData) => {
+//     setUser({
+//       name: profileData.name,
+//       email: profileData.email,
+//       bio: profileData.bio,
+//       phone: profileData.phone,
+//       skills: profileData.skills
+//     });
+//   };
+
+//   const handleAddCoins = (amount) => {
+//     setCoinBalance(prev => prev + amount);
+//     alert(`${amount} coins added successfully!`);
+//   };
+
+//   const handleRedeemCoins = (amount) => {
+//     setCoinBalance(prev => prev - amount);
+//     const cashValue = (amount * 0.10).toFixed(2);
+//     alert(`${amount} coins redeemed for ${cashValue} successfully!`);
+//   };
+
+//   const renderActiveSection = () => {
+//     switch (activeSection) {
+//       case 'overview':
+//         return <Overview loading={loading} />;
+//       case 'post-gig':
+//         return <PostGigForm onSubmit={handlePostGig} />;
+//       case 'booked-gigs':
+//         return <BookedGigs loading={loading} />;
+//       case 'profile':
+//         return <ProfileSettings user={user} onSave={handleSaveProfile} />;
+//       case 'add-coins':
+//         return <AddCoins currentBalance={coinBalance} onAddCoins={handleAddCoins} />;
+//       case 'redeem-coins':
+//         return <RedeemCoins currentBalance={coinBalance} onRedeemCoins={handleRedeemCoins} />;
+//       case 'help':
+//         return <HelpFAQs />;
+//       default:
+//         return <Overview loading={loading} />;
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-slate-100">
+//       {/* Fixed Header - Full width */}
+//       <Header user={user} onLogout={handleLogout} />
+      
+//       {/* Sidebar */}
+//       <Sidebar 
+//         activeSection={activeSection}
+//         setActiveSection={setActiveSection}
+//         isOpen={sidebarOpen}
+//         setIsOpen={setSidebarOpen}
+//       />
+
+//       {/* Main Content */}
+//       <div className="lg:ml-64 pt-20 pb-4 min-h-screen flex flex-col">        
+//         <main className="flex-1 p-4 sm:p-6">
+//           <div className="max-w-7xl mx-auto">
+//             {renderActiveSection()}
+//           </div>
+//         </main>
+
+//         {/* Fixed Footer - Full width */}
+//         <Footer />
+//       </div>
+
+//       {/* Background Pattern */}
+//       <div className="fixed inset-0 -z-10 opacity-5 pointer-events-none">
+//         <div className="absolute inset-0" style={{
+//           backgroundImage: `radial-gradient(circle at 25px 25px, rgba(20, 184, 166, 0.3) 2px, transparent 0)`,
+//           backgroundSize: '50px 50px'
+//         }} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UserDashboard;
+
+'use client'
+import React, { useState, useEffect } from 'react';
+import { 
+  Home, 
+  Plus, 
+  Calendar, 
+  Settings, 
+  Coins, 
+  HelpCircle, 
+  Menu, 
+  X, 
+  User,
+  LogOut,
+  TrendingUp,
+  Trophy,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Upload,
+  Gift,
+  Briefcase,
+  BookOpen
+} from 'lucide-react';
+
+// Skeleton Loader Component
+const SkeletonLoader = ({ className = "", type = "text" }) => {
+  if (type === "card") {
+    return (
+      <div className={`bg-white rounded-2xl shadow-md p-6 ${className}`}>
+        <div className="animate-pulse">
+          <div className="h-4 bg-slate-200 rounded mb-3"></div>
+          <div className="h-8 bg-slate-200 rounded mb-4"></div>
+          <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (type === "chart") {
+    return (
+      <div className={`bg-white rounded-2xl shadow-md p-6 ${className}`}>
+        <div className="animate-pulse">
+          <div className="h-4 bg-slate-200 rounded mb-4"></div>
+          <div className="h-32 bg-slate-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className={`animate-pulse bg-slate-200 rounded ${className}`}></div>
+  );
+};
+
+// Header Component with Home Button
+const Header = ({ user, onLogout, onHome }) => {
+  return (
+    <header className="bg-white shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30" 
+            style={{ borderBottomColor: '#e1ecea' }}>
+      <div className="px-4 sm:px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3 ml-16 lg:ml-0">
+            <button
+              onClick={onHome}
+              className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105"
+              style={{ backgroundColor: '#f3f8f8', color: '#344545' }}
+            >
+              <Home className="w-5 h-5" />
+              <span className="font-semibold hidden sm:block">Home</span>
+            </button>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
+                   style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
+                <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#344545' }}>
+                  Welcome, {user.name}!
+                </h1>
+                <p className="text-xs sm:text-sm hidden sm:block" style={{ color: '#719f9a' }}>
+                  Ready to manage your gigs?
+                </p>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={onLogout}
+            className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors duration-200 hover:scale-105"
+            style={{ backgroundColor: '#f3f8f8', color: '#405e5e' }}
+            aria-label="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm hidden sm:block">Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// Sidebar Component with new sections
+const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
+  const menuItems = [
+    { id: 'overview', icon: Home, label: 'Overview' },
+    { id: 'post-gig', icon: Plus, label: 'Post Gig' },
+    { id: 'my-gigs', icon: Briefcase, label: 'My Gigs' },
+    { id: 'my-bookings', icon: BookOpen, label: 'My Bookings' },
+    { id: 'profile', icon: Settings, label: 'Profile Settings' },
+    { id: 'add-coins', icon: Coins, label: 'Add Coins' },
+    { id: 'redeem-coins', icon: Gift, label: 'Redeem Coins' },
+    { id: 'help', icon: HelpCircle, label: 'Help / FAQs' },
+  ];
+
+  return (
+    <>
+      {/* Mobile Hamburger Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-white rounded-xl shadow-lg transition-all duration-200"
+        style={{ backgroundColor: '#344545' }}
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
+      >
+        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      {/* Sidebar with patterns */}
+      <aside className={`
+        fixed h-full text-white shadow-2xl z-40 transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0 lg:w-64 w-64
+        top-0 lg:top-20
+      `} style={{ backgroundColor: '#344545' }}>
+        <div className="p-4 pt-20 lg:pt-6 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `
+                radial-gradient(circle at 20px 20px, rgba(159, 193, 189, 0.4) 2px, transparent 0),
+                linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)
+              `,
+              backgroundSize: '40px 40px, 60px 60px'
+            }} />
+          </div>
+
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-8">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+                   style={{ backgroundColor: '#ff6b35' }}>
+                <span className="text-white font-bold text-sm">SA</span>
+              </div>
+              <h2 className="text-xl font-bold text-white">SkillsAmigo</h2>
+            </div>
+
+            <nav className="space-y-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveSection(item.id);
+                      setIsOpen(false);
+                    }}
+                    className={`
+                      w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-left
+                      ${isActive 
+                        ? 'text-white shadow-lg' 
+                        : 'hover:text-white'
+                      }
+                    `}
+                    style={{ 
+                      backgroundColor: isActive ? '#ff6b35' : 'transparent',
+                      color: isActive ? 'white' : '#bbd3d0'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.target.style.backgroundColor = '#405e5e';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.target.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      </aside>
+
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
+  );
+};
+
+// Overview Component with jet-stream colors
+const Overview = ({ loading }) => {
+  const stats = [
+    { 
+      title: 'Total Spent Coins', 
+      value: '1,250', 
+      icon: DollarSign, 
+      color: 'from-red-500 to-red-600',
+      change: '-5.2%'
+    },
+    { 
+      title: 'Total Gained Coins', 
+      value: '2,840', 
+      icon: TrendingUp, 
+      color: 'from-green-500 to-green-600',
+      change: '+12.3%'
+    },
+    { 
+      title: 'Leaderboard Rank', 
+      value: '#47', 
+      icon: Trophy, 
+      color: 'from-orange-500 to-orange-600',
+      change: '↑3'
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <SkeletonLoader className="h-8 w-48" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {[1, 2, 3].map((i) => (
+            <SkeletonLoader key={i} type="card" />
+          ))}
+        </div>
+        <SkeletonLoader type="chart" className="h-64" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Dashboard Overview
+      </h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.title} 
+                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
+              {/* Card Pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `radial-gradient(circle at 15px 15px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+                  backgroundSize: '30px 30px'
+                }} />
+              </div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color}`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <span className={`text-sm font-semibold ${stat.change.startsWith('+') || stat.change.startsWith('↑') ? 'text-green-600' : 'text-red-600'}`}>
+                    {stat.change}
+                  </span>
+                </div>
+                <h3 className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>{stat.title}</h3>
+                <p className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>{stat.value}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%),
+              radial-gradient(circle at 25px 25px, rgba(159, 193, 189, 0.2) 2px, transparent 0)
+            `,
+            backgroundSize: '50px 50px, 50px 50px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4" style={{ color: '#344545' }}>
+            Activity Overview
+          </h3>
+          <div className="h-32 rounded-xl flex items-center justify-center"
+               style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
+            <p className="text-center text-sm sm:text-base" style={{ color: '#719f9a' }}>
+              Chart placeholder - Activity trends would appear here
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced Post Gig Form Component
+const PostGigForm = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    minPrice: '',
+    maxPrice: '',
+    deadline: '',
+    thumbnail: null
+  });
+  const [loading, setLoading] = useState(false);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({...formData, thumbnail: file});
+      const reader = new FileReader();
+      reader.onload = (e) => setThumbnailPreview(e.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    onSubmit(formData);
+    setFormData({ title: '', description: '', minPrice: '', maxPrice: '', deadline: '', thumbnail: null });
+    setThumbnailPreview(null);
+    setLoading(false);
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Post New Gig
+      </h2>
+      
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+              Gig Title
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+              style={{ 
+                borderColor: '#bbd3d0',
+                backgroundColor: '#f3f8f8'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#558581';
+                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#bbd3d0';
+                e.target.style.boxShadow = 'none';
+              }}
+              placeholder="Enter gig title..."
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+              Thumbnail Image
+            </label>
+            <div className="flex flex-col space-y-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
+                className="hidden"
+                id="thumbnail-upload"
+              />
+              <label
+                htmlFor="thumbnail-upload"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 hover:scale-105"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+              >
+                {thumbnailPreview ? (
+                  <img
+                    src={thumbnailPreview}
+                    alt="Thumbnail preview"
+                    className="h-full w-full object-cover rounded-xl"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <Upload className="w-8 h-8 mb-2" style={{ color: '#719f9a' }} />
+                    <p className="text-sm" style={{ color: '#719f9a' }}>Click to upload thumbnail</p>
+                  </div>
+                )}
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+              Description
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              rows={4}
+              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+              style={{ 
+                borderColor: '#bbd3d0',
+                backgroundColor: '#f3f8f8'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#558581';
+                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#bbd3d0';
+                e.target.style.boxShadow = 'none';
+              }}
+              placeholder="Describe your gig requirements..."
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Minimum Price (Coins)
+              </label>
+              <input
+                type="number"
+                value={formData.minPrice}
+                onChange={(e) => setFormData({...formData, minPrice: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                placeholder="0"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Maximum Price (Coins)
+              </label>
+              <input
+                type="number"
+                value={formData.maxPrice}
+                onChange={(e) => setFormData({...formData, maxPrice: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+              Deadline
+            </label>
+            <input
+              type="date"
+              value={formData.deadline}
+              onChange={(e) => setFormData({...formData, deadline: e.target.value})}
+              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+              style={{ 
+                borderColor: '#bbd3d0',
+                backgroundColor: '#f3f8f8'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#558581';
+                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#bbd3d0';
+                e.target.style.boxShadow = 'none';
+              }}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Posting Gig...</span>
+              </div>
+            ) : (
+              'Post Gig'
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// My Gigs Component - Gigs posted by user
+const MyGigs = ({ loading }) => {
+  const myGigs = [
+    {
+      id: 1,
+      title: 'React Dashboard Development',
+      description: 'Build a modern admin dashboard with React and Tailwind CSS',
+      minPrice: 300,
+      maxPrice: 500,
+      applicants: 8,
+      status: 'active',
+      posted: '2025-08-20'
+    },
+    {
+      id: 2,
+      title: 'Logo Design for Tech Startup',
+      description: 'Create a modern, minimalist logo for our tech company',
+      minPrice: 50,
+      maxPrice: 150,
+      applicants: 15,
+      status: 'completed',
+      posted: '2025-08-18'
+    },
+    {
+      id: 3,
+      title: 'Content Writing - Blog Posts',
+      description: 'Write 5 SEO-optimized blog posts about web development',
+      minPrice: 80,
+      maxPrice: 120,
+      applicants: 3,
+      status: 'draft',
+      posted: '2025-08-22'
+    }
+  ];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active':
+        return { bg: '#e1ecea', text: '#344545' };
+      case 'completed':
+        return { bg: '#dcfce7', text: '#166534' };
+      case 'draft':
+        return { bg: '#fef3c7', text: '#92400e' };
+      default:
+        return { bg: '#f1f5f9', text: '#475569' };
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <SkeletonLoader className="h-8 w-48" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {[1, 2, 3].map((i) => (
+            <SkeletonLoader key={i} type="card" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+          My Gigs
+        </h2>
+        <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
+          {myGigs.length} Gigs Posted
+        </span>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {myGigs.map((gig) => {
+          const statusColors = getStatusColor(gig.status);
+          return (
+            <div key={gig.id} 
+                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `radial-gradient(circle at 15px 15px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+                  backgroundSize: '30px 30px'
+                }} />
+              </div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
+                    {gig.title}
+                  </h3>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 capitalize"
+                        style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+                    {gig.status}
+                  </span>
+                </div>
+                
+                <p className="text-sm mb-4" style={{ color: '#719f9a' }}>
+                  {gig.description}
+                </p>
+                
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Budget:</span> {gig.minPrice} - {gig.maxPrice} coins
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Applicants:</span> {gig.applicants}
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Posted:</span> {gig.posted}
+                  </p>
+                </div>
+                
+                <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
+                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
+                    View Details
+                  </button>
+                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
+                    Edit Gig
+                  </button>
+                  {gig.applicants > 0 && (
+                    <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
+                      View Applicants
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// My Bookings Component - Scheduled gigs for user to work
+const MyBookings = ({ loading }) => {
+  const myBookings = [
+    {
+      id: 1,
+      title: 'E-commerce Website Development',
+      client: 'Fashion Boutique LLC',
+      price: 800,
+      deadline: '2025-09-15',
+      status: 'in-progress',
+      progress: 65,
+      startDate: '2025-08-10'
+    },
+    {
+      id: 2,
+      title: 'Mobile App UI/UX Design',
+      client: 'HealthTech Solutions',
+      price: 400,
+      deadline: '2025-09-05',
+      status: 'pending-start',
+      progress: 0,
+      startDate: '2025-08-25'
+    },
+    {
+      id: 3,
+      title: 'Database Optimization',
+      client: 'DataCorp Analytics',
+      price: 250,
+      deadline: '2025-08-28',
+      status: 'completed',
+      progress: 100,
+      startDate: '2025-08-15'
+    }
+  ];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'in-progress':
+        return { bg: '#dbeafe', text: '#1d4ed8' };
+      case 'pending-start':
+        return { bg: '#fef3c7', text: '#92400e' };
+      case 'completed':
+        return { bg: '#dcfce7', text: '#166534' };
+      default:
+        return { bg: '#f1f5f9', text: '#475569' };
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <SkeletonLoader className="h-8 w-48" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {[1, 2, 3].map((i) => (
+            <SkeletonLoader key={i} type="card" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+          My Bookings
+        </h2>
+        <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
+          {myBookings.length} Active Projects
+        </span>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {myBookings.map((booking) => {
+          const statusColors = getStatusColor(booking.status);
+          return (
+            <div key={booking.id} 
+                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
+                  backgroundSize: '40px 40px'
+                }} />
+              </div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
+                    {booking.title}
+                  </h3>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
+                        style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+                    {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </span>
+                </div>
+                
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Client:</span> {booking.client}
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Payment:</span> {booking.price} coins
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Deadline:</span> {booking.deadline}
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Started:</span> {booking.startDate}
+                  </p>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
+                    <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
+                  </div>
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
+                    <div 
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        backgroundColor: '#558581',
+                        width: `${booking.progress}%`
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
+                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
+                    View Details
+                  </button>
+                  {booking.status === 'in-progress' && (
+                    <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
+                      Update Progress
+                    </button>
+                  )}
+                  {booking.status === 'completed' && (
+                    <button className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
+                      View Review
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// Profile Settings Component - simplified
+const ProfileSettings = ({ user, onSave }) => {
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+    bio: user.bio || '',
+    phone: user.phone || '',
+    skills: user.skills || ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    onSave(formData);
+    setLoading(false);
+    setShowSuccess(true);
+    
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Profile Settings
+      </h2>
+      
+      {showSuccess && (
+        <div className="border px-4 py-3 rounded-xl" 
+             style={{ backgroundColor: '#dcfce7', borderColor: '#22c55e', color: '#166534' }}>
+          Profile updated successfully!
+        </div>
+      )}
+      
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                placeholder="+1 234 567 8900"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Skills (comma separated)
+              </label>
+              <input
+                type="text"
+                value={formData.skills}
+                onChange={(e) => setFormData({...formData, skills: e.target.value})}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+                placeholder="React, Node.js, Design, etc."
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+              Bio
+            </label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => setFormData({...formData, bio: e.target.value})}
+              rows={4}
+              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+              style={{ 
+                borderColor: '#bbd3d0',
+                backgroundColor: '#f3f8f8'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#558581';
+                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#bbd3d0';
+                e.target.style.boxShadow = 'none';
+              }}
+              placeholder="Tell us about yourself and your expertise..."
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}
+          >
+            {loading ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Saving...</span>
+              </div>
+            ) : (
+              'Save Changes'
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Add Coins Component with jet-stream colors
+const AddCoins = ({ currentBalance, onAddCoins }) => {
+  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const predefinedAmounts = [50, 100, 250, 500, 1000];
+
+  const handleAddCoins = async (coinAmount) => {
+    setLoading(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    onAddCoins(coinAmount);
+    setAmount('');
+    setLoading(false);
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Add Coins
+      </h2>
+      
+      <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
+           style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.3) 2px, transparent 0)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-lg font-semibold mb-2">Current Balance</h3>
+          <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Add</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+            {predefinedAmounts.map((coins) => (
+              <button
+                key={coins}
+                onClick={() => handleAddCoins(coins)}
+                disabled={loading}
+                className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 text-sm sm:text-base hover:scale-105"
+                style={{ 
+                  backgroundColor: '#f3f8f8',
+                  color: '#344545'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#558581';
+                  e.target.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#f3f8f8';
+                  e.target.style.color = '#344545';
+                }}
+              >
+                {coins} Coins
+              </button>
+            ))}
+          </div>
+
+          <div className="border-t pt-6" style={{ borderColor: '#e1ecea' }}>
+            <h3 className="text-lg font-semibold mb-4" style={{ color: '#344545' }}>Custom Amount</h3>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount..."
+                className="flex-1 px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#558581';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+              <button
+                onClick={() => amount && handleAddCoins(parseInt(amount))}
+                disabled={loading || !amount}
+                className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
+                style={{ backgroundColor: '#ff6b35' }}
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                ) : (
+                  'Add Coins'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Redeem Coins Component with jet-stream colors
+const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
+  const [amount, setAmount] = useState('');
+  const [method, setMethod] = useState('bank');
+  const [loading, setLoading] = useState(false);
+
+  const redeemOptions = [
+    { value: 100, label: '100 Coins = $10', rate: 0.10 },
+    { value: 500, label: '500 Coins = $50', rate: 0.10 },
+    { value: 1000, label: '1000 Coins = $100', rate: 0.10 },
+    { value: 2500, label: '2500 Coins = $250', rate: 0.10 }
+  ];
+
+  const handleRedeemCoins = async (coinAmount) => {
+    if (coinAmount > currentBalance) {
+      alert('Insufficient balance!');
+      return;
+    }
+
+    setLoading(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    onRedeemCoins(coinAmount);
+    setAmount('');
+    setLoading(false);
+  };
+
+  const calculateCashValue = (coins) => {
+    return (coins * 0.10).toFixed(2);
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Redeem Coins
+      </h2>
+      
+      <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
+           style={{ backgroundColor: '#ff6b35' }}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.3) 2px, transparent 0)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-lg font-semibold mb-2">Available Balance</h3>
+          <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
+          <p className="opacity-90 mt-2">≈ ${calculateCashValue(currentBalance)} USD</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Redeem</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+            {redeemOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => handleRedeemCoins(option.value)}
+                disabled={loading || option.value > currentBalance}
+                className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base hover:scale-105"
+                style={{ 
+                  backgroundColor: '#f3f8f8',
+                  color: '#344545'
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.target.disabled) {
+                    e.target.style.backgroundColor = '#ff6b35';
+                    e.target.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.target.disabled) {
+                    e.target.style.backgroundColor = '#f3f8f8';
+                    e.target.style.color = '#344545';
+                  }
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="border-t pt-6 space-y-4" style={{ borderColor: '#e1ecea' }}>
+            <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>Custom Amount</h3>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Redemption Method
+              </label>
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ 
+                  borderColor: '#bbd3d0',
+                  backgroundColor: '#f3f8f8'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#ff6b35';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#bbd3d0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <option value="bank">Bank Transfer</option>
+                <option value="paypal">PayPal</option>
+                <option value="crypto">Cryptocurrency</option>
+              </select>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <div className="flex-1">
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter coins to redeem..."
+                  max={currentBalance}
+                  className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                  style={{ 
+                    borderColor: '#bbd3d0',
+                    backgroundColor: '#f3f8f8'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#ff6b35';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#bbd3d0';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+                {amount && (
+                  <p className="text-sm mt-1" style={{ color: '#719f9a' }}>
+                    ≈ ${calculateCashValue(amount)} USD
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => amount && handleRedeemCoins(parseInt(amount))}
+                disabled={loading || !amount || parseInt(amount) > currentBalance}
+                className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
+                style={{ backgroundColor: '#ff6b35' }}
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                ) : (
+                  'Redeem Now'
+                )}
+              </button>
+            </div>
+            
+            <div className="rounded-xl p-4" style={{ backgroundColor: '#f3f8f8' }}>
+              <h4 className="font-semibold mb-2" style={{ color: '#344545' }}>Redemption Info:</h4>
+              <ul className="text-sm space-y-1" style={{ color: '#719f9a' }}>
+                <li>• Minimum redemption: 100 coins</li>
+                <li>• Rate: 1 coin = $0.10 USD</li>
+                <li>• Processing time: 2-5 business days</li>
+                <li>• No redemption fees</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Help/FAQs Component with jet-stream colors
+const HelpFAQs = () => {
+  const [openFAQ, setOpenFAQ] = useState(null);
+
+  const faqs = [
+    {
+      question: "How do coins work on SkillsAmigo?",
+      answer: "Coins are our virtual currency. You can purchase coins to pay for gigs and earn coins by completing work for others. 1 coin = $0.10 USD when redeeming."
+    },
+    {
+      question: "How do I post a gig?",
+      answer: "Navigate to the 'Post Gig' section, fill out the form with your requirements, budget range, thumbnail image, and deadline, then submit."
+    },
+    {
+      question: "What happens if there's a dispute?",
+      answer: "We have a dispute resolution system where our team reviews the case and makes fair decisions based on the evidence provided."
+    },
+    {
+      question: "How do I redeem my coins?",
+      answer: "Go to the 'Redeem Coins' section and choose your preferred method (Bank Transfer, PayPal, or Crypto). Minimum redemption is 100 coins."
+    },
+    {
+      question: "Is there a fee for using SkillsAmigo?",
+      answer: "We charge a small platform fee of 5% on completed transactions to maintain and improve our services. No fees for adding or redeeming coins."
+    },
+    {
+      question: "How long does coin redemption take?",
+      answer: "Coin redemptions typically process within 2-5 business days depending on your chosen method."
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        Help & FAQs
+      </h2>
+      
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+        
+        <div className="space-y-4 relative z-10">
+          {faqs.map((faq, index) => (
+            <div key={index} className="border rounded-xl" style={{ borderColor: '#e1ecea' }}>
+              <button
+                onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+                className="w-full px-4 sm:px-6 py-4 text-left font-semibold rounded-xl transition-colors duration-200"
+                style={{ color: '#344545' }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#f3f8f8';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                }}
+                aria-expanded={openFAQ === index}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm sm:text-base">{faq.question}</span>
+                  <span className="ml-2" style={{ color: '#719f9a' }}>
+                    {openFAQ === index ? '−' : '+'}
+                  </span>
+                </div>
+              </button>
+              {openFAQ === index && (
+                <div className="px-4 sm:px-6 pb-4 text-sm sm:text-base" style={{ color: '#719f9a' }}>
+                  {faq.answer}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl p-4 sm:p-6 border relative overflow-hidden" 
+           style={{ backgroundColor: '#f3f8f8', borderColor: '#bbd3d0' }}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.2) 25%, rgba(85, 133, 129, 0.2) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.2) 75%)`,
+            backgroundSize: '30px 30px'
+          }} />
+        </div>
+        
+        <div className="relative z-10">
+          <h3 className="text-lg font-semibold mb-2" style={{ color: '#344545' }}>Need More Help?</h3>
+          <p className="mb-4 text-sm sm:text-base" style={{ color: '#405e5e' }}>
+            Can't find what you're looking for? Our support team is here to help!
+          </p>
+          <button className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200"
+                  style={{ backgroundColor: '#558581' }}>
+            Contact Support
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Footer Component - Full width with jet-stream colors
+const Footer = () => {
+  return (
+    <footer className="bg-white border-t mt-8 w-full" style={{ borderColor: '#e1ecea' }}>
+      <div className="px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+          <p className="text-xs sm:text-sm text-center sm:text-left" style={{ color: '#719f9a' }}>
+            © 2025 SkillsAmigo. All rights reserved.
+          </p>
+          <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
+            <a href="#" 
+               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
+               style={{ color: '#719f9a' }}
+               onMouseEnter={(e) => e.target.style.color = '#558581'}
+               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
+              Privacy Policy
+            </a>
+            <a href="#" 
+               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
+               style={{ color: '#719f9a' }}
+               onMouseEnter={(e) => e.target.style.color = '#558581'}
+               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
+              Terms of Service
+            </a>
+            <a href="#" 
+               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
+               style={{ color: '#719f9a' }}
+               onMouseEnter={(e) => e.target.style.color = '#558581'}
+               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
+              Support
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// Main Dashboard Component
+const UserDashboard = () => {
+  const [activeSection, setActiveSection] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({
+    name: 'John Doe',
+    email: 'john@example.com',
+    bio: 'Full-stack developer with 5 years of experience',
+    phone: '+1 234 567 8900',
+    skills: 'React, Node.js, Python, UI/UX Design'
+  });
+  const [coinBalance, setCoinBalance] = useState(1590);
+
+  useEffect(() => {
+    // Simulate initial data loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogout = () => {
+    alert('Logout functionality would be implemented here');
+  };
+
+  const handleHome = () => {
+    setActiveSection('overview');
+    setSidebarOpen(false);
+  };
+
+  const handlePostGig = (gigData) => {
+    alert(`Gig "${gigData.title}" posted successfully!`);
+  };
+
+  const handleSaveProfile = (profileData) => {
+    setUser({
+      name: profileData.name,
+      email: profileData.email,
+      bio: profileData.bio,
+      phone: profileData.phone,
+      skills: profileData.skills
+    });
+  };
+
+  const handleAddCoins = (amount) => {
+    setCoinBalance(prev => prev + amount);
+    alert(`${amount} coins added successfully!`);
+  };
+
+  const handleRedeemCoins = (amount) => {
+    setCoinBalance(prev => prev - amount);
+    const cashValue = (amount * 0.10).toFixed(2);
+    alert(`${amount} coins redeemed for ${cashValue} successfully!`);
+  };
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case 'overview':
+        return <Overview loading={loading} />;
+      case 'post-gig':
+        return <PostGigForm onSubmit={handlePostGig} />;
+      case 'my-gigs':
+        return <MyGigs loading={loading} />;
+      case 'my-bookings':
+        return <MyBookings loading={loading} />;
+      case 'profile':
+        return <ProfileSettings user={user} onSave={handleSaveProfile} />;
+      case 'add-coins':
+        return <AddCoins currentBalance={coinBalance} onAddCoins={handleAddCoins} />;
+      case 'redeem-coins':
+        return <RedeemCoins currentBalance={coinBalance} onRedeemCoins={handleRedeemCoins} />;
+      case 'help':
+        return <HelpFAQs />;
+      default:
+        return <Overview loading={loading} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#f3f8f8' }}>
+      {/* Fixed Header - Full width */}
+      <Header user={user} onLogout={handleLogout} onHome={handleHome} />
+      
+      {/* Sidebar */}
+      <Sidebar 
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+      />
+
+      {/* Main Content */}
+      <div className="lg:ml-64 pt-20 pb-4 min-h-screen flex flex-col">        
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="max-w-7xl mx-auto">
+            {renderActiveSection()}
+          </div>
+        </main>
+
+        {/* Fixed Footer - Full width */}
+        <Footer />
+      </div>
+
+      {/* Enhanced Background Pattern */}
+      <div className="fixed inset-0 -z-10 opacity-5 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 25px 25px, rgba(85, 133, 129, 0.3) 2px, transparent 0),
+            linear-gradient(45deg, transparent 25%, rgba(159, 193, 189, 0.1) 25%, rgba(159, 193, 189, 0.1) 50%, transparent 50%, transparent 75%, rgba(159, 193, 189, 0.1) 75%)
+          `,
+          backgroundSize: '50px 50px, 100px 100px'
+        }} />
+      </div>
+    </div>
+  );
+};
+
+export default UserDashboard;
