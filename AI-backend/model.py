@@ -18,6 +18,15 @@ mistral_llm = HuggingFaceEndpoint(
     huggingfacehub_api_token=os.getenv("HUGGIN_FACE_API_KEY") 
 )
 
+
+olama = HuggingFaceEndpoint(
+    repo_id="meta-llama/Llama-3.1-8B-Instruct",
+    temperature=0,
+    max_new_tokens=512,
+    huggingfacehub_api_token=os.getenv("HUGGIN_FACE_API_KEY") 
+)
+
+olama_llm = ChatHuggingFace(llm=olama)
 # Wrap it as a chat model
 mistral = ChatHuggingFace(llm=mistral_llm)
 
