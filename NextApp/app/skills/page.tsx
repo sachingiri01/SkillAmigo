@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
-import { Search, Filter, Star, MapPin, Clock, MessageCircle, Calendar, Badge, Zap, Users, TrendingUp, Award } from "lucide-react";
+import { Search, Check,Filter, Star,Circle, MapPin, Clock, MessageCircle, Calendar, Badge, Zap, Users, TrendingUp, Award } from "lucide-react";
 import React from "react";
 import { Button } from "../_components/ui/button";
 import { Card } from "../_components/ui/card";
@@ -13,23 +13,23 @@ import { FullwidthIconNavbar } from "../_components/navbars/fullwidth-icon-navba
 import { NewsletterFooter } from "../_components/footers/newsletter-footer";
 
 
-interface Gig {
-  id: string;                 // from g.gig_id AS id
-  title: string;
-  description: string;
-  provider: string;           // from u.name
-  providerPhoto: string;      // from u.profile_picture
-  image: string;              // from g.picture
-  price: string;              // formatted: `₹${gig.min_price}`
-  priceType: string;          // e.g., "per project"
-  rating: number;
-  reviews: number;
-  distance: string;           // placeholder or computed
-  availability: string;
-  tags: string[];
-  isVerified: boolean;
-}
-// Smooth Floating Elements with better performance
+// interface Gig {
+//   id: string;                 // from g.gig_id AS id
+//   title: string;
+//   description: string;
+//   provider: string;           // from u.name
+//   profile_picture: string;      // from u.profile_picture
+//   image: string;              // from g.picture
+//   price: string;              // formatted: `₹${gig.min_price}`
+//   priceType: string;          // e.g., "per project"
+//   rating: number;
+//   reviews: number;
+//   distance: string;           // placeholder or computed
+//   availability: string;
+//   tags: string[];
+//   isVerified: boolean;
+// }
+// // Smooth Floating Elements with better performance
 const FloatingElement = ({ children, delay = 0, duration = 4 }) => (
   <div 
     className="animate-float opacity-50"
@@ -94,7 +94,7 @@ const WireframeElement = ({ index, scrollY }) => {
 
 // Enhanced GigCard with jet-stream colors and removed elements
 const GigCard = ({ gig, index }) => {
-  console.log("gig acceted",gig);
+  
   
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -106,7 +106,7 @@ const GigCard = ({ gig, index }) => {
     }
   ]);
   
-  const cardRef = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -137,9 +137,7 @@ const GigCard = ({ gig, index }) => {
 
   const tiltX = (scrollProgress - 0.5) * 6;
   const tiltY = Math.sin(scrollProgress * Math.PI) * 3;
-     console.log(
-      "kkk",gig
-     );
+     
      
   return (
     <Card
@@ -158,7 +156,7 @@ const GigCard = ({ gig, index }) => {
       
       <div className="relative overflow-hidden">
         <img
-          src={gig.image}
+          src={gig.picture}
           alt={gig.title}
           className="w-full h-40 sm:h-48 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
@@ -187,7 +185,7 @@ const GigCard = ({ gig, index }) => {
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="relative">
               <img
-                src={gig.providerPhoto}
+                src={gig.profile_picture}
                 alt={gig.provider}
                 className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 border-jet-stream-300/50 group-hover:border-jet-stream-500/70 transition-colors duration-500"
               />
@@ -202,11 +200,15 @@ const GigCard = ({ gig, index }) => {
               </div>
             </div>
           </div>
-          {gig.isVerified && (
+          
+          
+          {gig.is_verified && (
             <BadgeComponent className="bg-jet-stream-100 text-jet-stream-700 border-jet-stream-300/50 hover:bg-jet-stream-200 transition-colors duration-300 text-xs">
-              <Badge className="w-3 h-3 mr-1" />
-              <span className="hidden sm:inline">Verified</span>
-              <span className="sm:hidden">✓</span>
+             <span className="relative w-4 h-4 mr-1 flex items-center justify-center">
+      <Badge className="w-4 h-4 absolute" />
+      <Check className="w-2 h-2 absolute text-jet-stream-700" />
+    </span>
+    <span>Verified</span>
             </BadgeComponent>
           )}
         </div>
@@ -272,7 +274,7 @@ const categories = [
 export default function FindSkillsFeed() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [filteredGigs, setFilteredGigs] = useState<Gig[]>([]);
+  const [filteredGigs, setFilteredGigs] = useState([]);
   const [scrollY, setScrollY] = useState(0);
   const [loading, setLoading] = useState(true);
   
@@ -281,7 +283,7 @@ export default function FindSkillsFeed() {
       try {
         const res = await fetch("/api/gigs");
         const data = await res.json();
-        console.log("data",data);
+        
         
         setFilteredGigs(data); // Initially show all gigs
       } catch (err) {
@@ -291,6 +293,8 @@ export default function FindSkillsFeed() {
       }
     }
     fetchGigs();
+    
+    
   }, []);
 
   useEffect(() => {
@@ -308,7 +312,9 @@ export default function FindSkillsFeed() {
         let gigs = await res.json();
 
         if (searchTerm) {
+
           gigs = gigs.filter(gig =>
+            gig.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
             gig.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             gig.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (gig.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -331,7 +337,7 @@ export default function FindSkillsFeed() {
   if (loading) return <p>Loading gigs...</p>;
 
   // Split gigs into chunks for section separators
-  const gigChunks: Gig[][] = [];
+  const gigChunks:any[][] = [];
   const chunkSize = 6;
   for (let i = 0; i < filteredGigs.length; i += chunkSize) {
     

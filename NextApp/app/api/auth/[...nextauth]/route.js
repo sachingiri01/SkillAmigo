@@ -13,6 +13,8 @@ export const authOptions = {
   secret: process.env.AUTH_SECRET_KEY,
   callbacks: {
     async jwt({ token, account, profile }) {
+      
+
       if (!token.email) return token;
 
       // check user
@@ -28,7 +30,7 @@ export const authOptions = {
             name, email, phone, profile_picture, bio, merit_credits, is_verified, role
           )
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          RETURNING user_id, name, email, profile_picture, role, is_verified, merit_credits`,
+          RETURNING user_id,phone, name, email, profile_picture, role, is_verified, merit_credits`,
           [
             token.name || profile?.name || "Unnamed",
             token.email,
@@ -41,14 +43,27 @@ export const authOptions = {
           ]
         );
         token.id = result.rows[0].user_id;
+        token.phone = result.rows[0].phone;
+        token.merit_credits = result.rows[0].merit_credits;
+        token.is_verified = result.rows[0].is_verified;
       } else {
         token.id = rows[0].user_id;
-      }
+        token.phone = rows[0].phone;
+        token.merit_credits = rows[0].merit_credits;
+        token.is_verified = rows[0].is_verified;
 
+      }
+       
       return token;
     },
+
     async session({ session, token }) {
+      
       session.user.id = token.id;
+      session.user.phone = token.phone;
+      session.user.merit_credits = token.merit_credits;
+      session.user.is_verified = token.is_verified;
+     
       return session;
     },
   },
