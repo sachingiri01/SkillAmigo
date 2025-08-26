@@ -30,7 +30,7 @@ export const authOptions = {
             name, email, phone, profile_picture, bio, merit_credits, is_verified, role
           )
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          RETURNING user_id,phone, name, email, profile_picture, role, is_verified, merit_credits`,
+          RETURNING user_id,phone, name, email,bio, profile_picture, role, is_verified, merit_credits`,
           [
             token.name || profile?.name || "Unnamed",
             token.email,
@@ -46,11 +46,17 @@ export const authOptions = {
         token.phone = result.rows[0].phone;
         token.merit_credits = result.rows[0].merit_credits;
         token.is_verified = result.rows[0].is_verified;
+        token.profile_picture=result.rows[0].profile_picture;
+        token.role=result.rows[0].role;
+        token.bio=result.rows[0].bio;
       } else {
         token.id = rows[0].user_id;
         token.phone = rows[0].phone;
         token.merit_credits = rows[0].merit_credits;
         token.is_verified = rows[0].is_verified;
+        token.profile_picture=rows[0].profile_picture;
+        token.role=rows[0].role;
+        token.bio=rows[0].bio;
 
       }
        
@@ -63,6 +69,11 @@ export const authOptions = {
       session.user.phone = token.phone;
       session.user.merit_credits = token.merit_credits;
       session.user.is_verified = token.is_verified;
+      session.user.profile_picture=token.profile_picture;
+      session.user.image = token.profile_picture || null;
+      session.user.bio=token.bio;
+      console.log("final session",session);
+     
      
       return session;
     },

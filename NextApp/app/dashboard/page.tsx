@@ -1,8 +1,10 @@
 
 
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { useSession, signIn, signOut } from "next-auth/react";
+
+
 import {
   Home,
   Plus,
@@ -358,17 +360,74 @@ const Overview = ({ loading }) => {
 
 
 
-  const PostGigForm = ({ onSubmit }) => {
-    const [formData, setFormData] = useState<{
-      title: string;
-      description: string;
-      minPrice: string;
-      maxPrice: string;
-      category: string;
-      location: string;
-      thumbnailFile: File | null;
-      thumbnailUrl: string;
-    }>({
+const PostGigForm = ({ onSubmit }) => {
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    minPrice: string;
+    maxPrice: string;
+    category: string;
+    location: string;
+    thumbnailFile: File | null;
+    thumbnailUrl: string;
+  }>({
+    title: '',
+    description: '',
+    minPrice: '',
+    maxPrice: '',
+    category: '',
+    location: '',
+    thumbnailFile: null,
+    thumbnailUrl: '',
+  });
+
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const form = new FormData();
+    form.append('title', formData.title);
+    form.append('description', formData.description);
+    form.append('minPrice', formData.minPrice);
+    form.append('maxPrice', formData.maxPrice);
+    form.append('category', formData.category);
+    form.append('location', formData.location);
+
+    // Append thumbnail file or URL
+    if (formData.thumbnailFile) {
+      form.append('thumbnail', formData.thumbnailFile);
+    } else if (formData.thumbnailUrl) {
+      form.append('thumbnailUrl', formData.thumbnailUrl);
+    }
+    console.log("data", formData);
+
+    try {
+      const res = await fetch('/api/gigs', {
+        method: 'POST',
+
+        body: form,
+
+
+      });
+
+
+
+      const data = await res.json();
+
+      console.log("check data", data)
+      if (res.ok) {
+        onSubmit(data.gig);
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error('Error posting gig:', err);
+    }
+
+    setFormData({
       title: '',
       description: '',
       minPrice: '',
@@ -378,69 +437,13 @@ const Overview = ({ loading }) => {
       thumbnailFile: null,
       thumbnailUrl: '',
     });
-
-    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-
-      const form = new FormData();
-      form.append('title', formData.title);
-      form.append('description', formData.description);
-      form.append('minPrice', formData.minPrice);
-      form.append('maxPrice', formData.maxPrice);
-      form.append('category', formData.category);
-      form.append('location', formData.location);
-
-      // Append thumbnail file or URL
-      if (formData.thumbnailFile) {
-        form.append('thumbnail', formData.thumbnailFile);
-      } else if (formData.thumbnailUrl) {
-        form.append('thumbnailUrl', formData.thumbnailUrl);
-      }
-    console.log("data",formData);
-    
-      try {
-      const res = await fetch('/api/gigs', {
-    method: 'POST',
-    
-    body:form,
-    
-    
-  });
-
-        
-
-        const data = await res.json();
-
-        console.log("check data",data)
-        if (res.ok) {
-          onSubmit(data.gig);
-        } else {
-          console.error(data.error);
-        }
-      } catch (err) {
-        console.error('Error posting gig:', err);
-      }
-
-      setFormData({
-        title: '',
-        description: '',
-        minPrice: '',
-        maxPrice: '',
-        category: '',
-        location: '',
-        thumbnailFile: null,
-        thumbnailUrl: '',
-      });
-      setThumbnailPreview(null);
-      setLoading(false);
-    };
+    setThumbnailPreview(null);
+    setLoading(false);
+  };
 
   return (
-    <div className="space-y-6" style={{color:'black'
+    <div className="space-y-6" style={{
+      color: 'black'
 
     }}>
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
@@ -640,9 +643,6 @@ const Overview = ({ loading }) => {
   );
 };
 
-
-
-
 // My Gigs Component - Gigs posted by user
 const MyGigs = () => {
   const [loading, setLoading] = useState(true);
@@ -681,23 +681,23 @@ const MyGigs = () => {
   //   }
   // ];
   useEffect(() => {
-  if (!session) return;
+    if (!session) return;
 
-  const fetchGigs = async () => {
-    try {
-      const res = await fetch(`/api/users/gigs`);
-      if (!res.ok) throw new Error("Failed to fetch gigs");
-      const data = await res.json();
-      setMyGigs(data);
-    } catch (error) {
-      console.error("Error fetching gigs:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchGigs = async () => {
+      try {
+        const res = await fetch(`/api/users/gigs`);
+        if (!res.ok) throw new Error("Failed to fetch gigs");
+        const data = await res.json();
+        setMyGigs(data);
+      } catch (error) {
+        console.error("Error fetching gigs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchGigs();
-}, [session]); // run when session becomes available
+    fetchGigs();
+  }, [session]); // run when session becomes available
 
 
   const getStatusColor = (status) => {
@@ -771,7 +771,7 @@ const MyGigs = () => {
                     <span className="font-medium">Budget:</span> {gig.min_price} - {gig.maxPrice} coins
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Applicants:</span> {gig.applicants||0}
+                    <span className="font-medium">Applicants:</span> {gig.applicants || 0}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
                     <span className="font-medium">Posted:</span> {gig.gig_created_at ? new Date(gig.gig_created_at).toLocaleDateString() : 'N/A'}
@@ -954,203 +954,256 @@ const MyBookings = ({ loading }) => {
   );
 };
 
-// Profile Settings Component - simplified
-const ProfileSettings = ({ user, onSave }) => {
-  const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    bio: user.bio || '',
-    phone: user.phone || '',
-    skills: user.skills || ''
+const roles = ['user', 'seller']; // example roles
+
+interface User {
+  name: string;
+  phone?: string;
+  profile_picture?: string; // URL string
+  bio?: string;
+  role?: string;
+  profile_picture_file?: File | null; // for upload
+}
+
+interface ProfileSettingsProps {
+  user: User;
+  onSave: (user: User) => void;
+}
+
+
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
+  const { data: session, status } = useSession();
+  const [formData, setFormData] = useState<User>({
+    name: '',
+    phone: '',
+    profile_picture: '',
+    bio: '',
+    role: roles[0],
+    profile_picture_file: null,
   });
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (session?.user) {
+      console.log("Session loaded:", session);
+      setFormData({
+        name: session.user.name || '',
+        phone: (session.user as any)?.phone || '',
+        profile_picture: (session.user as any)?.profile_picture || '',
+        bio: (session.user as any)?.bio || '',
+        role: (session.user as any)?.role || roles[0],
+        profile_picture_file: null,
+      });
+    }
+  }, [session]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    console.log(`Changed field: ${name}, New value: ${value}`);
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("phone", formData.phone || '');
+      form.append("bio", formData.bio || '');
+      form.append("role", formData.role || '');
 
-    onSave(formData);
-    setLoading(false);
-    setShowSuccess(true);
+      if (formData.profile_picture_file) {
+        form.append("profile_picture_file", formData.profile_picture_file);
+      }
 
-    setTimeout(() => setShowSuccess(false), 3000);
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        body: form,
+      });
+
+      console.log("check respose", response);
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const result = await response.json();
+      console.log("what stor in result",result)
+      onSave(result.user);
+
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          profile_picture: reader.result as string,
+          profile_picture_file: file,
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-gray-400">
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Profile Settings
       </h2>
 
       {showSuccess && (
-        <div className="border px-4 py-3 rounded-xl"
-          style={{ backgroundColor: '#dcfce7', borderColor: '#22c55e', color: '#166534' }}>
+        <div
+          className="border px-4 py-3 rounded-xl"
+          style={{ backgroundColor: '#dcfce7', borderColor: '#22c55e', color: '#166534' }}
+        >
           Profile updated successfully!
         </div>
       )}
 
       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Name */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
                 Full Name
               </label>
               <input
                 type="text"
+                name="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
+                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
-                required
-              />
-            </div>
-
+            {/* Phone */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
                 Phone Number
               </label>
               <input
                 type="tel"
+                name="phone"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
+                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
                 placeholder="+1 234 567 8900"
+                required
               />
             </div>
 
+            {/* Role */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-                Skills (comma separated)
+                Role
+              </label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
+                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
+                required
+              >
+                {roles.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Profile Picture Upload */}
+            <div >
+              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+                Profile Picture
               </label>
               <input
-                type="text"
-                value={formData.skills}
-                onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
-                placeholder="React, Node.js, Design, etc."
+                type="file"
+                name="profile_picture"
+                accept="image/*"
+                id="profile-picture-upload"
+                className="hidden"
+                
+                onChange={handleImageChange}
+                
               />
+              <label
+                htmlFor="profile-picture-upload"
+                className="flex items-center justify-center w-30 h-30 border-2 border-dashed rounded-full cursor-pointer overflow-hidden transition-all duration-200 hover:scale-105"
+                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
+              >
+                {formData.profile_picture ? (
+                  <img
+                    src={formData.profile_picture}
+                    alt="Profile Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm text-gray-400 block text-center">Click to upload</span>
+                )}
+              </label>
             </div>
           </div>
 
+          {/* Bio */}
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
               Bio
             </label>
             <textarea
+              name="bio"
               value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              onChange={handleChange}
               rows={4}
               className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-              style={{
-                borderColor: '#bbd3d0',
-                backgroundColor: '#f3f8f8'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#558581';
-                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#bbd3d0';
-                e.target.style.boxShadow = 'none';
-              }}
-              placeholder="Tell us about yourself and your expertise..."
+              style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
+              placeholder="Tell us a bit about yourself..."
+              required
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50"
-            style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}
-          >
-            {loading ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Saving...</span>
-              </div>
-            ) : (
-              'Save Changes'
-            )}
-          </button>
+          <div className="text-right">
+            <button
+              type="submit"
+              className="px-6 py-3 rounded-xl text-white font-medium"
+              style={{ backgroundColor: '#319795' }}
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 };
 
-// Add Coins Component with jet-stream colors
+
+
+
+// coines
 const AddCoins = ({ currentBalance, onAddCoins }) => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
