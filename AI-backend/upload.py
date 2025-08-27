@@ -1,372 +1,257 @@
-from pine import users_index
+from pine import users_index,index
 import uuid
-users_data = [
-    {
-        "id": "u1",
-        "name": "Rohit Sharma",
-        "skills": ["Plumbing", "Pipe Fitting"],
-        "location": "Delhi",
-        "gig": "Expert in bathroom fittings and leak repairs",
-        "experience": "5 years"
-    },
-    {
-        "id": "u2",
-        "name": "Ananya Verma",
-        "skills": ["Home Cleaning", "Sanitization"],
-        "location": "Mumbai",
-        "gig": "Deep cleaning specialist for homes and offices",
-        "experience": "3 years"
-    },
-    {
-        "id": "u3",
-        "name": "Vikas Singh",
-        "skills": ["Electrician", "Wiring"],
-        "location": "Bangalore",
-        "gig": "Certified electrician for wiring, fan, AC installation",
-        "experience": "7 years"
-    },
-    {
-        "id": "u4",
-        "name": "Meera Iyer",
-        "skills": ["Makeup", "Bridal Makeup"],
-        "location": "Chennai",
-        "gig": "Professional bridal and party makeup artist",
-        "experience": "4 years"
-    },
-    {
-        "id": "u5",
-        "name": "Amit Khanna",
-        "skills": ["Carpentry", "Furniture Assembly"],
-        "location": "Hyderabad",
-        "gig": "Custom furniture maker and carpenter",
-        "experience": "6 years"
-    },
-    {
-        "id": "u6",
-        "name": "Priya Nair",
-        "skills": ["Massage", "Spa"],
-        "location": "Kochi",
-        "gig": "Certified spa therapist for relaxing massages",
-        "experience": "8 years"
-    },
-    {
-        "id": "u7",
-        "name": "Rahul Mehta",
-        "skills": ["AC Repair", "Refrigerator Repair"],
-        "location": "Gurgaon",
-        "gig": "Expert in AC gas refill and fridge repair",
-        "experience": "5 years"
-    },
-    {
-        "id": "u8",
-        "name": "Sneha Kapoor",
-        "skills": ["Cooking", "Home Chef"],
-        "location": "Pune",
-        "gig": "Home chef for healthy tiffin and catering services",
-        "experience": "2 years"
-    },
-    {
-        "id": "u9",
-        "name": "Arjun Das",
-        "skills": ["Painting", "Interior Work"],
-        "location": "Kolkata",
-        "gig": "Professional wall painter and wallpaper expert",
-        "experience": "10 years"
-    },
-    {
-        "id": "u10",
-        "name": "Simran Kaur",
-        "skills": ["Fitness", "Yoga"],
-        "location": "Delhi",
-        "gig": "Certified yoga trainer for personal sessions",
-        "experience": "6 years"
-    },
-    {
-        "id": "u11",
-        "name": "Karan Patel",
-        "skills": ["Driving", "Car Rental"],
-        "location": "Ahmedabad",
-        "gig": "Personal driver and car rental services",
-        "experience": "4 years"
-    },
-    {
-        "id": "u12",
-        "name": "Neha Sharma",
-        "skills": ["Nanny", "Babysitting"],
-        "location": "Mumbai",
-        "gig": "Professional babysitter with CPR certification",
-        "experience": "3 years"
-    },
-    {
-        "id": "u13",
-        "name": "Rajiv Ranjan",
-        "skills": ["Gardening", "Landscaping"],
-        "location": "Patna",
-        "gig": "Garden design and maintenance services",
-        "experience": "7 years"
-    },
-    {
-        "id": "u14",
-        "name": "Divya Joshi",
-        "skills": ["Event Planning", "Decoration"],
-        "location": "Jaipur",
-        "gig": "Wedding planner and decorator",
-        "experience": "5 years"
-    },
-    {
-        "id": "u15",
-        "name": "Suresh Kumar",
-        "skills": ["Mechanic", "Bike Repair"],
-        "location": "Lucknow",
-        "gig": "Expert in two-wheeler servicing and repair",
-        "experience": "9 years"
-    },
-    {
-        "id": "u16",
-        "name": "Pooja Singh",
-        "skills": ["Teaching", "Tutoring"],
-        "location": "Indore",
-        "gig": "Math and Science tutor for school students",
-        "experience": "4 years"
-    },
-    {
-        "id": "u17",
-        "name": "Aditya Rao",
-        "skills": ["Photography", "Videography"],
-        "location": "Goa",
-        "gig": "Wedding and event photographer",
-        "experience": "6 years"
-    },
-    {
-        "id": "u18",
-        "name": "Nisha Gupta",
-        "skills": ["Catering", "Baking"],
-        "location": "Delhi",
-        "gig": "Catering services and custom cakes",
-        "experience": "3 years"
-    },
-    {
-        "id": "u19",
-        "name": "Manoj Yadav",
-        "skills": ["Security", "Bodyguard"],
-        "location": "Noida",
-        "gig": "Personal security and bouncer services",
-        "experience": "12 years"
-    },
-    {
-        "id": "u20",
-        "name": "Shweta Mishra",
-        "skills": ["Pet Care", "Dog Walking"],
-        "location": "Bhopal",
-        "gig": "Pet grooming and daily dog walking services",
-        "experience": "2 years"
+
+gigs =[
+  {
+    "gig_id": "1",
+    "title": "Modern Logo Design",
+    "description": "I will create a sleek and professional logo tailored to your brand.",
+    "category": "Design",
+    "min_price": 50.00,
+    "avg_price": 120.00,
+    "location": "Remote",
+    "rating": 4.8,
+    "picture": "https://picsum.photos/600/400?1",
+    "contact_info": { "email": "alex@designhub.com", "phone": "+91-9876543210" },
+    "user": {
+      "name": "Alex Johnson",
+      "profile_picture": "https://randomuser.me/api/portraits/men/45.jpg",
+      "role": "designer",
+      "is_verified": "true"
     }
-]
-gigs_data = [
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Urban Logo Design",
-        "description": "Create a modern logo for your urban brand.",
-        "price": 50,
-        "rating": 4.8,
-        "category": "Design"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "City Photography Session",
-        "description": "Professional outdoor photography in urban locations.",
-        "price": 100,
-        "rating": 4.6,
-        "category": "Photography"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Social Media Management",
-        "description": "Manage your social media accounts with trendy posts.",
-        "price": 200,
-        "rating": 4.7,
-        "category": "Marketing"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Urban Website Design",
-        "description": "Design a sleek and modern website for your business.",
-        "price": 300,
-        "rating": 4.9,
-        "category": "Web Development"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Street Style Illustration",
-        "description": "Custom digital illustrations inspired by urban fashion.",
-        "price": 40,
-        "rating": 4.5,
-        "category": "Illustration"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "SEO Optimization",
-        "description": "Improve your website ranking with targeted urban keywords.",
-        "price": 150,
-        "rating": 4.6,
-        "category": "Marketing"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Event Flyer Design",
-        "description": "Create eye-catching flyers for your urban events.",
-        "price": 30,
-        "rating": 4.4,
-        "category": "Design"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Music Beat Production",
-        "description": "Produce unique beats for urban music tracks.",
-        "price": 80,
-        "rating": 4.7,
-        "category": "Music"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Urban Video Editing",
-        "description": "Edit videos with trendy urban effects and transitions.",
-        "price": 120,
-        "rating": 4.6,
-        "category": "Video Editing"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Street Art Consultation",
-        "description": "Advice and guidance on urban street art projects.",
-        "price": 60,
-        "rating": 4.5,
-        "category": "Consulting"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Logo Animation",
-        "description": "Animate your logo for urban style videos.",
-        "price": 70,
-        "rating": 4.6,
-        "category": "Animation"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Brand Identity Package",
-        "description": "Complete branding package for modern urban brands.",
-        "price": 250,
-        "rating": 4.9,
-        "category": "Design"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Podcast Cover Design",
-        "description": "Design covers for podcasts with an urban vibe.",
-        "price": 35,
-        "rating": 4.5,
-        "category": "Design"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Cityscape Digital Painting",
-        "description": "Digital paintings inspired by urban cityscapes.",
-        "price": 90,
-        "rating": 4.7,
-        "category": "Illustration"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Online Ad Design",
-        "description": "Create ads for social media targeting urban audiences.",
-        "price": 45,
-        "rating": 4.6,
-        "category": "Marketing"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Music Video Storyboard",
-        "description": "Storyboard for urban music video production.",
-        "price": 55,
-        "rating": 4.5,
-        "category": "Video Production"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Urban Fashion Illustration",
-        "description": "Fashion sketches and illustrations for streetwear brands.",
-        "price": 60,
-        "rating": 4.7,
-        "category": "Illustration"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Street Photography Retouching",
-        "description": "Professional editing of street and urban photography.",
-        "price": 80,
-        "rating": 4.6,
-        "category": "Photography"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Social Media Graphics Pack",
-        "description": "Pack of trendy social media graphics for urban brands.",
-        "price": 50,
-        "rating": 4.5,
-        "category": "Design"
-    },
-    {
-        "id": str(uuid.uuid4()),
-        "title": "Urban Video Ads Production",
-        "description": "Produce short urban-style video ads for social media.",
-        "price": 150,
-        "rating": 4.8,
-        "category": "Video Production"
-    },
+  },
+  {
+    "gig_id": "2",
+    "title": "Full Stack Web Development",
+    "description": "Build scalable MERN stack web apps with authentication and payments.",
+    "category": "Development",
+    "min_price": 200.00,
+    "avg_price": 400.00,
+    "location": "Bangalore, India",
+    "rating": 4.9,
+    "picture": "https://picsum.photos/600/400?2",
+    "contact_info": { "email": "rahul@devpro.com", "phone": "+91-9988776655" },
+    "user": {
+      "name": "Rahul Mehta",
+      "profile_picture": "https://randomuser.me/api/portraits/men/20.jpg",
+      "role": "developer",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "3",
+    "title": "Social Media Marketing",
+    "description": "Grow your business with data-driven social media strategies.",
+    "category": "Marketing",
+    "min_price": 80.00,
+    "avg_price": 150.00,
+    "location": "Mumbai, India",
+    "rating": 4.6,
+    "picture": "https://picsum.photos/600/400?3",
+    "contact_info": { "email": "sara@socialbuzz.com" },
+    "user": {
+      "name": "Sara Khan",
+      "profile_picture": "https://randomuser.me/api/portraits/women/32.jpg",
+      "role": "marketer",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "4",
+    "title": "Mobile App Development",
+    "description": "Cross-platform mobile apps with React Native & Flutter.",
+    "category": "Development",
+    "min_price": 300.00,
+    "avg_price": 600.00,
+    "location": "Hyderabad, India",
+    "rating": 4.7,
+    "picture": "https://picsum.photos/600/400?4",
+    "contact_info": { "email": "amit@appgenius.com", "phone": "+91-9000012345" },
+    "user": {
+      "name": "Amit Sharma",
+      "profile_picture": "https://randomuser.me/api/portraits/men/52.jpg",
+      "role": "developer",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "5",
+    "title": "SEO Optimization",
+    "description": "Rank your website higher with proven SEO techniques.",
+    "category": "Marketing",
+    "min_price": 100.00,
+    "avg_price": 250.00,
+    "location": "Delhi, India",
+    "rating": 4.5,
+    "picture": "https://picsum.photos/600/400?5",
+    "contact_info": { "email": "jenny@seoexpert.com" },
+    "user": {
+      "name": "Jenny Patel",
+      "profile_picture": "https://randomuser.me/api/portraits/women/55.jpg",
+      "role": "seo specialist",
+      "is_verified": "false"
+    }
+  },
+  {
+    "gig_id": "6",
+    "title": "Content Writing",
+    "description": "Engaging blog posts, articles, and web content for your brand.",
+    "category": "Writing",
+    "min_price": 40.00,
+    "avg_price": 90.00,
+    "location": "Remote",
+    "rating": 4.3,
+    "picture": "https://picsum.photos/600/400?6",
+    "contact_info": { "email": "kiran@wordcraft.com" },
+    "user": {
+      "name": "Kiran Verma",
+      "profile_picture": "https://randomuser.me/api/portraits/men/65.jpg",
+      "role": "writer",
+      "is_verified": "false"
+    }
+  },
+  {
+    "gig_id": "7",
+    "title": "Video Editing",
+    "description": "Professional video edits, transitions, and effects.",
+    "category": "Video",
+    "min_price": 150.00,
+    "avg_price": 300.00,
+    "location": "Pune, India",
+    "rating": 4.7,
+    "picture": "https://picsum.photos/600/400?7",
+    "contact_info": { "phone": "+91-9112233445" },
+    "user": {
+      "name": "Mohit Singh",
+      "profile_picture": "https://randomuser.me/api/portraits/men/72.jpg",
+      "role": "editor",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "8",
+    "title": "UI/UX Design",
+    "description": "Craft user-friendly and modern designs for websites & apps.",
+    "category": "Design",
+    "min_price": 120.00,
+    "avg_price": 250.00,
+    "location": "Chennai, India",
+    "rating": 4.9,
+    "picture": "https://picsum.photos/600/400?8",
+    "contact_info": { "email": "riya@uxstudio.com" },
+    "user": {
+      "name": "Riya Kapoor",
+      "profile_picture": "https://randomuser.me/api/portraits/women/29.jpg",
+      "role": "designer",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "9",
+    "title": "Data Analysis",
+    "description": "Turn raw data into actionable insights using Python & SQL.",
+    "category": "Data Science",
+    "min_price": 200.00,
+    "avg_price": 350.00,
+    "location": "Remote",
+    "rating": 4.8,
+    "picture": "https://picsum.photos/600/400?9",
+    "contact_info": { "email": "vikas@datainsights.com" },
+    "user": {
+      "name": "Vikas Gupta",
+      "profile_picture": "https://randomuser.me/api/portraits/men/80.jpg",
+      "role": "data analyst",
+      "is_verified": "true"
+    }
+  },
+  {
+    "gig_id": "10",
+    "title": "Voice Over Artist",
+    "description": "High-quality voice overs for ads, YouTube, and podcasts.",
+    "category": "Voice",
+    "min_price": 60.00,
+    "avg_price": 120.00,
+    "location": "Remote",
+    "rating": 4.6,
+    "picture": "https://picsum.photos/600/400?10",
+    "contact_info": { "email": "ananya@voicepro.com", "phone": "+91-8887776666" },
+    "user": {
+      "name": "Ananya Das",
+      "profile_picture": "https://randomuser.me/api/portraits/women/38.jpg",
+      "role": "voice artist",
+      "is_verified": "false"
+    }
+  }
 ]
 
 from pine import pc
-import uuid
+
 def upload_data_to_pinecone():
     """
     Uploads users and gigs data to Pinecone dense users_index using integrated embedding.
     Returns a status dict.
     """
     try:
-        stats = users_index.describe_index_stats()
+        stats = index.describe_index_stats()
         if stats["total_vector_count"] > 0:
-            return {"status": "already_uploaded", "message": "users_index already has data"}
+            return {"status": "already_uploaded", "message": "index already has data"}
 
-        records = []
 
         # Prepare user records
-        for user in users_data:
-            records.append({
-                "_id": user["id"],  # use _id as per docs
-                "chunk_text": f"{user['name']} {', '.join(user['skills'])} {user['gig']} {user['location']} {user['experience']}",
-                "type": "user",
-                "name": str(user["name"]),
-                "location": str(user["location"]),
-                "gig": str(user["gig"]),
-                "experience": str(user["experience"]),
-                "skills": [str(skill) for skill in user["skills"]],  # list of strings is OK
-            })
+    #     for user in users:
+
+    #         records.append({
+    #     "_id": user["user_id"],  # use UUID as unique ID
+    #     "chunk_text": f"{user['name']} {user['email']} {user.get('phone', '')} {user.get('bio', '')} {user['role']}",
+    #     "type": "user",
+    #     "name": str(user["name"]),
+    #     "email": str(user["email"]),
+    #     "phone": str(user.get("phone", "")),
+    #     "profile_picture": str(user.get("profile_picture", "")),
+    #     "bio": str(user.get("bio", "")),
+    #     "merit_credits": int(user.get("merit_credits", 0)),
+    #     "is_verified": bool(user.get("is_verified", False)),
+    #     "role": str(user.get("role", "user")),
+    #     "created_at": str(user.get("created_at", "")),
+    #     "updated_at": str(user.get("updated_at", "")),
+    #    })
+
 
         # Prepare gig records
-        # for gig in gigs_data:
-        #     records.append({
-        #         "_id": gig["id"],
-        #         "chunk_text": f"{gig['title']} {gig['description']}",
-        #         "type": "gig",
-        #         "title": str(gig["title"]),
-        #         "category": str(gig["category"]),
-        #         "price": float(gig["price"]),
-        #         "rating": float(gig["rating"]),
-        #     })
+        records = []
+        for gig in gigs:
+          
+          user_data = gig.get("user", {})
+          contact_info = gig.get("contact_info", {})
+
+          records.append({
+        "_id": str(gig.get("gig_id", "")),
+        "chunk_text": f"{gig.get('title', '')} {gig.get('description', '')}".strip(),
+        "type": "gig",
+        "title": gig.get("title", ""),
+        "description": gig.get("description", ""),
+        "category": gig.get("category", ""),
+        "min_price": float(gig.get("min_price") or 0),
+        "avg_price": float(gig.get("avg_price") or 0),
+        "rating": float(gig.get("rating") or 0),
+        "location": gig.get("location", ""),
+        "picture": gig.get("picture", ""),
+
+        # Flattened contact_info
+        "contact_email": contact_info.get("email", ""),
+        "contact_phone": contact_info.get("phone", ""),
+
+        # Flattened user fields
+        "user_name": user_data.get("name", ""),
+        "user_profile_picture": user_data.get("profile_picture", ""),
+        "user_role": user_data.get("role", ""),
+        # Cast properly so "true"/"false" strings become bools
+        "user_is_verified": str(user_data.get("is_verified", "")).lower() == "true"
+         })
 
         # Upsert records into the default namespace
         namespace = "__default__"
-        users_index.upsert_records(namespace, records)
+        index.upsert_records(namespace, records)
 
         return {"status": "success", "msg": f"Uploaded {len(records)} users + gigs to Pinecone"}
 

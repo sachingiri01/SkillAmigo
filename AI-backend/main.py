@@ -13,11 +13,25 @@ from upload import upload_data_to_pinecone
 from organizer import expand_query
 import requests
 import json
+from fastapi.middleware.cors import CORSMiddleware
 # from routers.users import router as users_router
 # from routers.items import router as items_router
 
 app = FastAPI()
 
+# Allow Next.js frontend (localhost:3000) to call FastAPI
+origins = [
+    "http://localhost:3000",   # Next.js dev server
+    "http://127.0.0.1:3000"    # sometimes Next.js uses 127.0.0.1
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,        # which frontend URLs can talk to backend
+    allow_credentials=True,
+    allow_methods=["*"],          # allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],          # allow all headers
+)
 # app.include_router(users_router)
 # app.include_router(items_router)
 class UserRequest(BaseModel):
@@ -61,28 +75,66 @@ async def booking_worker(request: Request):
     return {"data": res, "msg": "book worker response"}
 
 @app.post("/chat-worker")
-async def booking_worker(request: Request):
+async def chatting_worker(request: Request):
     print("getting hit")
+
     chat_data = await request.json()
     print(chat_data['msg'])
+
+
+
     # print(f"Received request in book : {task_data}")
     # convert to SimpleNamespace for process_worker
-    res =chat_work(chat_data)
+
+    # Extract values
+    msg = chat_data["msg"]
+    history = chat_data["history"]
+
+    print("📝 Prompt:", msg)
+    print("📜 History:", history)
+
+
+    res =chat_work(msg,history)
     return {
         "msg":"chat worker response",
         "data": res
         }
 
 # to automate the task built to automate the thinking task to direct the which worker to work
-@app.post("/surpervisor")
+@app.post("/supervisor")
 async def surpervisor(request: Request):
+
     task_data = await request.json()
-    print(f"Received request in surpervisor -0: {task_data}")
-    from types import SimpleNamespace
-    request_obj = SimpleNamespace(msg=" | ".join(f"{k}: {v}" for k, v in task_data.items()))
-    print(f"Received request in surpervisor : {task_data['history']} , {request_obj}")
-    res =await surpervisor_work(task_data['history'], request_obj)
+    msg = task_data.get('msg')
+    final_msg=task_data['msg']
+    history = task_data.get('history', [])
+    full_chat = ""
+
+    if history:
+        for msg in history:
+            role = msg.get("type")
+            content = msg.get("content")
+            if role == "user":
+                full_chat += f"User: {content}\n"
+            elif role == "agent":
+                full_chat += f"Assistant: {content}\n"
+        full_chat = full_chat.strip()  
+    print(f"Received request in surpervisor : {history} , formatted chat:\n{full_chat}")
+    
+    print("sending ",full_chat,final_msg)
+    res = await surpervisor_work(full_chat, final_msg)
+
     return {"data": res, "msg": "surpervisor response"}
+
+
+# async def surpervisor(request: Request):
+#     task_data = await request.json()
+#     print(f"Received request in surpervisor -0: {task_data}")
+#     from types import SimpleNamespace
+#     request_obj = SimpleNamespace(msg=" | ".join(f"{k}: {v}" for k, v in task_data.items()))
+#     print(f"Received request in surpervisor : {task_data['history']} , {request_obj}")
+#     # res =await surpervisor_work(task_data['history'], request_obj)
+#     return {"data": "res", "msg": "surpervisor response"}
 
 
 # to test the pincone connection

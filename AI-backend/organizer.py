@@ -208,8 +208,8 @@ async def expand_query(user_query, history):
 
         # Step 3: If collaborate, expand categories
         categories = [
-            'decorator', 'cake maker', 'party scheduler',
-            'constructor', 'plumber', 'electrician', 'worker', 'cleaner'
+            'Voice', 'Writing', 'Video',
+            'Marketing', 'Design', 'Design', 'Development', 'Marketing',"Data Science"
         ]
         # categories = await fetch_categories()
 

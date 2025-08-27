@@ -9,7 +9,7 @@ supervisor_prompt = PromptTemplate.from_template("""
 You are a supervisor that routes requests.
 
 Workers:
-- Query Worker: For general queries, listing, filtering, or explaining data.
+- Query Worker: For general queries, listing, filtering, or explaining data,searching,filtering users,showing users.
 - API Worker: For taking action, booking, canceling, or calling APIs.
 
 Rules:
@@ -36,6 +36,7 @@ import json
 
 async def surpervisor_work(history, user_message):
     try:
+        print("op",user_message,history)
         # Run supervisor chain (always use invoke for multi-inputs)
         decision_raw = supervisor_chain.invoke({
             "history": history,
@@ -60,11 +61,11 @@ async def surpervisor_work(history, user_message):
                 decision = json.loads(cleaned)
         else:
             decision = decision_raw  # Already dict
+        # print(f"Supervisor on real data -> {history} , with message {user_message}")
 
         print(f"Supervisor decision: {decision}")
 
         worker = decision["chosen_worker"]  # <- safe now
-        
         if worker == "query":
             return searching(user_message)
         elif worker == "api":

@@ -44,6 +44,7 @@ else:
 
 # Always connect using the **same exact INDEX_NAME**
 users_index = pc.Index(USER_INDEX)
+
 index = pc.Index(INDEX_NAME)
 print(f"✅ Pinecone index '{INDEX_NAME}' is ready to use.")
 print("Pinecone index stats:", index.describe_index_stats())
