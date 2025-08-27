@@ -2424,13 +2424,13 @@ const Floating3DElements = () => {
           transform: `translate3d(${Math.random() * window.innerWidth}px, ${Math.random() * window.innerHeight}px, ${Math.random() * 200 - 100}px) 
                      rotateX(${Math.random() * 360}deg) rotateY(${Math.random() * 360}deg) rotateZ(${Math.random() * 360}deg) 
                      scale(${0.3 + Math.random() * 0.7})`,
-          opacity: 0.1 + Math.random() * 0.3
+          opacity: 0.8 + Math.random() * 0.3
         },
         {
           transform: `translate3d(${Math.random() * window.innerWidth}px, ${Math.random() * window.innerHeight}px, ${Math.random() * 200 - 100}px) 
                      rotateX(${Math.random() * 360}deg) rotateY(${Math.random() * 360}deg) rotateZ(${Math.random() * 360}deg) 
                      scale(${0.3 + Math.random() * 0.7})`,
-          opacity: 0.1 + Math.random() * 0.3
+          opacity: 0.8 + Math.random() * 0.3
         }
       ], {
         duration: (20 + Math.random() * 15) * 1000,
@@ -2452,7 +2452,7 @@ const Floating3DElements = () => {
             key={i}
             className="floating-3d-element absolute"
             style={{
-              color: i % 3 === 0 ? '#9fc1bd' : i % 3 === 1 ? '#719f9a' : '#547d77',
+              color: i % 3 === 0 ? '#627c79ff' : i % 3 === 1 ? '#33413fff' : '#315650ff',
               transformStyle: 'preserve-3d'
             }}
           >
@@ -2501,7 +2501,7 @@ const Interactive3DDotGrid = ({ className = "", dotSize = 8, gap = 20 }) => {
           originalZ: 0,
           size: dotSize / 2,
           opacity: 0.3,
-          color: '#9fc1bd'
+          color: '#293332ff'
         });
       }
     }
