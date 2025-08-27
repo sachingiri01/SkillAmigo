@@ -54,6 +54,7 @@ async def hit_chosen_api_collab(chain_result):
 
             try:
                 response = requests.post(url, json=body, timeout=10)
+                response =await requests.post(url, json=body, timeout=10)
                 try:
                     resp_json = response.json()
                 except Exception:
