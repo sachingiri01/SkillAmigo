@@ -1,22 +1,9 @@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
+import { CheckCircle, User  } from "lucide-react";
+import { Mail, Phone, Star, MapPin, Tag } from "lucide-react";
+import { useRouter } from 'next/navigation';
 import { 
   Menu, 
   X, 
@@ -57,8 +44,10 @@ const AI_AGENTS = [
   {
     id: 'skill-matcher',
     name: 'Skill Matcher',
-    description: 'Find perfect gigs and opportunities',
+    description: '',
     icon: Target,
+    URL:`${process.env.NEXT_PUBLIC_BACKEND_URL}/supervisor`,
+    method:"POST",
     color: 'text-blue-500'
   },
   {
@@ -66,13 +55,17 @@ const AI_AGENTS = [
     name: 'Deal Negotiator',
     description: 'Optimize pricing and contracts',
     icon: DollarSign,
+    method:"POST",
+    URL:`${process.env.NEXT_PUBLIC_BACKEND_URL}/negotiator`,
     color: 'text-green-500'
   },
   {
-    id: 'knowledge-mentor',
-    name: 'Knowledge Mentor',
+    id: 'AI ChatBot',
+    name: 'AI ChatBot',
     description: 'Get help and guidance',
     icon: HelpCircle,
+    method:"POST",
+    URL:`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-worker`,
     color: 'text-purple-500'
   },
   {
@@ -80,6 +73,8 @@ const AI_AGENTS = [
     name: 'Collaboration Assistant',
     description: 'Find team collaboration opportunities',
     icon: Users,
+    method:"POST",
+    URL:`${process.env.NEXT_PUBLIC_BACKEND_URL}/organizer`,
     color: 'text-orange-500'
   }
 ];
@@ -98,9 +93,7 @@ const Sidebar = ({ agents, activeAgent, onSelectAgent, isOpen, onToggle }) => {
       
       {/* Sidebar */}
       <div 
-        className={`
-          fixed left-0 top-0 h-full w-64 transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        className={`fixed left-0 top-0 h-full w-64 transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
         style={{
           background: 'linear-gradient(180deg, var(--color-jet-stream-975) 0%, var(--color-jet-stream-900) 100%)',
@@ -422,12 +415,14 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
   };
 
   const handleKeyPress = (e) => {
+    
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+    
       handleSend();
     }
   };
-
+  const router=useRouter();
   return (
     <div 
       className="flex flex-col h-full" 
@@ -503,6 +498,8 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
         ) : (
           <>
             {messages.map((message, index) => (
+              // //("chats",message)
+              
               <div
                 key={index}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -534,8 +531,46 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
                   }}
                 >
                   <p className="text-sm">{message.content}</p>
-                  <div className="text-xs mt-1 opacity-75">{message.timestamp}</div>
+                  
+                  <div>
+                       {message?.valid=="first" && message.data?.map((item, index) => {                 
+  return (
+    <div key={item.id}  onClick={() => window.open(`/user/${item.id}`, "_blank")} className="mt-4 flex gap-2 flex-col">
+      <UserCard user={item.metadata} />
+    </div>
+  )
+})}
+
+   {message?.valid=="second" && message.data?.map((item, index) => {
+  return (
+    <div key={item.id} onClick={() => window.open(`/gigs/${item.id}`, "_blank")}  className="mt-4 flex gap-2 flex-col">
+      <GigCard gig={item} />
+    </div>
+  )
+})}
+        {message.collab && message?.data?.map((item, i) => (
+         
+  <div key={`${item.api_prompt}-${i}`} className="mt-4 flex gap-2 flex-col">
+    {item?.pinecone_results?.map((collab, j) => (
+      <CollabCard   key={collab.id || `${i}-${j}`} collab={collab} />
+    ))}
+  </div>
+))}
+
+
+
+
+
+
+
+
+
+
+<div className="text-xs mt-1 opacity-75">{message.timestamp}</div>
+                  </div>
                 </div>
+              
+
               </div>
             ))}
             
@@ -567,7 +602,7 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
               onKeyPress={handleKeyPress}
               placeholder={`Ask ${activeAgent.name} anything...`}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-slate-600 placeholder:text-slate-600 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50"
               style={{
                 borderColor: 'var(--color-jet-stream-300)',
                 ...CSS_VARIABLES
@@ -743,6 +778,244 @@ const Card = ({ title, description, type, action, data }) => {
   );
 };
 
+
+const UserCard = ({user}) => {
+  return (
+    <div
+      className="rounded-xl p-6 shadow-sm border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer bg-white"
+      style={{ borderColor: "var(--color-jet-stream-200)", ...CSS_VARIABLES }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--color-jet-stream-300)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--color-jet-stream-200)";
+      }}
+    >
+      {/* Header with avatar + name */}
+      <div className="flex items-center space-x-4 mb-4">
+        <img
+          src={user?.profile_picture}
+          alt={user?.name}
+          className="w-14 h-14 rounded-full object-cover border"
+        />
+        <div>
+          <h3
+            className="font-semibold flex items-center space-x-2"
+            style={{ color: "var(--color-jet-stream-800)", ...CSS_VARIABLES }}
+          >
+            <span>{user?.name}</span>
+            {user?.is_verified && (
+              <CheckCircle className="w-4 h-4 text-blue-500" />
+            )}
+          </h3>
+          <p
+            className="text-xs"
+            style={{ color: "var(--color-jet-stream-500)", ...CSS_VARIABLES }}
+          >
+            {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+          </p>
+        </div>
+      </div>
+
+      {/* Bio */}
+      <p
+        className="text-sm mb-3"
+        style={{ color: "var(--color-jet-stream-600)", ...CSS_VARIABLES }}
+      >
+        {user.bio}
+      </p>
+
+      {/* Contact Info */}
+      <div className="space-y-2 text-sm mb-4">
+        <div className="flex items-center space-x-2">
+          <Mail className="w-4 h-4 text-slate-500" />
+          <span className='text-slate-600'>{user?.email}</span>
+        </div>
+        {user?.phone && (
+          <div className="flex items-center space-x-2">
+            <Phone className="w-4 h-4 text-slate-500" />
+            <span className='text-slate-600'>{user?.phone}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Merit credits */}
+      <div className="flex items-center text-sm font-medium space-x-2">
+        <User className="w-4 h-4 text-yellow-500" />
+        <span
+          style={{ color: "var(--color-jet-stream-700)", ...CSS_VARIABLES }}
+        >
+          {user?.merit_credits} Merit Credits
+        </span>
+      </div>
+    </div>
+  );
+};
+
+
+const GigCard = ({ gig }) => {
+  const {
+    title,
+    description,
+    category,
+    min_price,
+    avg_price,
+    location,
+    rating,
+    picture,
+    score,
+    contact_info,
+    user,
+  } = gig;
+
+  return (
+    <div className="rounded-xl p-6 shadow-sm border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer bg-white"
+         style={{ borderColor: "var(--color-jet-stream-200)", ...CSS_VARIABLES }}
+         onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--color-jet-stream-300)"}
+         onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--color-jet-stream-200)"}>
+      
+      {/* Seller Info */}
+      <div className="flex items-center space-x-4 mb-4">
+        <img src={user?.profile_picture} alt={user?.name} className="w-14 h-14 rounded-full object-cover border" />
+        <div>
+          <h3 className="font-semibold flex items-center space-x-2" style={{ color: "var(--color-jet-stream-800)", ...CSS_VARIABLES }}>
+            <span>{user?.name}</span>
+            {user?.is_verified && <CheckCircle className="w-4 h-4 text-blue-500" />}
+          </h3>
+          <p className="text-xs" style={{ color: "var(--color-jet-stream-500)", ...CSS_VARIABLES }}>
+            {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+          </p>
+        </div>
+      </div>
+
+      {/* Gig Image */}
+      {picture && <img src={picture} alt={title} className="w-full h-48 object-cover rounded-lg mb-4" />}
+
+      {/* Gig Title */}
+      <h2 className="text-lg font-semibold mb-1" style={{ color: "var(--color-jet-stream-800)", ...CSS_VARIABLES }}>
+        {title}
+      </h2>
+
+      {/* Category + Location */}
+      <div className="flex items-center text-sm text-slate-600 mb-2 space-x-4">
+        {category && <div className="flex items-center space-x-1"><Tag className="w-4 h-4 text-slate-500" /><span>{category}</span></div>}
+        {location && <div className="flex items-center space-x-1"><MapPin className="w-4 h-4 text-slate-500" /><span>{location}</span></div>}
+      </div>
+
+      {/* Gig Description */}
+      <p className="text-sm text-slate-700 mb-3 line-clamp-3" style={{ color: "var(--color-jet-stream-600)", ...CSS_VARIABLES }}>
+        {description}
+      </p>
+
+      {/* Pricing + Rating */}
+      <div className="flex items-center justify-between text-sm font-medium mb-4">
+        <div className="flex items-center space-x-2 text-green-700">
+          <span>From ${min_price}</span>
+          {avg_price && <span className="text-slate-500">(Avg: ${avg_price})</span>}
+        </div>
+        <div className="flex items-center space-x-1 text-yellow-600">
+          <Star className="w-4 h-4" />
+          <span>{rating?.toFixed(1)}</span>
+        </div>
+      </div>
+
+      {/* Contact Info */}
+      <div className="space-y-2 text-sm text-slate-600">
+        {contact_info?.email && <div className="flex items-center space-x-2"><Mail className="w-4 h-4 text-slate-500" /><span>{contact_info.email}</span></div>}
+        {contact_info?.phone && <div className="flex items-center space-x-2"><Phone className="w-4 h-4 text-slate-500" /><span>{contact_info.phone}</span></div>}
+      </div>
+    </div>
+  );
+};
+
+const CollabCard = ({ collab }) => {
+  const {
+    id,
+    title,
+    description,
+    category,
+    min_price,
+    avg_price,
+    location,
+    rating,
+    picture,
+    score,
+    contact_info,
+    user,
+  } = collab;
+   //("Rendering in collab -> ",collab)
+  return (
+    <div
+    onClick={() => window.open(`/gigs/${id}`, "_blank")}
+     key={score}
+     className="rounded-xl p-6 shadow-sm border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer bg-white"
+         style={{ borderColor: "var(--color-jet-stream-200)", ...CSS_VARIABLES }}
+         onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--color-jet-stream-300)"}
+         onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--color-jet-stream-200)"}>
+      
+      {/* Seller Info */}
+      <div className="flex items-center space-x-4 mb-4">
+        <img src={user?.profile_picture} alt={user?.name} className="w-14 h-14 rounded-full object-cover border" />
+        <div>
+          <h3 className="font-semibold flex items-center space-x-2" style={{ color: "var(--color-jet-stream-800)", ...CSS_VARIABLES }}>
+            <span>{user?.name}</span>
+            {user?.is_verified && <CheckCircle className="w-4 h-4 text-blue-500" />}
+          </h3>
+          <p className="text-xs" style={{ color: "var(--color-jet-stream-500)", ...CSS_VARIABLES }}>
+            {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+          </p>
+        </div>
+      </div>
+
+      {/* Gig Image */}
+      {picture && <img src={picture} alt={title} className="w-full h-48 object-cover rounded-lg mb-4" />}
+
+      {/* Gig Title */}
+      <h2 className="text-lg font-semibold mb-1" style={{ color: "var(--color-jet-stream-800)", ...CSS_VARIABLES }}>
+        {title}
+      </h2>
+
+      {/* Category + Location */}
+      <div className="flex items-center text-sm text-slate-600 mb-2 space-x-4">
+        {category && <div className="flex items-center space-x-1"><Tag className="w-4 h-4 text-slate-500" /><span>{category}</span></div>}
+        {location && <div className="flex items-center space-x-1"><MapPin className="w-4 h-4 text-slate-500" /><span>{location}</span></div>}
+      </div>
+
+      {/* Gig Description */}
+      <p className="text-sm text-slate-700 mb-3 line-clamp-3" style={{ color: "var(--color-jet-stream-600)", ...CSS_VARIABLES }}>
+        {description}
+      </p>
+
+      {/* Pricing + Rating */}
+      <div className="flex items-center justify-between text-sm font-medium mb-4">
+        <div className="flex items-center space-x-2 text-green-700">
+          <span>From ${min_price}</span>
+          {avg_price && <span className="text-slate-500">(Avg: ${avg_price})</span>}
+        </div>
+        <div className="flex items-center space-x-1 text-yellow-600">
+          <Star className="w-4 h-4" />
+          <span>{rating?.toFixed(1)}</span>
+        </div>
+      </div>
+
+      {/* Contact Info */}
+      <div className="space-y-2 text-sm text-slate-600">
+        {contact_info?.email && <div className="flex items-center space-x-2"><Mail className="w-4 h-4 text-slate-500" /><span>{contact_info.email}</span></div>}
+        {contact_info?.phone && <div className="flex items-center space-x-2"><Phone className="w-4 h-4 text-slate-500" /><span>{contact_info.phone}</span></div>}
+      </div>
+      <div
+      className='items-center text-center text-slate-500 font-semibold'
+      >
+        Flows Downward
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
 // Main Dashboard Component
 const AgentDashboard = () => {
   const [activeAgent, setActiveAgent] = useState(null);
@@ -826,8 +1099,101 @@ const AgentDashboard = () => {
     setCards(cardData[agent.id] || []);
   };
 
-  // Handle sending messages
+  const get_response = async (active, history,prompt) => {
+  try {
+    //("🔹 Active agent:", active);
+    //("🔹 Active agent:", history);
+
+    const res = await fetch(active.URL, {
+      method: active.method || "POST", // fallback to POST if not provided
+      headers: {
+        "Content-Type": "application/json", // important for JSON body
+      },
+      body: JSON.stringify({
+        "msg":prompt,
+        "history":history
+      }),
+      credentials: "include", // include cookies if backend supports it
+    });
+
+    if (!res.ok) {
+      throw new Error(`❌ Server responded with ${res.status}`);
+    }
+
+    const response = await res.json();
+    //("✅ Response from", active.id || active.name, ":", response);
+
+    return response;
+
+  } catch (error) {
+    console.error("⚠️ Error in get_response:", error);
+    return { error: error.message };
+  }
+};
+  const get_response_supervisor = async (active, history,prompt) => {
+  try {
+
+
+    const res = await fetch(active.URL, {
+      method: active.method || "POST", // fallback to POST if not provided
+      headers: {
+        "Content-Type": "application/json", // important for JSON body
+      },
+      body: JSON.stringify({
+        "msg":prompt,
+        "history":history
+      }),
+      credentials: "include", // include cookies if backend supports it
+    });
+
+    if (!res.ok) {
+      throw new Error(`❌ Server responded with ${res.status}`);
+    }
+
+    const response = await res.json();
+    //("✅ Response from", active.id || active.name, ":", response);
+
+    return response;
+
+  } catch (error) {
+    console.error("⚠️ Error in get_response:", error);
+    return { error: error.message };
+  }
+};
+
+  const get_response_collaborator = async (active, history,prompt) => {
+  try {
+
+
+    const res = await fetch(active.URL, {
+      method: active.method || "POST", // fallback to POST if not provided
+      headers: {
+        "Content-Type": "application/json", // important for JSON body
+      },
+      body: JSON.stringify({
+        "msg":prompt,
+        "history":history
+      }),
+      credentials: "include", // include cookies if backend supports it
+    });
+
+    if (!res.ok) {
+      throw new Error(`❌ Server responded with ${res.status}`);
+    }
+
+    const response = await res.json();
+    //("✅ Response from", active.id || active.name, ":", response);
+
+    return response;
+
+  } catch (error) {
+    console.error("⚠️ Error in get_response:", error);
+    return { error: error.message };
+  }
+};
+
   const handleSendMessage = async (text) => {
+     //("this is active",activeAgent);
     if (!activeAgent || isLoading) return;
 
     // Handle commands
@@ -849,19 +1215,71 @@ const AgentDashboard = () => {
 
     // Simulate AI response
     setIsLoading(true);
-    setTimeout(() => {
-      const agentMessage = {
+    if(activeAgent.id=="AI ChatBot") { 
+      const response=await get_response(activeAgent,messages[activeAgent.id],text);
+            const agentMessage = {
         type: 'agent',
-        content: generateAgentResponse(activeAgent, text),
+        content:response.data.text || "Please try again",
+        // data:response.data,
         timestamp: new Date().toLocaleTimeString()
       };
-
-      setMessages(prev => ({
+          setMessages(prev => ({
         ...prev,
         [activeAgent.id]: [...(prev[activeAgent.id] || []), agentMessage]
       }));
+
+      //("fijnaly response in web",response);
+    }else if(activeAgent.id=="skill-matcher"){
+       const response=await get_response_supervisor(activeAgent,messages[activeAgent.id],text);
+         //("kelo ",response);
+         
+          const agentMessage = {
+        type: 'agent',
+        content:response?.data?.extracted?.msg || response?.data?.msg ||response?.data?.extracted?.query  || "Please try again",
+        data:response?.data?.data,
+        valid: response?.data?.extracted?.valid == "true" 
+  ? "second" 
+  : response?.data?.extracted?.valid == "false" 
+    ? "first" 
+    : "third",
+        timestamp: new Date().toLocaleTimeString()
+      };
+
+      //("fijnaly response in web agent reply -> ",agentMessage);
+          setMessages(prev => ({
+        ...prev,
+        [activeAgent.id]: [...(prev[activeAgent.id] || []), agentMessage]
+      }));
+
+
+    }else if(activeAgent.id=="collaboration-assistant"){
+          const response=await get_response_collaborator(activeAgent,messages[activeAgent.id],text);
+          //("recied -> ",response);
+                
+          const agentMessage = {
+        type: 'agent',
+        content:response?.message || "Please try again after reloading",
+        data:response?.data,
+        timestamp: new Date().toLocaleTimeString(),
+        collab:true
+      };
+
+      //("fijnaly response in web agent reply -> ",agentMessage);
+          setMessages(prev => ({
+        ...prev,
+        [activeAgent.id]: [...(prev[activeAgent.id] || []), agentMessage]
+      }));
+
+          
+          
+          
+    }else{
+       return;
+    }
+      
+  
       setIsLoading(false);
-    }, 1500 + Math.random() * 1000);
+   
   };
 
   // Handle commands
