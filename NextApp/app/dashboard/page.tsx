@@ -1048,7 +1048,7 @@ const MyBookings = ({ loading }) => {
     {
       id: 1,
       title: 'E-commerce Website Development',
-      client: 'Fashion Boutique LLC',
+      name: 'Fashion Boutique LLC',
       price: 800,
       deadline: '2025-09-15',
       category: 'delhi',
@@ -1153,24 +1153,26 @@ const MyBookings = ({ loading }) => {
 
                 <div className="space-y-2 mb-4">
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Client:</span> {booking.client}
+                    <span className="font-medium">Seller Name:</span> {booking.client}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Payment:</span> {booking.price} coins
+                    <span className="font-medium">Cost:</span> {booking.price} coins
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Deadline:</span> {booking.deadline}
-                    <span className="font-medium">Deadline:</span> {booking.category}
+                    <span className="font-medium">Booking Date:</span> {booking.bookDate}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Started:</span> {booking.startDate}
+                    <span className="font-medium">Location: </span> {booking.category}
+                  </p>
+                  <p className="text-sm" style={{ color: '#405e5e' }}>
+                    <span className="font-medium">Scheduled Date:</span> {booking.startDate}
                   </p>
                 </div>
                 
 
                 {/* Progress Bar */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
+                  {/* <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
                     <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
                   </div>
@@ -1185,13 +1187,12 @@ const MyBookings = ({ loading }) => {
                         width: `${booking.progress}%`
                       }}
                     />
-                  </div>
-                </div>
-                
+                  </div> */}
+                </div> 
 
                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    View Details
+                    Delete
                   </button>
                   {booking.status === 'in-progress' && (
                     <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>

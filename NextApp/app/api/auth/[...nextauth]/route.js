@@ -72,7 +72,8 @@ export const authOptions = {
       session.user.profile_picture=token.profile_picture;
       session.user.image = token.profile_picture || null;
       session.user.bio=token.bio;
-      console.log("final session",session);
+      
+   
      
      
       return session;

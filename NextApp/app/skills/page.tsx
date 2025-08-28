@@ -2,8 +2,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
+
 import Link from 'next/link';
-import { Search, Check,Filter, Star,Circle, MapPin, Clock, MessageCircle, Calendar, Badge, Zap, Users, TrendingUp, Award } from "lucide-react";
+import { Search, Check, Filter, Star, Circle, MapPin, Clock, MessageCircle, Calendar, Badge, Zap, Users, TrendingUp, Award } from "lucide-react";
 import React from "react";
 import { Button } from "../_components/ui/button";
 import { Card } from "../_components/ui/card";
@@ -13,28 +15,11 @@ import { FullwidthIconNavbar } from "../_components/navbars/fullwidth-icon-navba
 import { NewsletterFooter } from "../_components/footers/newsletter-footer";
 
 
-// interface Gig {
-//   id: string;                 // from g.gig_id AS id
-//   title: string;
-//   description: string;
-//   provider: string;           // from u.name
-//   profile_picture: string;      // from u.profile_picture
-//   image: string;              // from g.picture
-//   price: string;              // formatted: `₹${gig.min_price}`
-//   priceType: string;          // e.g., "per project"
-//   rating: number;
-//   reviews: number;
-//   distance: string;           // placeholder or computed
-//   availability: string;
-//   tags: string[];
-//   isVerified: boolean;
-// }
-// // Smooth Floating Elements with better performance
 const FloatingElement = ({ children, delay = 0, duration = 4 }) => (
-  <div 
+  <div
     className="animate-float opacity-50"
-    style={{ 
-      animationDelay: `${delay}s`, 
+    style={{
+      animationDelay: `${delay}s`,
       animationDuration: `${duration}s`,
       animationTimingFunction: 'ease-in-out',
       animationIterationCount: 'infinite',
@@ -73,7 +58,7 @@ const ParallaxSphere = ({ size, color, speed, initialPosition, opacity = 0.3 }) 
 const WireframeElement = ({ index, scrollY }) => {
   const angle = (index * 45) + (scrollY * 0.04);
   const baseOpacity = 0.6 + Math.sin(scrollY * 0.004 + index) * 0.3;
-  
+
   return (
     <div
       className="absolute w-20 h-20 border-2 border-jet-stream-400/70 transform pointer-events-none transition-all duration-500 ease-out will-change-transform"
@@ -93,19 +78,22 @@ const WireframeElement = ({ index, scrollY }) => {
 
 
 // Enhanced GigCard with jet-stream colors and removed elements
-const GigCard = ({ gig, index }) => {
-  
-  
+const GigCard = ({ gig, index, isBooked }) => {
+
+
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [hh, h] = useState([
-    {
 
-    },{
-      
-    }
-  ]);
-  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  // const [success, setSuccess] = useState('');
+  const [scheduledDate, setScheduledDate] = useState('');
+  // const [showDateInput, setShowDateInput] = useState(false);
+
+  const [showBookingPanel, setShowBookingPanel] = useState(false);
+  const [booked, setBooked] = useState(isBooked || false);
+
+
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -121,6 +109,81 @@ const GigCard = ({ gig, index }) => {
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [index]);
+  
+
+
+  const submitBooking = async () => {
+    if (!scheduledDate || isNaN(Date.parse(scheduledDate))) {
+      setError('Please select a valid scheduled date.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const priceNumber = parseFloat(gig.price.replace(/[^\d.-]/g, ''));
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          gigId: gig.id,
+          scheduledDate,
+          coin: priceNumber,
+
+        }),
+      });
+      console.log(gig.price)
+
+
+      const data = await response.json();
+      console.log("respose", data);
+      if (!response.ok) throw new Error(data.error || 'Failed to book service');
+
+      // setSuccess('Booking successful! 🎉');
+      setBooked(true);
+      // setShowDateInput(false); // Hide input
+      setShowBookingPanel(false);
+      setScheduledDate('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
+useEffect(() => {
+  async function fetchBookingStatus() {
+    try {
+      const res = await fetch(`/api/booking-status?gigId=${gig.id}`);
+      if (!res.ok) throw new Error('Failed to fetch booking status');
+      const data = await res.json();
+      console.log("data for status",data);
+      if (data.booked) {
+        setBooked(true);
+      } else {
+        setBooked(false);
+      }
+    } catch (error) {
+      console.error('Error fetching booking status:', error);
+      // optionally setBooked(false) or leave as is
+    }
+  }
+
+  fetchBookingStatus();
+}, [gig.id]);
+useEffect(() => {
+  setBooked(isBooked);
+}, [isBooked]);
+
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -137,15 +200,14 @@ const GigCard = ({ gig, index }) => {
 
   const tiltX = (scrollProgress - 0.5) * 6;
   const tiltY = Math.sin(scrollProgress * Math.PI) * 3;
-     
-     
+
+
   return (
     <Card
-   
+
       ref={cardRef}
-      className={`bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden group hover:shadow-2xl hover:shadow-jet-stream-500/15 transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.02] will-change-transform ${
-        isVisible ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-6 rotate-1'
-      }`}
+      className={`bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden group hover:shadow-2xl hover:shadow-jet-stream-500/15 transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.02] will-change-transform ${isVisible ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-6 rotate-1'
+        }`}
       style={{
         transitionDelay: isVisible ? `${index * 60}ms` : '0ms',
         transform: `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) ${isVisible ? 'translateY(0)' : 'translateY(24px)'}`
@@ -153,17 +215,17 @@ const GigCard = ({ gig, index }) => {
     >
       {/* Enhanced Card Glow Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-400/5 via-transparent to-orange-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-600 ease-out" />
-      
+
       <div className="relative overflow-hidden">
         <img
           src={gig.picture}
           alt={gig.title}
           className="w-full h-40 sm:h-48 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
-        
+
         {/* Enhanced Image Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-jet-stream-900/50 via-jet-stream-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-600 ease-out" />
-        
+
         {/* Smoother Floating Animation on Hover */}
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(3)].map((_, i) => (
@@ -200,15 +262,15 @@ const GigCard = ({ gig, index }) => {
               </div>
             </div>
           </div>
-          
-          
+
+
           {gig.is_verified && (
             <BadgeComponent className="bg-jet-stream-100 text-jet-stream-700 border-jet-stream-300/50 hover:bg-jet-stream-200 transition-colors duration-300 text-xs">
-             <span className="relative w-4 h-4 mr-1 flex items-center justify-center">
-      <Badge className="w-4 h-4 absolute" />
-      <Check className="w-2 h-2 absolute text-jet-stream-700" />
-    </span>
-    <span>Verified</span>
+              <span className="relative w-4 h-4 mr-1 flex items-center justify-center">
+                <Badge className="w-4 h-4 absolute" />
+                <Check className="w-2 h-2 absolute text-jet-stream-700" />
+              </span>
+              <span>Verified</span>
             </BadgeComponent>
           )}
         </div>
@@ -235,27 +297,106 @@ const GigCard = ({ gig, index }) => {
           <div className="flex items-center space-x-1">
             <Clock className="w-3 h-3 text-jet-stream-500" />
             <span className="truncate">{gig.availability}</span>
-          </div>
-        </div>
 
+          </div>
+
+
+        </div>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-jet-stream-900 to-jet-stream-700 bg-clip-text text-transparent">{gig.price}</p>
-            <p className="text-xs text-jet-stream-500">{gig.priceType}</p>
+
           </div>
-          <div className="flex space-x-1.5 sm:space-x-2">
-            <Button size="sm" variant="outline" className="border-jet-stream-300 text-jet-stream-600 hover:bg-jet-stream-50 hover:border-jet-stream-500 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">
-              <MessageCircle className="w-3 h-3 sm:mr-1" />
-              <span className="hidden sm:inline">Chat</span>
-            </Button>
-            <Button size="sm" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-300 hover:scale-105 shadow-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">
+
+        </div>
+
+        <div className="flex justify-end space-x-1.5 sm:space-x-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-jet-stream-300 text-jet-stream-600 hover:bg-jet-stream-50 hover:border-jet-stream-500 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
+          >
+            <MessageCircle className="w-3 h-3 sm:mr-1" />
+            <span className="hidden sm:inline">Chat</span>
+          </Button>
+
+          {/* Show Book button only if NOT booked */}
+          {!booked ? (
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-300 hover:scale-105 shadow-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
+              onClick={() => {
+                setShowBookingPanel(true);
+                setScheduledDate('');
+                setError('');
+               
+              }}
+              disabled={loading}
+            >
               <Calendar className="w-3 h-3 sm:mr-1" />
               <span className="hidden sm:inline">Book</span>
             </Button>
+          ) : (
+            <div
+            className="bg-green-600 text-white rounded px-3 py-1 text-xs sm:text-sm flex items-center space-x-1 cursor-pointer select-none hover:bg-green-700 transition duration-200 ease-in-out"
+            role="button"
+            tabIndex={0}
+            onClick={() => alert('You have already booked this gig.')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') alert('You have already booked this gig.');
+            }}
+          >
+            <Check className="w-4 h-4" />
+            <span>Booked</span>
           </div>
+            
+          )}
         </div>
+        {showBookingPanel && (
+          <div className="mt-3 flex items-center space-x-2">
+            <input
+              type="date"
+              className="border rounded px-2 py-1 text-sm"
+              value={scheduledDate}
+              onChange={(e) => setScheduledDate(e.target.value)}
+              disabled={loading}
+              min={new Date().toISOString().split('T')[0]} // no past dates
+            />
+            <button
+              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm"
+              onClick={submitBooking}
+              disabled={loading || !scheduledDate}
+            >
+              {loading ? 'Booking...' : 'Confirm'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowBookingPanel(false);
+                setScheduledDate('');
+                setError('');
+              
+              }}
+              disabled={loading}
+              className="text-gray-500 px-2 py-1 hover:text-gray-700 transition-colors duration-200"
+            >
+              Cancel
+            </button>
+
+          </div>
+        )}
+
+
+
+
+
+
       </div>
+       
+
+
     </Card>
+
   );
 };
 
@@ -277,14 +418,14 @@ export default function FindSkillsFeed() {
   const [filteredGigs, setFilteredGigs] = useState([]);
   const [scrollY, setScrollY] = useState(0);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     async function fetchGigs() {
       try {
         const res = await fetch("/api/gigs");
         const data = await res.json();
-        
-        
+
+
         setFilteredGigs(data); // Initially show all gigs
       } catch (err) {
         console.error("Failed to load gigs:", err);
@@ -293,8 +434,8 @@ export default function FindSkillsFeed() {
       }
     }
     fetchGigs();
-    
-    
+
+
   }, []);
 
   useEffect(() => {
@@ -334,14 +475,14 @@ export default function FindSkillsFeed() {
     applyFilters();
   }, [searchTerm, selectedCategory]);
 
-  if (loading) return <p>Loading gigs...</p>;
+
 
   // Split gigs into chunks for section separators
-  const gigChunks:any[][] = [];
+  const gigChunks: any[][] = [];
   const chunkSize = 6;
   for (let i = 0; i < filteredGigs.length; i += chunkSize) {
-    
-    
+
+
     gigChunks.push(filteredGigs.slice(i, i + chunkSize));
   }
 
@@ -352,10 +493,10 @@ export default function FindSkillsFeed() {
       {/* Enhanced Parallax Background with smoother animations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Enhanced Gradient Spheres */}
-        <ParallaxSphere 
-          size="w-48 sm:w-64 h-48 sm:h-64" 
-          color="bg-gradient-radial from-jet-stream-600/10 to-transparent" 
-          speed={-0.12} 
+        <ParallaxSphere
+          size="w-48 sm:w-64 h-48 sm:h-64"
+          color="bg-gradient-radial from-jet-stream-600/10 to-transparent"
+          speed={-0.12}
           initialPosition={{ top: '30%', right: '25%' }}
           opacity={0.2}
         />
@@ -367,10 +508,10 @@ export default function FindSkillsFeed() {
 
         {/* Light Grid Pattern Background */}
         <div className="absolute inset-0 pattern-grid opacity-51" />
-        
+
         {/* Enhanced Animated Grid Pattern */}
         <div className="absolute inset-0 opacity-15">
-          <div 
+          <div
             className="w-full h-full bg-gradient-to-b from-transparent via-jet-stream-200/30 to-transparent will-change-transform"
             style={{
               backgroundImage: `
@@ -421,11 +562,10 @@ export default function FindSkillsFeed() {
                     key={category.id}
                     variant={selectedCategory === category.id ? "default" : "outline"}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`${
-                      selectedCategory === category.id
-                        ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/25"
-                        : "border-jet-stream-300 text-jet-stream-700 hover:bg-jet-stream-50 hover:border-jet-stream-400 bg-white/90"
-                    } transition-all duration-500 ease-out px-3 sm:px-6 py-2 sm:py-3 hover:scale-105 hover:-translate-y-0.5 font-medium text-sm sm:text-base will-change-transform`}
+                    className={`${selectedCategory === category.id
+                      ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/25"
+                      : "border-jet-stream-300 text-jet-stream-700 hover:bg-jet-stream-50 hover:border-jet-stream-400 bg-white/90"
+                      } transition-all duration-500 ease-out px-3 sm:px-6 py-2 sm:py-3 hover:scale-105 hover:-translate-y-0.5 font-medium text-sm sm:text-base will-change-transform`}
                   >
                     <Icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     <span className="hidden sm:inline">{category.name}</span>
@@ -445,15 +585,15 @@ export default function FindSkillsFeed() {
             <div key={chunkIndex} className="mb-16 sm:mb-20">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-16 sm:mb-20">
                 {chunk.map((gig, index) => (
-                  <GigCard 
-                    key={gig.id} 
-                    gig={gig} 
-                    index={chunkIndex * chunkSize + index} 
+                  <GigCard
+                    key={gig.id}
+                    gig={gig}
+                    index={chunkIndex * chunkSize + index}
                   />
                 ))}
               </div>
-              
-              
+
+
             </div>
           ))}
 
@@ -463,8 +603,8 @@ export default function FindSkillsFeed() {
                 <div className="absolute inset-0 bg-gradient-radial from-jet-stream-300/10 to-transparent blur-3xl" />
                 <div className="relative bg-white/95 backdrop-blur-sm border border-jet-stream-200 rounded-2xl sm:rounded-3xl p-8 sm:p-16 max-w-lg mx-auto shadow-xl">
                   <div className="text-jet-stream-600 text-lg sm:text-xl mb-6 sm:mb-8">No skills found matching your search</div>
-                  <Button 
-                    onClick={() => setSearchTerm("")} 
+                  <Button
+                    onClick={() => setSearchTerm("")}
                     className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 px-6 sm:px-10 py-3 sm:py-4 hover:scale-105 transition-all duration-500 shadow-lg text-sm sm:text-base"
                   >
                     Clear Search
@@ -789,4 +929,5 @@ export default function FindSkillsFeed() {
         }
       `}</style>
     </div>
-  );}
+  );
+}
