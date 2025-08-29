@@ -101,31 +101,66 @@ async def chatting_worker(request: Request):
         }
 
 # to automate the task built to automate the thinking task to direct the which worker to work
+# @app.post("/supervisor")
+# async def surpervisor(request: Request):
+
+#     task_data = await request.json()
+#     msg = task_data.get('msg')
+#     final_msg=task_data['msg']
+#     history = task_data.get('history', [])
+#     full_chat = ""
+
+#     if history:
+#         for msg in history:
+#             role = msg.get("type")
+#             content = msg.get("content")
+#             if role == "user":
+#                 full_chat += f"User: {content}\n"
+#             elif role == "agent":
+#                 full_chat += f"Assistant: {content}\n"
+#         full_chat = full_chat.strip()  
+#     print(f"Received request in surpervisor : {history} , formatted chat:\n{full_chat}")
+    
+#     print("sending ",full_chat,final_msg)
+#     res = await surpervisor_work(full_chat, final_msg)
+
+#     return {"data": res, "msg": "surpervisor response"}
+
+
 @app.post("/supervisor")
 async def surpervisor(request: Request):
-
     task_data = await request.json()
-    msg = task_data.get('msg')
-    final_msg=task_data['msg']
-    history = task_data.get('history', [])
+    msg = task_data.get("msg")
+    final_msg = task_data.get("msg")
+    history = task_data.get("history", [])
     full_chat = ""
+    collected_data = []  # <-- to store gig arrays
 
     if history:
         for msg in history:
             role = msg.get("type")
             content = msg.get("content")
+            data = msg.get("data")  # <-- capture array if present
+
             if role == "user":
                 full_chat += f"User: {content}\n"
             elif role == "agent":
                 full_chat += f"Assistant: {content}\n"
-        full_chat = full_chat.strip()  
-    print(f"Received request in surpervisor : {history} , formatted chat:\n{full_chat}")
-    
-    print("sending ",full_chat,final_msg)
-    res = await surpervisor_work(full_chat, final_msg)
 
-    return {"data": res, "msg": "surpervisor response"}
+            if data:  # if there's a gig array, save it
+                collected_data.extend(data)
 
+        full_chat = full_chat.strip()
+
+    print(f"Received request in supervisor : {history} , formatted chat:\n{full_chat}")
+    print("Collected gigs:", collected_data)   # ✅ you'll see your gigs array here
+
+    res = await surpervisor_work(full_chat, final_msg,collected_data)
+    print("final sending basck",res);
+    return {
+        "data": res,
+        "msg": "supervisor response"
+    }
 
 # async def surpervisor(request: Request):
 #     task_data = await request.json()
@@ -157,6 +192,7 @@ async def organise(request:Request):
     task_data = await request.json()
     print("organizer working");
     result=await expand_query(task_data['msg'],task_data['history']);
+    print("result collab ",result)
     return result;
     
 

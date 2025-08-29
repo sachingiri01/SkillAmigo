@@ -1235,7 +1235,7 @@ const AgentDashboard = () => {
          
           const agentMessage = {
         type: 'agent',
-        content:response?.data?.extracted?.msg || response?.data?.msg ||response?.data?.extracted?.query  || "Please try again",
+        content:response?.data?.extracted?.msg || response?.data?.msg ||response?.data?.extracted?.query || response?.data?.message  || "Please try again",
         data:response?.data?.data,
         valid: response?.data?.extracted?.valid == "true" 
   ? "second" 
@@ -1258,7 +1258,7 @@ const AgentDashboard = () => {
                 
           const agentMessage = {
         type: 'agent',
-        content:response?.message || "Please try again after reloading",
+        content:response?.message || response.msg || "Please try again after reloading",
         data:response?.data,
         timestamp: new Date().toLocaleTimeString(),
         collab:true

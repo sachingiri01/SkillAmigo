@@ -40,7 +40,7 @@ async def book_task_collab(combined_msg,history=None):
         if resp.get('success') == False:
             return resp.get('error', 'No error message provided')
         response=await hit_chosen_api_collab(resp);
-        return resp
+        return response
 
     except Exception as e:
         print(f"Error processing task: {e}")

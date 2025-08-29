@@ -27,9 +27,9 @@ apis = [
         "name": "book_gig",
         "description": "Book a gig or freelance job for the user.",
         "method": "POST",
-        "url": f"{BACKEND_URL}/book_gig",
+        "url": f"{BACKEND_URL}/booking",
         "body_schema": {
-            "gig_id": "string",
+            "gigId": "string",
             "user_id": "string",
             "date": "string optional (current data)"
         }
@@ -117,7 +117,7 @@ Rules:
 4. Always construct the API body using the chosen data from history + the user’s request.
    Example:
    If user says "book first one", 
-   and history = [{{"gigid": "1", "user_id": 1...}}, {{"gigid": "2", "user_id": 2...}}],
+   and history = [{{"gigId": "1", "user_id": 1...}}, {{"gigId": "2", "user_id": 2...}}],
    then you must output a booking request with gig_id="1" and user_id=1.
 5. Return ONLY valid JSON in one of the following formats:
 

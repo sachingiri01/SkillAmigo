@@ -7,20 +7,21 @@ export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const buyerId = session.user.id;
 
     const { gigId, scheduledDate ,coin} = await req.json();
-    console.log("what is req",req);
+    // console.log("what is req",gigId);
+    // return NextResponse.json({ success: true, message: 'Booking created' }, { status: 201 });
     const dateToUse = scheduledDate || new Date().toISOString();
 
     if (!gigId ) {
-      return NextResponse.json({ error: 'gigId is required' }, { status: 400 });
+      return NextResponse.json({ message: 'gigId is required' }, { status: 400 });
     }
     if (!dateToUse) {
-      return NextResponse.json({ error: 'scheduledDate is required' }, { status: 400 });
+      return NextResponse.json({ message: 'scheduledDate is required' }, { status: 400 });
     }
 
     // Fetch seller_id from gigs table
@@ -39,6 +40,6 @@ export async function POST(req) {
     return NextResponse.json({ success: true, message: 'Booking created' }, { status: 201 });
   } catch (error) {
     console.error('Booking error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
