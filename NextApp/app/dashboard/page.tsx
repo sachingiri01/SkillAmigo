@@ -1208,9 +1208,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     }}
                   >
                     {(booking.status?.replace("-", " ") ?? "")
-                    {(booking.status?.replace("-", " ") ?? "")
-  .replace(/\b\w/g, (l) => l.toUpperCase())}
-.replace(/\b\w/g, (l) => l.toUpperCase())}
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
 
 =======
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
