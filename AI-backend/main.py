@@ -9,7 +9,7 @@ from chat_worker import chat_work
 from book_worker import book_task
 from supervisor import surpervisor_work
 from pine import index
-from upload import upload_data_to_pinecone
+from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig
 from organizer import expand_query
 import requests
 import json
@@ -196,3 +196,18 @@ async def organise(request:Request):
     return result;
     
 
+@app.post("/upload-gig")
+async def upload_data(request: Request):
+    """
+    Endpoint to receive gig JSON and upload to Pinecone.
+    """
+    try:
+        gig = await request.json()   # Parse incoming JSON body
+        print("Received gig:", gig)
+
+        result = upload_data_to_pinecone_gig(gig)  # Pass gig dict to your function
+        print("response upload",result)
+        return result
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
