@@ -957,9 +957,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     }}
                   >
                     {(booking.status?.replace("-", " ") ?? "")
-                    {(booking.status?.replace("-", " ") ?? "")
-  .replace(/\b\w/g, (l) => l.toUpperCase())}
-.replace(/\b\w/g, (l) => l.toUpperCase())}
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
 
                   </span>
                 </div>
