@@ -225,7 +225,7 @@ import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef } from "react";
 
-import { cn } from "@/app/lib/utils";
+import { cn } from "../../lib/utils";
 
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Card } from "../ui/card";

@@ -15,12 +15,30 @@ import { FullwidthIconNavbar } from '../_components/navbars/fullwidth-icon-navba
 // 3D Floating Network Nodes
 const FloatingNetworkNodes = () => {
   const [scrollY, setScrollY] = useState(0);
+    const [nodeParticles, setNodeParticles] = useState({});
+
   
+ 
+
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const newParticles = {};
+    nodes.forEach((node) => {
+      newParticles[node.id] = [...Array(3)].map((_, i) => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: `${node.delay + i * 0.5}s`,
+        duration: `${2 + Math.random() * 2}s`
+      }));
+    });
+    setNodeParticles(newParticles);
+  }, []);
+
 
   const nodes = [
     { id: 1, x: 20, y: 30, size: 'large', delay: 0, icon: Users },
@@ -103,19 +121,21 @@ const FloatingNetworkNodes = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-400/20 to-orange-400/20 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300" />
               <Icon className={`${iconSize} text-jet-stream-600 relative z-10`} />
               
-              {/* Floating particles around nodes */}
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-1 h-1 bg-jet-stream-400/60 rounded-full animate-ping"
-                  style={{
-                    left: `${20 + i * 30}%`,
-                    top: `${20 + i * 30}%`,
-                    animationDelay: `${node.delay + i * 0.5}s`,
-                    animationDuration: `${2 + i * 0.5}s`
-                  }}
-                />
-              ))}
+              
+             {/* Floating particles around nodes */}
+{nodeParticles[node.id]?.map((p, i) => (
+  <div
+    key={i}
+    className="absolute w-1 h-1 bg-jet-stream-600/60 rounded-full animate-ping"
+    style={{
+      left: p.left,
+      top: p.top,
+      animationDelay: p.delay,
+      animationDuration: p.duration
+    }}
+  />
+))}
+
             </div>
           );
         })}
@@ -207,7 +227,7 @@ const SkillCard3D = ({ icon: Icon, title, description, index }) => {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className="absolute w-1 h-1 bg-jet-stream-400/60 rounded-full animate-ping"
+                    className="absolute w-1 h-1 bg-jet-stream-600/60 rounded-full animate-ping"
                     style={{
                       left: `${20 + i * 15}%`,
                       top: `${20 + i * 15}%`,
@@ -308,7 +328,7 @@ export default function AboutPage() {
     },
     {
       name: "Ajeet Kumar",
-      role: "“Future on speed-dial – The Vision Hacker.",
+      role: "“Future on speed-dial – The Vision Hacker.”",
       image: "/aj.jpg",
       linkedin: "#",
       github: "#"
@@ -362,7 +382,7 @@ export default function AboutPage() {
         </ParallaxLayer>
 
         {/* Light Grid Background */}
-        <div className="absolute inset-0 pattern-grid opacity-80" />
+        <div className="absolute inset-0 pattern-grid opacity-90" />
       </div>
 
       {/* Enhanced Hero Section */}
