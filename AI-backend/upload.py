@@ -257,3 +257,125 @@ def upload_data_to_pinecone():
 
     except Exception as e:
         return {"status": "error", "msg": str(e)}
+
+
+def upload_data_to_pinecone_gig(gig):
+    """
+    Uploads a single gig (with user & contact info) to Pinecone.
+    Only metadata is stored here (no embedding).
+    """
+    try:
+        user_data = gig.get("user", {}) or {}
+        contact_info = gig.get("contact_info", {}) or {}
+
+        record = {
+            "_id": str(gig.get("gig_id") or gig.get("id") or ""),
+            "chunk_text": f"{gig.get('title', '')} {gig.get('description', '')}".strip(),
+            "type": "gig",
+            "title": gig.get("title", "") or "",
+            "description": gig.get("description", "") or "",
+            "category": gig.get("category", "") or "",
+            "min_price": float(gig.get("min_price") or 0),
+            "avg_price": float(gig.get("avg_price") or 0),
+            "rating": float(gig.get("rating") or 0),
+            "location": gig.get("location", "") or "",
+            "picture": gig.get("picture", "") or "",
+
+            # Flattened contact_info (force empty string if missing)
+            "contact_email": contact_info.get("email") or "",
+            "contact_phone": contact_info.get("phone") or "",
+
+            # Flattened user fields
+            "user_name": user_data.get("name") or "",
+            "user_profile_picture": user_data.get("profile_picture") or "",
+            "user_role": user_data.get("role") or "",
+            "user_is_verified": bool(user_data.get("is_verified", False)),
+        }
+
+        namespace = "__default__"
+
+        # ⚠️ Depending on Pinecone SDK
+        index.upsert_records(namespace, [record])   # new wrapper
+        # index.upsert([record], namespace=namespace)  # old client
+
+        return {"status": "success", "msg": f"Uploaded gig {record['_id']} to Pinecone"}
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+
+
+# def upload_data_to_pinecone_user(user: dict):
+#     """
+#     Uploads a single user (with metadata) to Pinecone.
+#     Only metadata is stored here (no embedding).
+#     """
+#     try:
+#         record = {
+#             "_id": str(user.get("user_id") or user.get("id") or ""),
+#             "chunk_text": f"{user.get('name', '')} {user.get('email', '')} {user.get('phone', '')} {user.get('bio', '')} {user.get('role', '')}".strip(),
+#             "type": "user",
+#             "name": str(user.get("name") or ""),
+#             "email": str(user.get("email") or ""),
+#             "phone": str(user.get("phone") or ""),
+#             "profile_picture": str(user.get("profile_picture") or ""),
+#             "bio": str(user.get("bio") or ""),
+#             "merit_credits": int(user.get("merit_credits") or 0),
+#             "is_verified": bool(user.get("is_verified") or False),
+#             "role": str(user.get("role") or "user"),
+#             "created_at": str(user.get("created_at") or ""),
+#             "updated_at": str(user.get("updated_at") or ""),
+#         }
+
+#         namespace = "__default__"
+
+#         # ⚠️ Depending on Pinecone SDK version
+#         users_index.upsert_records(namespace, [record])   # new wrapper
+#         # users_index.upsert([record], namespace=namespace)  # old client
+
+#         return {"status": "success", "msg": f"Uploaded user {record['_id']} to Pinecone"}
+
+#     except Exception as e:
+#         return {"status": "error", "msg": str(e)}
+def upload_data_to_pinecone_user(user: dict):
+    """
+    Uploads a single user (with metadata) to Pinecone.
+    If user exists -> update
+    If not -> insert
+    """
+    try:
+        user_id = str(user.get("user_id") or user.get("id") or "")
+        if not user_id:
+            return {"status": "error", "msg": "User ID is required"}
+
+        record = {
+            "_id": user_id,
+            "chunk_text": f"{user.get('name', '')} {user.get('email', '')} {user.get('phone', '')} {user.get('bio', '')} {user.get('role', '')}".strip(),
+            "type": "user",
+            "name": str(user.get("name") or ""),
+            "email": str(user.get("email") or ""),
+            "phone": str(user.get("phone") or ""),
+            "profile_picture": str(user.get("profile_picture") or ""),
+            "bio": str(user.get("bio") or ""),
+            "merit_credits": int(user.get("merit_credits") or 0),
+            "is_verified": bool(user.get("is_verified") or False),
+            "role": str(user.get("role") or "user"),
+            "created_at": str(user.get("created_at") or ""),
+            "updated_at": str(user.get("updated_at") or ""),
+        }
+
+        namespace = "__default__"
+
+        # 🔎 Step 1: Check if user already exists
+        existing = users_index.fetch(ids=[user_id], namespace=namespace)
+
+        # 🔄 Step 2: Upsert (insert or update)
+        users_index.upsert_records(namespace, [record])
+
+        # Step 3: Return correct message
+        if hasattr(existing, "records") and existing.records:   # ✅ fixed
+            return {"status": "success", "msg": f"Updated user {user_id} in Pinecone"}
+        else:
+            return {"status": "success", "msg": f"Inserted new user {user_id} in Pinecone"}
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}

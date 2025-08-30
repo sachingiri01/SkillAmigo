@@ -78,6 +78,78 @@ function uploadToCloudinary(buffer) {
 
 
 
+// export async function POST(req) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     if (!session) {
+//       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//     }
+
+//     const sellerId = session.user.id;
+//     const formData = await req.formData(); 
+//     console.log("formdata",formData);// Accept multipart/form-data
+//     const title = formData.get("title");
+//     const minPrice = formData.get("minPrice");
+//     const description = formData.get("description");
+//     const category = formData.get("category");
+//     const avgPrice = formData.get("maxPrice");
+//     const location = formData.get("location");
+//     const pictureFile = formData.get("thumbnail");
+//     const pictureUrlField = formData.get("thumbnailUrl");
+
+//     if (!title || !minPrice) {
+//       return NextResponse.json(
+//         { error: "Title and Min Price are required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     let pictureUrl = pictureUrlField || null;;
+//     if (pictureFile && typeof pictureFile === "object") {
+//       const bytes = await pictureFile.arrayBuffer();
+//       const buffer = Buffer.from(bytes);
+//       const uploadResult = await uploadToCloudinary(buffer);
+//       console.log("result by cloudenery",uploadResult)
+//       pictureUrl = uploadResult.secure_url;
+//     }
+
+//     const result = await pool.query(
+//       `INSERT INTO gigs (
+//         seller_id, title, description, category,
+//         min_price, avg_price, location, picture
+//       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+//       RETURNING gig_id, title, min_price`,
+//       [
+//         sellerId,
+//         title,
+//         description || null,
+//         category || null,
+//         minPrice,
+//         avgPrice || null,
+//         location || null,
+//         pictureUrl,
+//       ]
+//     );
+
+
+
+
+
+
+
+
+
+//     return NextResponse.json({ success: true, gig: result.rows[0] }, { status: 201 });
+//   } catch (err) {
+//     console.error("Error inserting gig:", err);
+//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+//   }
+// }
+
+
+
+import { v4 as uuidv4 } from "uuid"; // optional, for gig_id
+
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
@@ -85,9 +157,22 @@ export async function POST(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const sellerId = session.user.id;
-    const formData = await req.formData(); 
-    console.log("formdata",formData);// Accept multipart/form-data
+    // enrich session with token props
+    const user = {
+      id: session.user.id,
+      phone: session.user.phone,
+      merit_credits: session.user.merit_credits,
+      is_verified: session.user.is_verified,
+      profile_picture: session.user.profile_picture,
+      image: session.user.profile_picture || null,
+      bio: session.user.bio,
+      balance: session.user.balance,
+      role: session.user.role,
+      name: session.user.name,
+      email: session.user.email,
+    };
+
+    const formData = await req.formData();
     const title = formData.get("title");
     const minPrice = formData.get("minPrice");
     const description = formData.get("description");
@@ -104,15 +189,17 @@ export async function POST(req) {
       );
     }
 
-    let pictureUrl = pictureUrlField || null;;
+    // handle picture upload
+    let pictureUrl = pictureUrlField || null;
     if (pictureFile && typeof pictureFile === "object") {
       const bytes = await pictureFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const uploadResult = await uploadToCloudinary(buffer);
-      console.log("result by cloudenery",uploadResult)
+      console.log("result by cloudinary:", uploadResult);
       pictureUrl = uploadResult.secure_url;
     }
 
+    // Step 1: Insert into Neon DB
     const result = await pool.query(
       `INSERT INTO gigs (
         seller_id, title, description, category,
@@ -120,7 +207,7 @@ export async function POST(req) {
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
       RETURNING gig_id, title, min_price`,
       [
-        sellerId,
+        user.id,
         title,
         description || null,
         category || null,
@@ -131,9 +218,57 @@ export async function POST(req) {
       ]
     );
 
-    return NextResponse.json({ success: true, gig: result.rows[0] }, { status: 201 });
+    const insertedGig = result.rows[0];
+
+    // Step 2: Structured payload for Django API
+    const gigPayload = {
+      gig_id: insertedGig.gig_id?.toString(),
+      title,
+      description: description || null,
+      category: category || null,
+      min_price: parseFloat(minPrice),
+      avg_price: avgPrice ? parseFloat(avgPrice) : null,
+      location: location || null,
+      rating: 0, // default until reviews
+      picture: pictureUrl,
+      contact_info: {
+        email: user.email,
+        phone: user.phone,
+      },
+      user: {
+        name: user.name,
+        profile_picture: user.profile_picture,
+        role: user.role,
+        is_verified: user.is_verified,
+      },
+    };
+
+    // Step 3: Forward to Django backend
+    const response = await fetch("http://127.0.0.1:8000/upload-gig", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(gigPayload),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("Django API error:", errText);
+      return NextResponse.json(
+        { error: "Gig inserted in Neon but failed to upload to Django" },
+        { status: 500 }
+      );
+    }
+
+    const djangoData = await response.json();
+
+    // Final response
+    return NextResponse.json(
+      { success: true, gig: result.rows[0],  django: djangoData  },
+      { status: 201 }
+    );
+
   } catch (err) {
-    console.error("Error inserting gig:", err);
+    console.error("Error in POST /api/gigs:", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

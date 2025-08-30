@@ -51,6 +51,8 @@ export const authOptions = {
         token.role=result.rows[0].role;
         token.bio=result.rows[0].bio;
         token.balance=result.rows[0].balance;
+        token.name = result.rows[0].name;
+        token.email = result.rows[0].email;
       } else {
         token.id = rows[0].user_id;
         token.phone = rows[0].phone;
@@ -60,6 +62,8 @@ export const authOptions = {
         token.role=rows[0].role;
         token.bio=rows[0].bio;
         token.balance=rows[0].balance;
+        token.name = rows[0].name;
+        token.email = rows[0].email;
 
       }
        
@@ -76,6 +80,10 @@ export const authOptions = {
       session.user.image = token.profile_picture || null;
       session.user.bio=token.bio;
       session.user.balance=token.balance;
+      session.user.role=token.role;
+      session.user.name = token.name;
+      session.user.email = token.email;
+      
      
       
       
