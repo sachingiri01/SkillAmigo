@@ -31,7 +31,8 @@ apis = [
         "body_schema": {
             "gigId": "string",
             "user_id": "string",
-            "date": "string optional (current data)"
+            "coin":"this is given as avg_price in gigs data",
+
         }
     },
     {
