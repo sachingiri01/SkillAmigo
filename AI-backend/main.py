@@ -9,7 +9,7 @@ from chat_worker import chat_work
 from book_worker import book_task
 from supervisor import surpervisor_work
 from pine import index
-from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig
+from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig,upload_data_to_pinecone_user
 from organizer import expand_query
 import requests
 import json
@@ -162,19 +162,6 @@ async def surpervisor(request: Request):
         "msg": "supervisor response"
     }
 
-# async def surpervisor(request: Request):
-#     task_data = await request.json()
-#     print(f"Received request in surpervisor -0: {task_data}")
-#     from types import SimpleNamespace
-#     request_obj = SimpleNamespace(msg=" | ".join(f"{k}: {v}" for k, v in task_data.items()))
-#     print(f"Received request in surpervisor : {task_data['history']} , {request_obj}")
-#     # res =await surpervisor_work(task_data['history'], request_obj)
-#     return {"data": "res", "msg": "surpervisor response"}
-
-
-# to test the pincone connection
-
-
 @app.get("/pinecone-status")
 def pinecone_status():
     stats = index.describe_index_stats()
@@ -202,10 +189,26 @@ async def upload_data(request: Request):
     Endpoint to receive gig JSON and upload to Pinecone.
     """
     try:
-        gig = await request.json()   # Parse incoming JSON body
+        gig = await request.json()   
         print("Received gig:", gig)
 
-        result = upload_data_to_pinecone_gig(gig)  # Pass gig dict to your function
+        result = upload_data_to_pinecone_gig(gig) 
+        print("response upload",result)
+        return result
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+
+@app.post("/upload-user")
+async def upload_data(request: Request):
+    """
+    Endpoint to receive gig JSON and upload to Pinecone.
+    """
+    try:
+        user = await request.json()  
+        print("Received user:", user)
+
+        result = upload_data_to_pinecone_user(user)  
         print("response upload",result)
         return result
 
