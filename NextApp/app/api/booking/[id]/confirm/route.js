@@ -4,8 +4,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/route";
 
-export async function PATCH(req, { params }) {
-   const bookingId = params?.id;
+export async function PATCH(req, context) {
+  const params  = await context.params;
+   const bookingId = params.id;
 
   try {
     const session = await getServerSession(authOptions);

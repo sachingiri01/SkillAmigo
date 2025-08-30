@@ -843,149 +843,7 @@ const MyGigs = () => {
   );
 };
 
-// My Bookings Component - Scheduled gigs for user to work
-// const MyBookings = ({ loading:initialLoading }) => {
-//   const [myBookings, setMyBookings] = useState([]);
-//   const [loading, setLoading] = useState(initialLoading);
-//   const [updatingId, setUpdatingId] = useState(null);
 
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case 'in-progress':
-//         return { bg: '#dbeafe', text: '#1d4ed8' };
-//       case 'pending-start':
-//         return { bg: '#fef3c7', text: '#92400e' };
-//       case 'completed':
-//         return { bg: '#dcfce7', text: '#166534' };
-//       default:
-//         return { bg: '#f1f5f9', text: '#475569' };
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchBookings = async () => {
-//       try {
-//         setLoading(true);
-//         const res = await fetch('/api/bookings');
-//         const data = await res.json();
-//         setMyBookings(data);
-//       } catch (error) {
-//         console.error('Error fetching bookings:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchBookings();
-//   }, []);
-
-
-
-
-//   if (loading) {
-//     return (
-//       <div className="space-y-6">
-//         <SkeletonLoader className="h-8 w-48" />
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-//           {[1, 2, 3].map((i) => (
-//             <SkeletonLoader key={i} type="card" />
-//           ))}
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="space-y-6">
-//       <div className="flex items-center justify-between">
-//         <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-//           My Bookings
-//         </h2>
-//         <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
-//           {myBookings.length} Active Projects
-//         </span>
-//       </div>
-
-//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-//         {myBookings.map((booking) => {
-//           const statusColors = getStatusColor(booking.status);
-//           return (
-//             <div key={booking.id}
-//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-//               {/* Background Pattern */}
-//               <div className="absolute inset-0 opacity-5">
-//                 <div className="absolute inset-0" style={{
-//                   backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
-//                   backgroundSize: '40px 40px'
-//                 }} />
-//               </div>
-
-//               <div className="relative z-10">
-//                 <div className="flex items-start justify-between mb-4">
-//                   <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
-//                     {booking.title}
-//                   </h3>
-//                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
-//                     style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-//                     {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-//                   </span>
-//                 </div>
-
-//                 <div className="space-y-2 mb-4">
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Client:</span> {booking.client}
-//                   </p>
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Payment:</span> {booking.price} coins
-//                   </p>
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Deadline:</span> {booking.category}
-//                   </p>
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Started:</span> {booking.startDate}
-//                   </p>
-//                 </div>
-
-//                 {/* Progress Bar */}
-//                 {/* <div className="mb-4">
-//                   <div className="flex items-center justify-between mb-2">
-//                     <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
-//                     <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
-//                   </div>
-//                   <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
-//                     <div
-//                       className="h-2 rounded-full transition-all duration-500"
-//                       style={{
-//                         backgroundColor: '#558581',
-//                         width: `${booking.progress}%`
-//                       }}
-//                     />
-//                   </div>
-//                 </div> */}
-
-//                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-//                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-//                     View Details
-//                   </button>
-//                   {booking.status === 'in-progress' && (
-//                     <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
-//                       Update Progress
-//                     </button>
-//                   )}
-//                   {booking.status === 'completed' && (
-//                     <button className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
-//                       View Review
-//                     </button>
-//                   )}
-//                 </div>
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// };
 
 interface Booking {
   booking_id: string;
@@ -1098,9 +956,11 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                       color: statusColors.text,
                     }}
                   >
-                    {booking.status
-                      .replace("-", " ")
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
+                    {(booking.status?.replace("-", " ") ?? "")
+                    {(booking.status?.replace("-", " ") ?? "")
+  .replace(/\b\w/g, (l) => l.toUpperCase())}
+.replace(/\b\w/g, (l) => l.toUpperCase())}
+
                   </span>
                 </div>
 
@@ -1383,7 +1243,7 @@ return (
                 className="px-3 py-1 text-xs font-semibold rounded-full"
                 style={{ backgroundColor: bg, color: text }}
               >
-                {gig.status.toUpperCase()}
+                {gig.status ? gig.status.toUpperCase() : "UNKNOWN"}
               </span>
 
               {gig.status === "confirmed" && (
