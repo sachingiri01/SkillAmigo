@@ -6,7 +6,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 
 
 import {
-  ClipboardCheck,
   Home,
   Plus,
   Calendar,
@@ -844,242 +843,6 @@ const MyGigs = () => {
   );
 };
 
-<<<<<<< Updated upstream
-=======
-
-// Booked Gigs Component - Gigs user has booked from other freelancers
-const BookedGigs = ({ loading }) => {
-  const bookedGigs = [
-    {
-      id: 1,
-      title: 'Logo Design & Branding Package',
-      freelancer: 'Sarah Design Studio',
-      freelancerRating: 4.9,
-      price: 300,
-      location: 'bangalore',
-      status: 'in-progress',
-      progress: 40,
-      bookingDate: '2025-08-12',
-      expectedDelivery: '2025-09-05'
-    },
-    {
-      id: 2,
-      title: 'Content Writing for Blog',
-      freelancer: 'WordCraft Writers',
-      freelancerRating: 4.7,
-      price: 150,
-      location: 'pune',
-      status: 'pending-start',
-      progress: 0,
-      bookingDate: '2025-08-20',
-      expectedDelivery: '2025-09-10'
-    },
-    {
-      id: 3,
-      title: 'Social Media Marketing Strategy',
-      freelancer: 'Digital Growth Agency',
-      freelancerRating: 4.8,
-      price: 500,
-      location: 'delhi',
-      status: 'delivered',
-      progress: 100,
-      bookingDate: '2025-07-28',
-      expectedDelivery: '2025-08-15'
-    },
-    {
-      id: 4,
-      title: 'Video Editing for YouTube',
-      freelancer: 'Creative Cuts Studio',
-      freelancerRating: 4.6,
-      price: 200,
-      location: 'mumbai',
-      status: 'revision-requested',
-      progress: 85,
-      bookingDate: '2025-08-05',
-      expectedDelivery: '2025-08-25'
-    }
-  ];
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'in-progress':
-        return { bg: '#dbeafe', text: '#1d4ed8' };
-      case 'pending-start':
-        return { bg: '#fef3c7', text: '#92400e' };
-      case 'delivered':
-        return { bg: '#dcfce7', text: '#166534' };
-      case 'revision-requested':
-        return { bg: '#fef2f2', text: '#dc2626' };
-      default:
-        return { bg: '#f1f5f9', text: '#475569' };
-    }
-  };
-
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`text-xs ${i < Math.floor(rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-      >
-        ★
-      </span>
-    ));
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <SkeletonLoader className="h-8 w-48" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <SkeletonLoader key={i} type="card" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-          Booked Gigs
-        </h2>
-        <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
-          {bookedGigs.length} Active Orders
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {bookedGigs.map((gig) => {
-          const statusColors = getStatusColor(gig.status);
-          return (
-            <div key={gig.id}
-              className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
-                  backgroundSize: '40px 40px'
-                }} />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
-                    {gig.title}
-                  </h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
-                    style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-                    {gig.status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </span>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm" style={{ color: '#405e5e' }}>
-                      <span className="font-medium">Freelancer:</span> {gig.freelancer}
-                    </p>
-                    <div className="flex items-center space-x-1">
-                      {renderStars(gig.freelancerRating)}
-                      <span className="text-xs ml-1" style={{ color: '#405e5e' }}>
-                        {gig.freelancerRating}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Cost:</span> {gig.price} coins
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Location:</span> {gig.location}
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Booked:</span> {gig.bookingDate}
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Expected Delivery:</span> {gig.expectedDelivery}
-                  </p>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
-                    <span className="text-sm font-medium" style={{ color: '#558581' }}>{gig.progress}%</span>
-                  </div>
-                  <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
-                    <div
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{
-                        backgroundColor: '#558581',
-                        width: `${gig.progress}%`
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    View Details
-                  </button>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    Message Freelancer
-                  </button>
-                  {gig.status === 'revision-requested' && (
-                    <button className="text-sm font-medium hover:underline" style={{ color: '#dc2626' }}>
-                      View Revision
-                    </button>
-                  )}
-                  {gig.status === 'delivered' && (
-                    <button className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
-                      Leave Review
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-// My Bookings Component - Scheduled gigs for user to work
-const MyBookings = ({ loading }) => {
-  const myBookings = [
-    {
-      id: 1,
-      title: 'E-commerce Website Development',
-      client: 'Fashion Boutique LLC',
-      price: 800,
-      category: 'delhi',
-      status: 'in-progress',
-      progress: 65,
-      startDate: '2025-08-10'
-    },
-    {
-      id: 2,
-      title: 'Mobile App UI/UX Design',
-      client: 'HealthTech Solutions',
-      price: 400,
-      category: 'mumbai',
-      status: 'pending-start',
-      progress: 0,
-      startDate: '2025-08-25'
-    },
-    {
-      id: 3,
-      title: 'Database Optimization',
-      client: 'DataCorp Analytics',
-      price: 250,
-      category: 'hariyana',
-      status: 'completed',
-      progress: 100,
-      startDate: '2025-08-15'
-    }
-  ];
->>>>>>> Stashed changes
 
 
 interface Booking {
@@ -1172,19 +935,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {myBookings.map((booking) => {
           const statusColors = getStatusColor(booking.status);
-<<<<<<< Updated upstream
-=======
-          return (
-            <div key={booking.id}
-              className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
-                  backgroundSize: '40px 40px'
-                }} />
-              </div>
->>>>>>> Stashed changes
 
           return (
             <div
@@ -1199,7 +949,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                   >
                     {booking.title ?? "No Title"}
                   </h3>
-<<<<<<< Updated upstream
                   <span
                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
                     style={{
@@ -1210,11 +959,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     {(booking.status?.replace("-", " ") ?? "")
                     .replace(/\b\w/g, (l) => l.toUpperCase())}
 
-=======
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
-                    style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-                    {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
->>>>>>> Stashed changes
                   </span>
                 </div>
 
@@ -1227,14 +971,9 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     <span className="font-medium">Payment:</span>{" "}
                     {booking.coins_paid} coins
                   </p>
-<<<<<<< Updated upstream
                   <p className="text-sm" style={{ color: "#405e5e" }}>
                     <span className="font-medium">Category:</span>{" "}
                     {booking.category ?? "N/A"}
-=======
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Deadline:</span> {booking.category}
->>>>>>> Stashed changes
                   </p>
                   <p className="text-sm" style={{ color: "#405e5e" }}>
                     <span className="font-medium">Started:</span>{" "}
@@ -1242,7 +981,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                   </p>
                 </div>
 
-<<<<<<< Updated upstream
                 <div
                   className="flex space-x-3 pt-4 border-t"
                   style={{ borderColor: "#e1ecea" }}
@@ -1251,27 +989,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     className="text-sm font-medium hover:underline"
                     style={{ color: "#558581" }}
                   >
-=======
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
-                    <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
-                  </div>
-                  <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
-                    <div
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{
-                        backgroundColor: '#558581',
-                        width: `${booking.progress}%`
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
->>>>>>> Stashed changes
                     View Details
                   </button>
 
@@ -1332,7 +1049,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
   );
 };
 
-<<<<<<< Updated upstream
 
 
 
@@ -1562,8 +1278,6 @@ return (
 
 
 
-=======
->>>>>>> Stashed changes
 const roles = ['user', 'seller']; // example roles
 
 interface User {
@@ -2321,11 +2035,7 @@ const UserDashboard = () => {
         return <MyGigs loading={loading} />;
       case 'my-bookings':
         return <MyBookings loading={loading} />;
-<<<<<<< Updated upstream
       case 'BookedGigs':
-=======
-        case 'BookedGigs':
->>>>>>> Stashed changes
         return <BookedGigs loading={loading} />;
       case 'profile':
         return <ProfileSettings user={user} onSave={handleSaveProfile} />;
