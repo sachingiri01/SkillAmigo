@@ -25,6 +25,7 @@ import {
   Eye,
   Upload,
   Gift,
+  ClipboardCheck,
   Briefcase,
   BookOpen
 } from 'lucide-react';
@@ -77,7 +78,6 @@ const SkeletonLoader = ({ className = "", type = "text" }) => {
       </div>
     );
   }
-  
 
   if (type === "chart") {
     return (
@@ -89,7 +89,6 @@ const SkeletonLoader = ({ className = "", type = "text" }) => {
       </div>
     );
   }
-  
 
   return (
     <div className={`animate-pulse bg-slate-200 rounded ${className}`}></div>
@@ -98,23 +97,6 @@ const SkeletonLoader = ({ className = "", type = "text" }) => {
 
 // Header Component with Home Button
 const Header = ({ user, onLogout, onHome }) => {
-  return (
-    <header className="bg-white shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30" 
-            style={{ borderBottomColor: '#e1ecea' }}>
-      <div className="px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3 ml-16 lg:ml-0">
-            <button
-              onClick={onHome}
-              className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105"
-              style={{ backgroundColor: '#f3f8f8', color: '#344545' }}
-            >
-              <Home className="w-5 h-5" />
-              <span className="font-semibold hidden sm:block">Home</span>
-            </button>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
-                   style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
   const { data: session } = useSession();
   return (
     <header className="bg-white shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30"
@@ -138,7 +120,6 @@ const Header = ({ user, onLogout, onHome }) => {
               </div>
               <div>
                 <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#344545' }}>
-                  Welcome, {user.name}!
                   Welcome, {session && session.user?.name}!
                 </h1>
                 <p className="text-xs sm:text-sm hidden sm:block" style={{ color: '#719f9a' }}>
@@ -148,7 +129,6 @@ const Header = ({ user, onLogout, onHome }) => {
             </div>
           </div>
           <button
-            onClick={onLogout}
             onClick={() => signOut({ callbackUrl: "/" })}
 
             className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors duration-200 hover:scale-105"
@@ -164,6 +144,8 @@ const Header = ({ user, onLogout, onHome }) => {
   );
 };
 
+
+
 // Sidebar Component with new sections
 const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
   const menuItems = [
@@ -171,6 +153,7 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
     { id: 'post-gig', icon: Plus, label: 'Post Gig' },
     { id: 'my-gigs', icon: Briefcase, label: 'My Gigs' },
     { id: 'my-bookings', icon: BookOpen, label: 'My Bookings' },
+    { id: 'BookedGigs', icon: ClipboardCheck, label: 'BookedGigs' },
     { id: 'profile', icon: Settings, label: 'Profile Settings' },
     { id: 'add-coins', icon: Coins, label: 'Add Coins' },
     { id: 'redeem-coins', icon: Gift, label: 'Redeem Coins' },
@@ -212,7 +195,6 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
           <div className="relative z-10">
             <div className="flex items-center space-x-3 mb-8">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                   style={{ backgroundColor: '#ff6b35' }}>
                 style={{ backgroundColor: '#ff6b35' }}>
                 <span className="text-white font-bold text-sm">SA</span>
               </div>
@@ -223,7 +205,6 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.id;
-                
 
                 return (
                   <button
@@ -234,12 +215,6 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
                     }}
                     className={`
                       w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-left
-                      ${isActive 
-                        ? 'text-white shadow-lg' 
-                        : 'hover:text-white'
-                      }
-                    `}
-                    style={{ 
                       ${isActive
                         ? 'text-white shadow-lg'
                         : 'hover:text-white'
@@ -285,24 +260,6 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
 // Overview Component with jet-stream colors
 const Overview = ({ loading }) => {
   const stats = [
-    { 
-      title: 'Total Spent Coins', 
-      value: '1,250', 
-      icon: DollarSign, 
-      color: 'from-red-500 to-red-600',
-      change: '-5.2%'
-    },
-    { 
-      title: 'Total Gained Coins', 
-      value: '2,840', 
-      icon: TrendingUp, 
-      color: 'from-green-500 to-green-600',
-      change: '+12.3%'
-    },
-    { 
-      title: 'Leaderboard Rank', 
-      value: '#47', 
-      icon: Trophy, 
     {
       title: 'Total Spent Coins',
       value: '1,250',
@@ -345,14 +302,11 @@ const Overview = ({ loading }) => {
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Dashboard Overview
       </h2>
-      
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.title} 
-                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
             <div key={stat.title}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
               {/* Card Pattern */}
@@ -362,7 +316,6 @@ const Overview = ({ loading }) => {
                   backgroundSize: '30px 30px'
                 }} />
               </div>
-              
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
@@ -392,14 +345,12 @@ const Overview = ({ loading }) => {
             backgroundSize: '50px 50px, 50px 50px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-lg sm:text-xl font-semibold mb-4" style={{ color: '#344545' }}>
             Activity Overview
           </h3>
           <div className="h-32 rounded-xl flex items-center justify-center"
-               style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
             style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
             <p className="text-center text-sm sm:text-base" style={{ color: '#719f9a' }}>
               Chart placeholder - Activity trends would appear here
@@ -411,9 +362,6 @@ const Overview = ({ loading }) => {
   );
 };
 
-// Enhanced Post Gig Form Component
-const PostGigForm = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
 
 
 const PostGigForm = ({ onSubmit }) => {
@@ -431,21 +379,6 @@ const PostGigForm = ({ onSubmit }) => {
     description: '',
     minPrice: '',
     maxPrice: '',
-    deadline: '',
-    thumbnail: null
-  });
-  const [loading, setLoading] = useState(false);
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
-
-  const handleThumbnailChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({...formData, thumbnail: file});
-      const reader = new FileReader();
-      reader.onload = (e) => setThumbnailPreview(e.target.result);
-      reader.readAsDataURL(file);
-    }
-  };
     category: '',
     location: '',
     thumbnailFile: null,
@@ -458,11 +391,6 @@ const PostGigForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    onSubmit(formData);
-    setFormData({ title: '', description: '', minPrice: '', maxPrice: '', deadline: '', thumbnail: null });
 
     const form = new FormData();
     form.append('title', formData.title);
@@ -518,21 +446,6 @@ const PostGigForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-        Post New Gig
-      </h2>
-      
-      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
     <div className="space-y-6" style={{
       color: 'black'
 
@@ -551,20 +464,6 @@ const PostGigForm = ({ onSubmit }) => {
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-              style={{ 
-                borderColor: '#bbd3d0',
-                backgroundColor: '#f3f8f8'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#558581';
-                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#bbd3d0';
-                e.target.style.boxShadow = 'none';
-              }}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full px-4 py-3 border rounded-xl"
               style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
@@ -583,16 +482,6 @@ const PostGigForm = ({ onSubmit }) => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleThumbnailChange}
-                className="hidden"
-                id="thumbnail-upload"
-              />
-              <label
-                htmlFor="thumbnail-upload"
-                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 hover:scale-105"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
                 className="hidden"
                 id="thumbnail-upload"
                 onChange={(e) => {
@@ -634,9 +523,6 @@ const PostGigForm = ({ onSubmit }) => {
                   </div>
                 )}
               </label>
-            </div>
-          </div>
-
 
               {/* Image URL Input */}
               <input
@@ -665,21 +551,6 @@ const PostGigForm = ({ onSubmit }) => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              rows={4}
-              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-              style={{ 
-                borderColor: '#bbd3d0',
-                backgroundColor: '#f3f8f8'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#558581';
-                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#bbd3d0';
-                e.target.style.boxShadow = 'none';
-              }}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
               className="w-full px-4 py-3 border rounded-xl"
@@ -698,20 +569,6 @@ const PostGigForm = ({ onSubmit }) => {
               <input
                 type="number"
                 value={formData.minPrice}
-                onChange={(e) => setFormData({...formData, minPrice: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
                 onChange={(e) => setFormData({ ...formData, minPrice: e.target.value })}
                 className="w-full px-4 py-3 border rounded-xl"
                 style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
@@ -727,20 +584,6 @@ const PostGigForm = ({ onSubmit }) => {
               <input
                 type="number"
                 value={formData.maxPrice}
-                onChange={(e) => setFormData({...formData, maxPrice: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
                 onChange={(e) => setFormData({ ...formData, maxPrice: e.target.value })}
                 className="w-full px-4 py-3 border rounded-xl"
                 style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
@@ -750,27 +593,6 @@ const PostGigForm = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-              Deadline
-            </label>
-            <input
-              type="date"
-              value={formData.deadline}
-              onChange={(e) => setFormData({...formData, deadline: e.target.value})}
-              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-              style={{ 
-                borderColor: '#bbd3d0',
-                backgroundColor: '#f3f8f8'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#558581';
-                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#bbd3d0';
-                e.target.style.boxShadow = 'none';
-              }}
           {/* Category */}
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
@@ -826,75 +648,43 @@ const PostGigForm = ({ onSubmit }) => {
 };
 
 // My Gigs Component - Gigs posted by user
-const MyGigs = ({ loading }) => {
-  const myGigs = [
-    {
-      id: 1,
-      title: 'React Dashboard Development',
-      description: 'Build a modern admin dashboard with React and Tailwind CSS',
-      minPrice: 300,
-      maxPrice: 500,
-      applicants: 8,
-      status: 'active',
-      posted: '2025-08-20'
-    },
-    {
-      id: 2,
-      title: 'Logo Design for Tech Startup',
-      description: 'Create a modern, minimalist logo for our tech company',
-      minPrice: 50,
-      maxPrice: 150,
-      applicants: 15,
-      status: 'completed',
-      posted: '2025-08-18'
-    },
-    {
-      id: 3,
-      title: 'Content Writing - Blog Posts',
-      description: 'Write 5 SEO-optimized blog posts about web development',
-      minPrice: 80,
-      maxPrice: 120,
-      applicants: 3,
-      status: 'draft',
-      posted: '2025-08-22'
-    }
-  ];
 const MyGigs = () => {
   const [loading, setLoading] = useState(true);
   const [myGigs, setMyGigs] = useState<Gig[]>([]);
+  const [applicants, setApplicants] = useState({});
   const { data: session } = useSession();
-  // const myGigs = [
-  //   {
-  //     id: 1,
-  //     title: 'React Dashboard Development',
-  //     description: 'Build a modern admin dashboard with React and Tailwind CSS',
-  //     minPrice: 300,
-  //     maxPrice: 500,
-  //     applicants: 8,
-  //     status: 'active',
-  //     posted: '2025-08-20'
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Logo Design for Tech Startup',
-  //     description: 'Create a modern, minimalist logo for our tech company',
-  //     minPrice: 50,
-  //     maxPrice: 150,
-  //     applicants: 15,
-  //     status: 'completed',
-  //     posted: '2025-08-18'
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Content Writing - Blog Posts',
-  //     description: 'Write 5 SEO-optimized blog posts about web development',
-  //     minPrice: 80,
-  //     maxPrice: 120,
-  //     applicants: 3,
-  //     status: 'draft',
-  //     posted: '2025-08-22'
-  //   }
-  // ];
+
+
+  const handleDelete = async (gigId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/api/gigs/${gigId}`, { method: 'DELETE' });
+
+
+      if (!res.ok) {
+        let errorData;
+        try {
+          errorData = await res.json();
+        } catch {
+          errorData = { error: "Failed to delete gig" };
+        }
+        alert(errorData.error || 'Could not delete gig');
+        return;
+
+      }
+      const data = await res.json();
+
+      alert('Gig deleted successfully');
+      setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId)); // Remove from list
+    } catch (error) {
+      console.error('Error deleting gig:', error);
+      alert('Something went wrong');
+    }
+  };
+
+
   useEffect(() => {
     if (!session) return;
 
@@ -913,6 +703,19 @@ const MyGigs = () => {
 
     fetchGigs();
   }, [session]); // run when session becomes available
+
+
+  const handleViewApplicants = async (gigId) => {
+    try {
+      const res = await fetch(`/api/gigs/${gigId}/applicants`);
+      if (!res.ok) throw new Error('Failed to fetch applicants');
+      const data = await res.json();
+      setApplicants((prev) => ({ ...prev, [gigId]: data }));
+    } catch (error) {
+      console.error('Error fetching applicants:', error);
+      alert('Failed to load applicants');
+    }
+  };
 
 
   const getStatusColor = (status) => {
@@ -951,14 +754,11 @@ const MyGigs = () => {
           {myGigs.length} Gigs Posted
         </span>
       </div>
-      
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {myGigs.map((gig) => {
           const statusColors = getStatusColor(gig.status);
           return (
-            <div key={gig.id} 
-                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
             <div key={gig.gig_id}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
               {/* Background Pattern */}
@@ -968,7 +768,6 @@ const MyGigs = () => {
                   backgroundSize: '30px 30px'
                 }} />
               </div>
-              
 
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
@@ -976,27 +775,6 @@ const MyGigs = () => {
                     {gig.title}
                   </h3>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 capitalize"
-                        style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-                    {gig.status}
-                  </span>
-                </div>
-                
-                <p className="text-sm mb-4" style={{ color: '#719f9a' }}>
-                  {gig.description}
-                </p>
-                
-                <div className="space-y-2 mb-4">
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Budget:</span> {gig.minPrice} - {gig.maxPrice} coins
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Applicants:</span> {gig.applicants}
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Posted:</span> {gig.posted}
-                  </p>
-                </div>
-                
                     style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
                     {gig.status}
                   </span>
@@ -1008,7 +786,7 @@ const MyGigs = () => {
 
                 <div className="space-y-2 mb-4">
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Budget:</span> {gig.min_price} - {gig.maxPrice} coins
+                    <span className="font-medium">Price:</span> {gig.min_price} - {gig.maxPrice} coins
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
                     <span className="font-medium">Applicants:</span> {gig.applicants || 0}
@@ -1023,17 +801,40 @@ const MyGigs = () => {
                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
                     View Details
                   </button>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    Edit Gig
+                  <button
+                    className="text-sm font-medium hover:underline"
+                    style={{ color: '#db1738ff' }}
+                    onClick={() => handleDelete(gig.gig_id)}
+
+                  >
+                    Delete
                   </button>
-                  {gig.applicants > 0 && (
                   {(gig.buyer_count ?? 0) > 0 && (
-                    <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
+                    <button
+                      className="text-sm font-medium hover:underline"
+                      style={{ color: '#53e656ff' }}
+                      onClick={() => handleViewApplicants(gig.gig_id)}
+                    >
                       View Applicants
                     </button>
                   )}
                 </div>
+                {applicants[gig.gig_id]?.length > 0 && (
+                  <div className="flex overflow-x-auto space-x-4 py-3">
+                    {applicants[gig.gig_id].map((user) => (
+                      <div key={user.user_id} className="flex flex-col items-center min-w-[60px]">
+                        <img
+                          src={user.profile_picture || '/default-profile.png'}
+                          alt={user.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <span className="text-xs text-center mt-1">{user.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+
             </div>
           );
         })}
@@ -1043,164 +844,340 @@ const MyGigs = () => {
 };
 
 // My Bookings Component - Scheduled gigs for user to work
-const MyBookings = ({ loading }) => {
-  const myBookings = [
-    {
-      id: 1,
-      title: 'E-commerce Website Development',
-      name: 'Fashion Boutique LLC',
-      price: 800,
-      deadline: '2025-09-15',
-      category: 'delhi',
-      status: 'in-progress',
-      progress: 65,
-      startDate: '2025-08-10'
-    },
-    {
-      id: 2,
-      title: 'Mobile App UI/UX Design',
-      client: 'HealthTech Solutions',
-      price: 400,
-      deadline: '2025-09-05',
-      category: 'mumbai',
-      status: 'pending-start',
-      progress: 0,
-      startDate: '2025-08-25'
-    },
-    {
-      id: 3,
-      title: 'Database Optimization',
-      client: 'DataCorp Analytics',
-      price: 250,
-      deadline: '2025-08-28',
-      category: 'hariyana',
-      status: 'completed',
-      progress: 100,
-      startDate: '2025-08-15'
-    }
-  ];
+// const MyBookings = ({ loading:initialLoading }) => {
+//   const [myBookings, setMyBookings] = useState([]);
+//   const [loading, setLoading] = useState(initialLoading);
+//   const [updatingId, setUpdatingId] = useState(null);
 
-  const getStatusColor = (status) => {
+//   const getStatusColor = (status) => {
+//     switch (status) {
+//       case 'in-progress':
+//         return { bg: '#dbeafe', text: '#1d4ed8' };
+//       case 'pending-start':
+//         return { bg: '#fef3c7', text: '#92400e' };
+//       case 'completed':
+//         return { bg: '#dcfce7', text: '#166534' };
+//       default:
+//         return { bg: '#f1f5f9', text: '#475569' };
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchBookings = async () => {
+//       try {
+//         setLoading(true);
+//         const res = await fetch('/api/bookings');
+//         const data = await res.json();
+//         setMyBookings(data);
+//       } catch (error) {
+//         console.error('Error fetching bookings:', error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchBookings();
+//   }, []);
+
+
+
+
+//   if (loading) {
+//     return (
+//       <div className="space-y-6">
+//         <SkeletonLoader className="h-8 w-48" />
+//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//           {[1, 2, 3].map((i) => (
+//             <SkeletonLoader key={i} type="card" />
+//           ))}
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       <div className="flex items-center justify-between">
+//         <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+//           My Bookings
+//         </h2>
+//         <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
+//           {myBookings.length} Active Projects
+//         </span>
+//       </div>
+
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//         {myBookings.map((booking) => {
+//           const statusColors = getStatusColor(booking.status);
+//           return (
+//             <div key={booking.id}
+//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
+//               {/* Background Pattern */}
+//               <div className="absolute inset-0 opacity-5">
+//                 <div className="absolute inset-0" style={{
+//                   backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
+//                   backgroundSize: '40px 40px'
+//                 }} />
+//               </div>
+
+//               <div className="relative z-10">
+//                 <div className="flex items-start justify-between mb-4">
+//                   <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
+//                     {booking.title}
+//                   </h3>
+//                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
+//                     style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+//                     {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+//                   </span>
+//                 </div>
+
+//                 <div className="space-y-2 mb-4">
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Client:</span> {booking.client}
+//                   </p>
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Payment:</span> {booking.price} coins
+//                   </p>
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Deadline:</span> {booking.category}
+//                   </p>
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Started:</span> {booking.startDate}
+//                   </p>
+//                 </div>
+
+//                 {/* Progress Bar */}
+//                 {/* <div className="mb-4">
+//                   <div className="flex items-center justify-between mb-2">
+//                     <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
+//                     <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
+//                   </div>
+//                   <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
+//                     <div
+//                       className="h-2 rounded-full transition-all duration-500"
+//                       style={{
+//                         backgroundColor: '#558581',
+//                         width: `${booking.progress}%`
+//                       }}
+//                     />
+//                   </div>
+//                 </div> */}
+
+//                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
+//                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
+//                     View Details
+//                   </button>
+//                   {booking.status === 'in-progress' && (
+//                     <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
+//                       Update Progress
+//                     </button>
+//                   )}
+//                   {booking.status === 'completed' && (
+//                     <button className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
+//                       View Review
+//                     </button>
+//                   )}
+//                 </div>
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
+
+interface Booking {
+  booking_id: string;
+  title: string;
+  client?: string;
+  buyer_id?: string;
+  coins_paid: number;
+  category?: string;
+  startDate?: string;
+  booking_date?: string;
+  status: string;
+
+}
+
+
+
+const MyBookings = ({ loading }: { loading: boolean }) => {
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
+
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in-progress':
-        return { bg: '#dbeafe', text: '#1d4ed8' };
-      case 'pending-start':
-        return { bg: '#fef3c7', text: '#92400e' };
-      case 'completed':
-        return { bg: '#dcfce7', text: '#166534' };
+      case "pending":
+        return { bg: "#fef3c7", text: "#92400e" };
+      case "confirmed":
+        return { bg: "#dbeafe", text: "#1d4ed8" };
+      case "completed":
+        return { bg: "#dcfce7", text: "#166534" };
+      case "cancelled":
+        return { bg: "#fee2e2", text: "#991b1b" };
       default:
-        return { bg: '#f1f5f9', text: '#475569' };
+        return { bg: "#f1f5f9", text: "#475569" };
+    }
+  };
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await fetch("/api/my-gig-bookings");
+        if (!res.ok) throw new Error("Failed to fetch bookings");
+        const data = await res.json();
+        setMyBookings(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+      const updated = await res.json();
+
+      setMyBookings((prev) =>
+        prev.map((b) =>
+          b.booking_id === bookingId ? { ...b, status: updated.status } : b
+        )
+      );
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <SkeletonLoader className="h-8 w-48" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          {[1, 2, 3].map((i) => (
-            <SkeletonLoader key={i} type="card" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const handleViewReview = (bookingId: string) => {
+    alert(`Viewing review for booking ${bookingId}`);
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+        <h2 className="text-2xl font-bold" style={{ color: "#344545" }}>
           My Bookings
         </h2>
-        <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
+        <span
+          className="text-sm px-3 py-1 rounded-full"
+          style={{ backgroundColor: "#e1ecea", color: "#344545" }}
+        >
           {myBookings.length} Active Projects
         </span>
       </div>
-      
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {myBookings.map((booking) => {
           const statusColors = getStatusColor(booking.status);
-          return (
-            <div key={booking.id} 
-                 className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-            <div key={booking.id}
-              className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
-                  backgroundSize: '40px 40px'
-                }} />
-              </div>
-              
 
+          return (
+            <div
+              key={booking.booking_id}
+              className="bg-white rounded-2xl shadow-md p-4 sm:p-6"
+            >
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
-                    {booking.title}
+                  <h3
+                    className="text-lg font-semibold flex-1 mr-2"
+                    style={{ color: "#344545" }}
+                  >
+                    {booking.title ?? "No Title"}
                   </h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
-                        style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-                    {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </span>
-                </div>
-                
-                    style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-                    {booking.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  <span
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
+                    style={{
+                      backgroundColor: statusColors.bg,
+                      color: statusColors.text,
+                    }}
+                  >
+                    {booking.status
+                      .replace("-", " ")
+                      .replace(/\b\w/g, (l) => l.toUpperCase())}
                   </span>
                 </div>
 
                 <div className="space-y-2 mb-4">
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Seller Name:</span> {booking.client}
+                  <p className="text-sm" style={{ color: "#405e5e" }}>
+                    <span className="font-medium">Client:</span>{" "}
+                    {booking.client ?? booking.buyer_id}
                   </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Cost:</span> {booking.price} coins
+                  <p className="text-sm" style={{ color: "#405e5e" }}>
+                    <span className="font-medium">Payment:</span>{" "}
+                    {booking.coins_paid} coins
                   </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Booking Date:</span> {booking.bookDate}
+                  <p className="text-sm" style={{ color: "#405e5e" }}>
+                    <span className="font-medium">Category:</span>{" "}
+                    {booking.category ?? "N/A"}
                   </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Location: </span> {booking.category}
-                  </p>
-                  <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Scheduled Date:</span> {booking.startDate}
+                  <p className="text-sm" style={{ color: "#405e5e" }}>
+                    <span className="font-medium">Started:</span>{" "}
+                    {booking.startDate ?? booking.booking_date}
                   </p>
                 </div>
-                
 
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  {/* <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium" style={{ color: '#405e5e' }}>Progress</span>
-                    <span className="text-sm font-medium" style={{ color: '#558581' }}>{booking.progress}%</span>
-                  </div>
-                  <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e1ecea' }}>
-                    <div 
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{ 
-                    <div
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{
-                        backgroundColor: '#558581',
-                        width: `${booking.progress}%`
-                      }}
-                    />
-                  </div> */}
-                </div> 
-
-                <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    Delete
+                <div
+                  className="flex space-x-3 pt-4 border-t"
+                  style={{ borderColor: "#e1ecea" }}
+                >
+                  <button
+                    className="text-sm font-medium hover:underline"
+                    style={{ color: "#558581" }}
+                  >
+                    View Details
                   </button>
-                  {booking.status === 'in-progress' && (
-                    <button className="text-sm font-medium hover:underline" style={{ color: '#ff6b35' }}>
-                      Update Progress
+
+                  {/* Pending: Confirm & Cancel */}
+                  {booking.status === "pending" && (
+                    <>
+                      <button
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: "#16a34a" }}
+                        onClick={() =>
+                          handleUpdateStatus(booking.booking_id, "confirm")
+                        }
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: "#dc2626" }}
+                        onClick={() =>
+                          handleUpdateStatus(booking.booking_id, "cancel")
+                        }
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+
+                  {/* Confirmed: Only Cancel */}
+                  {booking.status === "confirmed" && (
+                    <button
+                      className="text-sm font-medium hover:underline"
+                      style={{ color: "#dc2626" }}
+                      onClick={() =>
+                        handleUpdateStatus(booking.booking_id, "cancel")
+                      }
+                    >
+                      Cancel
                     </button>
                   )}
-                  {booking.status === 'completed' && (
-                    <button className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
+
+                  {/* Completed: View Review */}
+                  {booking.status === "completed" && (
+                    <button
+                      className="text-sm font-medium hover:underline"
+                      style={{ color: "#16a34a" }}
+                      onClick={() => handleViewReview(booking.booking_id)}
+                    >
                       View Review
                     </button>
                   )}
@@ -1214,14 +1191,235 @@ const MyBookings = ({ loading }) => {
   );
 };
 
-// Profile Settings Component - simplified
-const ProfileSettings = ({ user, onSave }) => {
-  const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    bio: user.bio || '',
-    phone: user.phone || '',
-    skills: user.skills || ''
+
+
+
+
+
+
+interface BookedGig {
+  booking_id: string;
+  gig_id: string;
+  seller_id: string;
+  seller_name?: string; // Seller's name
+  seller_location?: string; // Seller's location
+  title: string;
+  scheduled_date: string;
+  booking_date?: string; // Date when booked
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "disputed";
+  rating?: number;
+  picture?: string;
+  category?: string;
+  min_price?:number;
+  avg_price?:number;
+  coins_paid?:number;
+  cost?: number;  // Use this for cost if your backend returns it
+}
+
+
+const BookedGigs = () => {
+  const [bookedGigs, setBookedGigs] = useState<BookedGig[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [reviewData, setReviewData] = useState<Record<string, any>>({});
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const getStatusColor = (status: BookedGig["status"]) => {
+    switch (status) {
+      case "confirmed":
+        return { bg: "#dbeafe", text: "#1d4ed8" };
+      case "completed":
+        return { bg: "#dcfce7", text: "#166534" };
+      case "cancelled":
+        return { bg: "#fef2f2", text: "#dc2626" };
+      default:
+        return { bg: "#f1f5f9", text: "#475569" };
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await fetch("/api/user-booked-gigs");
+        if (!res.ok) throw new Error("Failed to fetch bookings");
+        const data = await res.json();
+        setBookedGigs(data);
+      } catch (error) {
+        console.error("Failed to fetch booked gigs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  // const handleComplete = async (id: string) => {
+  //   try {
+  //     const res = await fetch(`/api/booking/${id}/complete`, { method: "PATCH" });
+  //     if (!res.ok){ 
+  //       const errorData = await res.json();
+  //       throw new Error(errorData.error ||"Failed to complete booking");}
+  //     setBookedGigs((prev) =>
+  //       prev.map((b) => (b.booking_id === id ? { ...b, status: "completed" } : b))
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  // const handleCancel = async (id: string) => {
+  //   try {
+  //     const res = await fetch(`/api/booking/${id}/cancel`, { method: "PATCH" });
+  //     if (!res.ok) throw new Error("Failed to cancel booking");
+  //     setBookedGigs((prev) =>
+  //       prev.map((b) => (b.booking_id === id ? { ...b, status: "cancelled" } : b))
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      });
+       console.log("res",res)
+      if (!res.ok) throw new Error("Failed to update status");
+      const updated = await res.json();
+
+      setBookedGigs((prev) =>
+        prev.map((b) =>
+          b.booking_id === bookingId ? { ...b, status: updated.status } : b
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+ 
+
+  // 🌀 Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 bg-gray-200 rounded"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-40 bg-gray-200 rounded"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  
+
+return (
+  <div className="space-y-8">
+    <h2 className="text-2xl font-semibold text-gray-800">Your Booked Gigs</h2>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {bookedGigs.map((gig) => {
+        const { bg, text } = getStatusColor(gig.status);
+
+        return (
+          <article
+            key={gig.booking_id}
+            className="border rounded-lg p-5 shadow-sm bg-white space-y-4"
+          >
+            {/* Title */}
+            <h3 className="text-xl font-semibold text-gray-900">{gig.title}</h3>
+
+            {/* Image */}
+            {/* {gig.picture && (
+              <img
+                src={gig.picture}
+                alt={`${gig.title} image`}
+                className="w-full h-44 object-cover rounded"
+                loading="lazy"
+              />
+            )} */}
+
+            {/* Seller Info */}
+            <div className="text-gray-700 text-sm space-y-0.5">
+              <p>
+                <strong>Seller:</strong> {gig.seller_name}
+              </p>
+              <p>
+                <strong>Location:</strong> {gig.seller_location}
+              </p>
+              <p>
+              <strong>Scheduled For:</strong>{" "}
+              {gig.scheduled_date ? new Date(gig.scheduled_date).toLocaleDateString() : "N/A"}
+              </p>
+
+              <p>
+               <strong>Booking Date:</strong>{" "}
+              {gig.booking_date ? new Date(gig.booking_date).toLocaleDateString() : "N/A"}
+              </p>
+              <p>
+                <strong>Category:</strong> {gig.category}
+              </p>
+            </div>
+
+            {/* Pricing Info */}
+            <div className="text-gray-700 text-sm space-y-0.5">
+              <p>
+                <strong>Price Range:</strong> {gig.min_price} – {gig.avg_price} coins
+              </p>
+              <p>
+                <strong>Coins Paid:</strong> {gig.coins_paid}
+              </p>
+            </div>
+
+            {/* Status & Actions */}
+            <div className="flex items-center justify-between">
+              <span
+                className="px-3 py-1 text-xs font-semibold rounded-full"
+                style={{ backgroundColor: bg, color: text }}
+              >
+                {gig.status.toUpperCase()}
+              </span>
+
+              {gig.status === "confirmed" && (
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => handleUpdateStatus(gig.booking_id,'complete')}
+                    className="text-green-600 text-sm hover:underline"
+                  >
+                    Mark Complete
+                  </button>
+                  <button
+                    onClick={() => handleUpdateStatus(gig.booking_id,'cancel')}
+                    className="text-red-600 text-sm hover:underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+
+            
+          </article>
+        );
+      })}
+    </div>
+  </div>
+);
+
+};
+
+
+
+
+
+
+
 const roles = ['user', 'seller']; // example roles
 
 interface User {
@@ -1252,43 +1450,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    onSave(formData);
-    setLoading(false);
-    setShowSuccess(true);
-    
-    setTimeout(() => setShowSuccess(false), 3000);
-  };
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-        Profile Settings
-      </h2>
-      
-      {showSuccess && (
-        <div className="border px-4 py-3 rounded-xl" 
-             style={{ backgroundColor: '#dcfce7', borderColor: '#22c55e', color: '#166534' }}>
-          Profile updated successfully!
-        </div>
-      )}
-      
-      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
   useEffect(() => {
     if (session?.user) {
       console.log("Session loaded:", session);
@@ -1338,7 +1499,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
       }
 
       const result = await response.json();
-      console.log("what stor in result",result)
+      console.log("what stor in result", result)
       onSave(result.user);
 
       setShowSuccess(true);
@@ -1392,46 +1553,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
               </label>
               <input
                 type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -1448,51 +1569,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
               </label>
               <input
                 type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
-                placeholder="+1 234 567 8900"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-                Skills (comma separated)
-              </label>
-              <input
-                type="text"
-                value={formData.skills}
-                onChange={(e) => setFormData({...formData, skills: e.target.value})}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
-                  borderColor: '#bbd3d0',
-                  backgroundColor: '#f3f8f8'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#558581';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#bbd3d0';
-                  e.target.style.boxShadow = 'none';
-                }}
-                placeholder="React, Node.js, Design, etc."
-              />
-            </div>
-          </div>
-
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -1535,9 +1611,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
                 accept="image/*"
                 id="profile-picture-upload"
                 className="hidden"
-                
+
                 onChange={handleImageChange}
-                
+
               />
               <label
                 htmlFor="profile-picture-upload"
@@ -1563,41 +1639,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
               Bio
             </label>
             <textarea
-              value={formData.bio}
-              onChange={(e) => setFormData({...formData, bio: e.target.value})}
-              rows={4}
-              className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-              style={{ 
-                borderColor: '#bbd3d0',
-                backgroundColor: '#f3f8f8'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#558581';
-                e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#bbd3d0';
-                e.target.style.boxShadow = 'none';
-              }}
-              placeholder="Tell us about yourself and your expertise..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="text-white py-3 px-6 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50"
-            style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}
-          >
-            {loading ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Saving...</span>
-              </div>
-            ) : (
-              'Save Changes'
-            )}
-          </button>
               name="bio"
               value={formData.bio}
               onChange={handleChange}
@@ -1625,7 +1666,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
   );
 };
 
-// Add Coins Component with jet-stream colors
 
 
 
@@ -1638,9 +1678,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
 
   const handleAddCoins = async (coinAmount) => {
     setLoading(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
 
     await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -1654,9 +1691,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Add Coins
       </h2>
-      
-      <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
-           style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
 
       <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
@@ -1667,7 +1701,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
             backgroundSize: '50px 50px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-lg font-semibold mb-2">Current Balance</h3>
@@ -1683,7 +1716,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
             backgroundSize: '40px 40px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Add</h3>
@@ -1694,7 +1726,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
                 onClick={() => handleAddCoins(coins)}
                 disabled={loading}
                 className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 text-sm sm:text-base hover:scale-105"
-                style={{ 
                 style={{
                   backgroundColor: '#f3f8f8',
                   color: '#344545'
@@ -1722,7 +1753,6 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="Enter amount..."
                 className="flex-1 px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
                 style={{
                   borderColor: '#bbd3d0',
                   backgroundColor: '#f3f8f8'
@@ -1776,9 +1806,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
     }
 
     setLoading(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
 
     await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -1796,9 +1823,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Redeem Coins
       </h2>
-      
-      <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
-           style={{ backgroundColor: '#ff6b35' }}>
 
       <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
         style={{ backgroundColor: '#ff6b35' }}>
@@ -1809,7 +1833,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
             backgroundSize: '50px 50px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-lg font-semibold mb-2">Available Balance</h3>
@@ -1826,7 +1849,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
             backgroundSize: '50px 50px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Redeem</h3>
@@ -1837,7 +1859,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
                 onClick={() => handleRedeemCoins(option.value)}
                 disabled={loading || option.value > currentBalance}
                 className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base hover:scale-105"
-                style={{ 
                 style={{
                   backgroundColor: '#f3f8f8',
                   color: '#344545'
@@ -1862,7 +1883,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
 
           <div className="border-t pt-6 space-y-4" style={{ borderColor: '#e1ecea' }}>
             <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>Custom Amount</h3>
-            
 
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
@@ -1872,7 +1892,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
                 className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ 
                 style={{
                   borderColor: '#bbd3d0',
                   backgroundColor: '#f3f8f8'
@@ -1891,7 +1910,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
                 <option value="crypto">Cryptocurrency</option>
               </select>
             </div>
-            
 
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <div className="flex-1">
@@ -1902,7 +1920,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
                   placeholder="Enter coins to redeem..."
                   max={currentBalance}
                   className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                  style={{ 
                   style={{
                     borderColor: '#bbd3d0',
                     backgroundColor: '#f3f8f8'
@@ -1935,7 +1952,6 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
                 )}
               </button>
             </div>
-            
 
             <div className="rounded-xl p-4" style={{ backgroundColor: '#f3f8f8' }}>
               <h4 className="font-semibold mb-2" style={{ color: '#344545' }}>Redemption Info:</h4>
@@ -1964,7 +1980,6 @@ const HelpFAQs = () => {
     },
     {
       question: "How do I post a gig?",
-      answer: "Navigate to the 'Post Gig' section, fill out the form with your requirements, budget range, thumbnail image, and deadline, then submit."
       answer: "Navigate to the 'Post Gig' section, fill out the form with your requirements, budget range, thumbnail image, and category, then submit."
     },
     {
@@ -1990,7 +2005,6 @@ const HelpFAQs = () => {
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Help & FAQs
       </h2>
-      
 
       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
         {/* Background Pattern */}
@@ -2000,7 +2014,6 @@ const HelpFAQs = () => {
             backgroundSize: '40px 40px'
           }} />
         </div>
-        
 
         <div className="space-y-4 relative z-10">
           {faqs.map((faq, index) => (
@@ -2034,8 +2047,6 @@ const HelpFAQs = () => {
         </div>
       </div>
 
-      <div className="rounded-2xl p-4 sm:p-6 border relative overflow-hidden" 
-           style={{ backgroundColor: '#f3f8f8', borderColor: '#bbd3d0' }}>
       <div className="rounded-2xl p-4 sm:p-6 border relative overflow-hidden"
         style={{ backgroundColor: '#f3f8f8', borderColor: '#bbd3d0' }}>
         {/* Background Pattern */}
@@ -2045,7 +2056,6 @@ const HelpFAQs = () => {
             backgroundSize: '30px 30px'
           }} />
         </div>
-        
 
         <div className="relative z-10">
           <h3 className="text-lg font-semibold mb-2" style={{ color: '#344545' }}>Need More Help?</h3>
@@ -2053,7 +2063,6 @@ const HelpFAQs = () => {
             Can't find what you're looking for? Our support team is here to help!
           </p>
           <button className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200"
-                  style={{ backgroundColor: '#558581' }}>
             style={{ backgroundColor: '#558581' }}>
             Contact Support
           </button>
@@ -2073,25 +2082,6 @@ const Footer = () => {
             © 2025 SkillsAmigo. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
-            <a href="#" 
-               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
-               style={{ color: '#719f9a' }}
-               onMouseEnter={(e) => e.target.style.color = '#558581'}
-               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
-              Privacy Policy
-            </a>
-            <a href="#" 
-               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
-               style={{ color: '#719f9a' }}
-               onMouseEnter={(e) => e.target.style.color = '#558581'}
-               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
-              Terms of Service
-            </a>
-            <a href="#" 
-               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
-               style={{ color: '#719f9a' }}
-               onMouseEnter={(e) => e.target.style.color = '#558581'}
-               onMouseLeave={(e) => e.target.style.color = '#719f9a'}>
             <a href="#"
               className="text-xs sm:text-sm transition-colors duration-200 hover:underline"
               style={{ color: '#719f9a' }}
@@ -2187,6 +2177,8 @@ const UserDashboard = () => {
         return <MyGigs loading={loading} />;
       case 'my-bookings':
         return <MyBookings loading={loading} />;
+      case 'BookedGigs':
+        return <BookedGigs loading={loading} />;
       case 'profile':
         return <ProfileSettings user={user} onSave={handleSaveProfile} />;
       case 'add-coins':
@@ -2204,9 +2196,6 @@ const UserDashboard = () => {
     <div className="min-h-screen" style={{ backgroundColor: '#f3f8f8' }}>
       {/* Fixed Header - Full width */}
       <Header user={user} onLogout={handleLogout} onHome={handleHome} />
-      
-      {/* Sidebar */}
-      <Sidebar 
 
       {/* Sidebar */}
       <Sidebar
@@ -2217,7 +2206,6 @@ const UserDashboard = () => {
       />
 
       {/* Main Content */}
-      <div className="lg:ml-64 pt-20 pb-4 min-h-screen flex flex-col">        
       <div className="lg:ml-64 pt-20 pb-4 min-h-screen flex flex-col">
         <main className="flex-1 p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">

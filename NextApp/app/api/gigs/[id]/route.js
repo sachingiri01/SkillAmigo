@@ -1,10 +1,13 @@
 // app/api/gigs/[id]/route.js
-import pool from "../../../db";
+
+//this for deleting user own gig//
+import pool from "../../db";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function DELETE(req, { params }) {
+  console.log("DELETE route hit with ID:", params.id);
   const { id: gigId } = params;
 
   try {
@@ -12,8 +15,12 @@ export async function DELETE(req, { params }) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    
 
     const sellerId = session.user.id;
+    console.log("saler",sellerId);
+    
+    
 
     // Check if gig belongs to seller
     const gigRes = await pool.query(
@@ -23,6 +30,7 @@ export async function DELETE(req, { params }) {
     if (gigRes.rowCount === 0 || gigRes.rows[0].seller_id !== sellerId) {
       return NextResponse.json({ error: "Gig not found or unauthorized" }, { status: 404 });
     }
+    console.log("gig",gigRes.rows[0].seller_id)
 
     // Check bookings
     const bookingRes = await pool.query(

@@ -10,7 +10,7 @@ import cloudinary from "../cloudinary";
 
 
 
-
+//this api fetch all gigs on platform
 
 // GET /api/gigs → fetch all gigs
 export async function GET() {

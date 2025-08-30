@@ -14,7 +14,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- =========================
 CREATE TYPE user_role AS ENUM ('user', 'seller', 'admin');
 CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'completed', 'cancelled', 'disputed');
-CREATE TYPE transaction_type AS ENUM ('purchase', 'refund', 'withdrawal');
+CREATE TYPE transaction_type AS ENUM ('purchase', 'refund', 'withdrawal',earning,commission);
 CREATE TYPE chat_sender AS ENUM ('buyer', 'seller', 'ai');
 CREATE TYPE collab_status AS ENUM ('pending', 'active', 'completed');
 CREATE TYPE dispute_status AS ENUM ('open', 'resolved', 'rejected');
@@ -34,6 +34,7 @@ CREATE TABLE users (
     merit_credits INT DEFAULT 0,
     is_verified BOOLEAN DEFAULT FALSE,
     role user_role DEFAULT 'user',
+    balance DECIMAL(12,2) DEFAULT 0 CHECK (balance >= 0),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -82,23 +83,15 @@ CREATE TABLE chat (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-DROP TABLE IF EXISTS wallets CASCADE;
-CREATE TABLE wallets (
-    wallet_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID UNIQUE NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    balance DECIMAL(12,2) DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    CONSTRAINT positive_balance CHECK (balance >= 0)
-);
+
 
 DROP TABLE IF EXISTS transactions CASCADE;
 CREATE TABLE transactions (
     transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    wallet_id UUID NOT NULL REFERENCES wallets(wallet_id),
+    user_id UUID NOT NULL REFERENCES users(user_id),       -- buyer or initiator
+    seller_id UUID REFERENCES users(user_id),  
     type transaction_type NOT NULL,
-    amount DECIMAL(12,2) NOT NULL,
-    booking_id UUID REFERENCES bookings(booking_id),
+    amount DECIMAL(12,2) NOT NULL CHECK (amount > 0),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -156,8 +149,6 @@ FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 CREATE TRIGGER set_timestamp_bookings BEFORE UPDATE ON bookings
 FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
-CREATE TRIGGER set_timestamp_wallets BEFORE UPDATE ON wallets
-FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 CREATE TRIGGER set_timestamp_collaborations BEFORE UPDATE ON collaborations
 FOR EACH ROW EXECUTE PROCEDURE update_timestamp();

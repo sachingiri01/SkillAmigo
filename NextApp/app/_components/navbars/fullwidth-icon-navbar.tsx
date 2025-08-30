@@ -171,16 +171,16 @@ const FullwidthIconNavbar = ({
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-saffron transition-all duration-300 group-hover:w-full group-hover:shadow-[0_0_8px_rgba(230,126,34,0.6)]"></span>
               </a>
             ))}
-          
+
 
 
           </div>
-          
-            
-          
+
+
+
 
           {/* Auth Buttons */}
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <Button
               asChild
               variant="outline"
@@ -236,7 +236,96 @@ const FullwidthIconNavbar = ({
 
 
             </div>
+          </div> */}
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-3">
+            {session ? (
+              <>
+                {/* Profile Picture */}
+                <img
+                  src={session.user?.image || "/default-avatar.png"}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full border"
+                />
+
+                {/* User Name */}
+                <span className="text-sm font-medium text-white">
+                  {session.user?.name}
+                </span>
+
+                {/* Coin + Balance */}
+                <div className="flex items-center gap-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    viewBox="0 0 64 64"
+                    className="animate-spin-slow"
+                  >
+                    {/* Outer bright coin ring */}
+                    <circle cx="32" cy="32" r="20" fill="#FFEB3B" />
+                    {/* Inner ring for depth */}
+                    <circle cx="32" cy="32" r="16" fill="#FBC02D" />
+                    {/* Even smaller inner circle for layering */}
+                    <circle cx="32" cy="32" r="16" fill="#FFF176" />
+
+                    {/* Rupee symbol */}
+                    <text
+                      x="32"
+                      y="42"
+                      textAnchor="middle"
+                      fontSize="26"
+                      fontWeight="bold"
+                      fill="#F57F17"
+                      fontFamily="Arial, sans-serif"
+                      stroke="#F57F17"
+                      strokeWidth="0.5"
+                      paintOrder="stroke"
+                    >
+                      ₹
+                    </text>
+                  </svg>
+                  <span className="font-semibold text-yellow-700 text-lg">{session.user?.balance ?? 0}</span>
+                </div>
+
+
+
+                {/* Logout Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="bg-transparent border-jet-stream-400/40 text-white hover:bg-saffron hover:border-saffron hover:text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(230,126,34,0.4)] transition-all duration-300"
+                >
+                  <a className="flex items-center gap-2">
+                    Logout
+                  </a>
+                </Button>
+              </>
+            ) : (
+              // Login Button when no session
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+                className="bg-transparent border-jet-stream-400/40 text-white hover:bg-saffron hover:border-saffron hover:text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(230,126,34,0.4)] transition-all duration-300"
+              >
+                <a className="flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 transition-transform duration-200 group-hover:rotate-12"
+                    viewBox="0 0 24 24"
+                  >
+                    {/* Google icon paths */}
+                  </svg>
+                  <span className="hidden xl:inline">Login with Google</span>
+                  <span className="xl:hidden">Google</span>
+                </a>
+              </Button>
+            )}
           </div>
+
         </nav>
 
         {/* Tablet Menu */}
@@ -420,7 +509,7 @@ const FullwidthIconNavbar = ({
                     </a>
                   ))}
                 </div>
-                
+
 
 
 

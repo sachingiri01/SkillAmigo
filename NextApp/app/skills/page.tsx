@@ -120,7 +120,7 @@ const GigCard = ({ gig, index, isBooked }) => {
 
     setLoading(true);
     setError('');
-    setSuccess('');
+    
 
     try {
       const priceNumber = parseFloat(gig.price.replace(/[^\d.-]/g, ''));

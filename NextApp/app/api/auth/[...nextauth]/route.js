@@ -27,10 +27,10 @@ export const authOptions = {
         // insert new user
         const result = await pool.query(
           `INSERT INTO users (
-            name, email, phone, profile_picture, bio, merit_credits, is_verified, role
+            name, email, phone, profile_picture, bio, merit_credits, is_verified, role,balance
           )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          RETURNING user_id,phone, name, email,bio, profile_picture, role, is_verified, merit_credits`,
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8,$9)
+          RETURNING user_id,phone, name, email,bio, profile_picture, role, is_verified, merit_credits,balance`,
           [
             token.name || profile?.name || "Unnamed",
             token.email,
@@ -40,6 +40,7 @@ export const authOptions = {
             0,
             false,
             "user",
+            0,
           ]
         );
         token.id = result.rows[0].user_id;
@@ -49,6 +50,7 @@ export const authOptions = {
         token.profile_picture=result.rows[0].profile_picture;
         token.role=result.rows[0].role;
         token.bio=result.rows[0].bio;
+        token.balance=result.rows[0].balance;
       } else {
         token.id = rows[0].user_id;
         token.phone = rows[0].phone;
@@ -57,6 +59,7 @@ export const authOptions = {
         token.profile_picture=rows[0].profile_picture;
         token.role=rows[0].role;
         token.bio=rows[0].bio;
+        token.balance=rows[0].balance;
 
       }
        
@@ -72,6 +75,9 @@ export const authOptions = {
       session.user.profile_picture=token.profile_picture;
       session.user.image = token.profile_picture || null;
       session.user.bio=token.bio;
+      session.user.balance=token.balance;
+     
+      
       
    
      
