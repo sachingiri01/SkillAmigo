@@ -27,10 +27,10 @@ apis = [
         "name": "book_gig",
         "description": "Book a gig or freelance job for the user.",
         "method": "POST",
-        "url": f"{BACKEND_URL}/booking",
+        "url": f"{BACKEND_URL}/ai-booking",
         "body_schema": {
             "gigId": "string",
-            "user_id": "string",
+            "user_id": "string this will be logged_user_id",
             "coin":"this is given as avg_price in gigs data",
 
         }
@@ -59,7 +59,7 @@ apis = [
         "name": "cancel_booking",
         "description": "Cancel a previously booked service or gig.",
         "method": "POST",
-        "url": f"{BACKEND_URL}/bookings/cancel",
+        "url": f"{BACKEND_URL}/booking/gigid",
         "body_schema": {
             "booking_id": "string",
             "user_id": "string",
@@ -121,7 +121,7 @@ Rules:
    and history = [{{"gigId": "1", "user_id": 1...}}, {{"gigId": "2", "user_id": 2...}}],
    then you must output a booking request with gig_id="1" and user_id=1.
 5. Return ONLY valid JSON in one of the following formats:
-
+And this is the logged_user_id -> {logged_user_id}
 If the request is not related to any available API:
 {{
   "error": "Request not related to any available API",
@@ -144,7 +144,7 @@ collab_prompt = """
 You are SkillAmigo's AI Agent.
 You have the following APIs available:
 {apis}
-
+And this is the logged_user_id -> {logged_user_id}
 Rules:
 1. The variable "history" is a list of objects containing gig or user details. 
    Example: history = [
@@ -263,20 +263,21 @@ def process_worker(request: UserRequest,history=None):
 import json
 import re
 
-def process_worker_v2(msg: str, history=None, user_id=None):
+def process_worker_v2(msg: str, history=None, user_id=None,logged_user_id=None):
     """
     Processes a raw user message (string) + optional history, 
     and decides which API to call.
     """
     if history is None:
         history = []
-
+    print("logged_user_id v2",user_id)
     try:
         # Run chain with inputs
         result = chain.invoke({
             "msg": msg,
             "apis": apis,
-            "history": history
+            "history": history,
+            "logged_user_id":user_id
         })
 
         # Normalize LLM output
@@ -324,7 +325,8 @@ def process_worker_collab(msg: str, history=None, user_id=None):
         result = collab_chain.invoke({
             "msg": msg,
             "apis": apis,
-            "history": history
+            "history": history,
+            "logged_user_id":user_id
         })
 
         # Normalize LLM output

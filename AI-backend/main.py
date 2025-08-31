@@ -135,7 +135,8 @@ async def surpervisor(request: Request):
     history = task_data.get("history", [])
     full_chat = ""
     collected_data = []  # <-- to store gig arrays
-
+    logged_user_id = history[0].get("logged_user_id") if history else None
+    print(logged_user_id," yes")
     if history:
         for msg in history:
             role = msg.get("type")
@@ -155,7 +156,7 @@ async def surpervisor(request: Request):
     print(f"Received request in supervisor : {history} , formatted chat:\n{full_chat}")
     print("Collected gigs:", collected_data)   # ✅ you'll see your gigs array here
 
-    res = await surpervisor_work(full_chat, final_msg,collected_data)
+    res = await surpervisor_work(full_chat, final_msg,collected_data,logged_user_id)
     print("final sending basck",res);
     return {
         "data": res,
@@ -178,7 +179,9 @@ def upload_data():
 async def organise(request:Request):
     task_data = await request.json()
     print("organizer working");
-    result=await expand_query(task_data['msg'],task_data['history']);
+    history = task_data.get("history", [])
+    logged_user_id = history[0].get("logged_user_id") if history else None
+    result=await expand_query(task_data['msg'],task_data['history'],logged_user_id);
     print("result collab ",result)
     return result;
     
