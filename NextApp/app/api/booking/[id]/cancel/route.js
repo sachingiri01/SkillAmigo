@@ -7,7 +7,7 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 export async function PATCH(req, context) {
   const params = await context.params; // await here
   const bookingId = params.id;
-
+  
   try {
     const session = await getServerSession(authOptions);
     if (!session) {

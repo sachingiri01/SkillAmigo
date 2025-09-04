@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CheckCircle, User  } from "lucide-react";
 import { Mail, Phone, Star, MapPin, Tag } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
 import { 
   Menu, 
   X, 
@@ -21,6 +22,7 @@ import {
   ExternalLink,
   Bot
 } from 'lucide-react';
+import { Session } from 'inspector/promises';
 
 // CSS Variables Definition
 const CSS_VARIABLES = {
@@ -535,7 +537,7 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
                   <div>
                        {message?.valid=="first" && message.data?.map((item, index) => {                 
   return (
-    <div key={item.id}  onClick={() => window.open(`/user/${item.id}`, "_blank")} className="mt-4 flex gap-2 flex-col">
+    <div key={item.id}  onClick={() => window.open(`/profile/${item.id}`, "_blank")} className="mt-4 flex gap-2 flex-col">
       <UserCard user={item.metadata} />
     </div>
   )
@@ -543,7 +545,7 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
 
    {message?.valid=="second" && message.data?.map((item, index) => {
   return (
-    <div key={item.id} onClick={() => window.open(`/gigs/${item.id}`, "_blank")}  className="mt-4 flex gap-2 flex-col">
+    <div key={item.id} onClick={() => window.open(`/gig/${item.id}`, "_blank")}  className="mt-4 flex gap-2 flex-col">
       <GigCard gig={item} />
     </div>
   )
@@ -1023,7 +1025,14 @@ const AgentDashboard = () => {
   const [messages, setMessages] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [cards, setCards] = useState([]);
-
+  const router=useRouter();
+  const { data: session,status  } = useSession(); 
+    useEffect(() => {
+    if (status === "unauthenticated") {  // only redirect if unauthenticated
+      router.push('/');
+    }
+  }, [status, router]);
+  
   // Handle agent selection
   const handleSelectAgent = (agent) => {
     setActiveAgent(agent);
@@ -1039,7 +1048,8 @@ const AgentDashboard = () => {
         [agent.id]: [{
           type: 'agent',
           content: `Hi! I'm ${agent.name}. ${agent.description}. How can I help you today?`,
-          timestamp: new Date().toLocaleTimeString()
+          timestamp: new Date().toLocaleTimeString(),
+          logged_user_id:session?.user?.id,
         }]
       }));
     }

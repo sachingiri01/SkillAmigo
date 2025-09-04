@@ -18,10 +18,11 @@ async def book_task(combined_msg,history=None):
         return {"error": str(e)}
 
 
-async def book_task_super(combined_msg,history=None):
+async def book_task_super(combined_msg,history=None,logged_user_id=None):
     try:
-        print(f"Combined Message: {combined_msg} , history: {history}")
-        resp = process_worker_v2(combined_msg,history)
+        # print(f"Combined Message: {combined_msg} , history: {history}")
+        print("logged_used_id",logged_user_id)
+        resp = process_worker_v2(combined_msg,history,logged_user_id)
         print(f"Chain result: {resp}")
         if resp.get('success') == False:
             return resp.get('error', 'No error message provided')
@@ -32,10 +33,10 @@ async def book_task_super(combined_msg,history=None):
         print(f"Error processing task: {e}")
         return {"error": str(e)}
 
-async def book_task_collab(combined_msg,history=None):
+async def book_task_collab(combined_msg,history=None,user_id=None):
     try:
         print(f"Combined Message: {combined_msg} , history: {history}")
-        resp = process_worker_collab(combined_msg,history)
+        resp = process_worker_collab(combined_msg,history,user_id)
         # print(f"Chain result: {resp}")
         if resp.get('success') == False:
             return resp.get('error', 'No error message provided')

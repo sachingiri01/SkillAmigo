@@ -34,9 +34,11 @@ import json
 import json
 import json
 
-async def surpervisor_work(history, user_message,data=None):
+async def surpervisor_work(history, user_message,data=None,logged_user_id=None):
     try:
-        print("op",user_message,history)
+
+        # print("op",user_message,history)
+        print("logged_useer_id",logged_user_id)
         # Run supervisor chain (always use invoke for multi-inputs)
         decision_raw = supervisor_chain.invoke({
             "history": history,
@@ -69,7 +71,7 @@ async def surpervisor_work(history, user_message,data=None):
         if worker == "query":
             return searching(user_message)
         elif worker == "api":
-            return await book_task_super(user_message, data)
+            return await book_task_super(user_message, data,logged_user_id)
         else:
             return {
                 "error": "Invalid worker chosen",

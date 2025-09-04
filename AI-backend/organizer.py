@@ -175,7 +175,7 @@ async def fetch_categories(ap=None):
 
 import json
 
-async def expand_query(user_query, history):
+async def expand_query(user_query, history,logged_user_id=None):
     print("organizer")
     try:
         # Step 1: Decide what to do
@@ -204,7 +204,7 @@ async def expand_query(user_query, history):
 
         # Step 2: If booking, call book_task_collab
         if decision.get("action") == "book":
-            return await book_task_collab(user_query, history)
+            return await book_task_collab(user_query, history,logged_user_id)
 
         # Step 3: If collaborate, expand categories
         categories = [
