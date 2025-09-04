@@ -8,7 +8,7 @@ import { NewsletterFooter } from '../_components/footers/newsletter-footer';
 
 // Individual Components
 const Hero = ({ title, picture }) => (
-  <section className="relative min-h-[70vh] overflow-hidden mt-11">
+  <section className="relative min-h-[70vh] overflow-hidden pt-11">
     {/* Abstract Bohemian Background Pattern */}
     <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-100 via-jet-stream-200 to-jet-stream-300">
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">

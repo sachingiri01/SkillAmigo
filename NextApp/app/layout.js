@@ -1,8 +1,11 @@
 import "./globals.css"
 import Providers  from "./providers"
 export const metadata = {
-  title: "My App",
-  description: "Next.js + NextAuth demo",
+  title: "skillamigo",
+  description: "skillamigo",
+  icons: {
+    icon: "/favicon.svg",
+  },
 }
 
 export default function RootLayout({ children }) {

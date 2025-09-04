@@ -3,6 +3,7 @@
 'use client'
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 
 import {
@@ -99,7 +100,7 @@ const SkeletonLoader = ({ className = "", type = "text" }) => {
 const Header = ({ user, onLogout, onHome }) => {
   const { data: session } = useSession();
   return (
-    <header className="bg-white shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30"
+    <header className="bg-jet-stream-50 shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30"
       style={{ borderBottomColor: '#e1ecea' }}>
       <div className="px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
@@ -179,10 +180,10 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:w-64 w-64
         top-0 lg:top-20
-      `} style={{ backgroundColor: '#344545' }}>
+      `} style={{ backgroundColor: '#141919' }}>
         <div className="p-4 pt-20 lg:pt-6 relative overflow-hidden">
           {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-90">
             <div className="absolute inset-0" style={{
               backgroundImage: `
                 radial-gradient(circle at 20px 20px, rgba(159, 193, 189, 0.4) 2px, transparent 0),
@@ -193,12 +194,19 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
           </div>
 
           <div className="relative z-10">
-            <div className="flex items-center space-x-3 mb-8">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+            <div className="flex items-center space-x-1 mb-8">
+              {/* <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ backgroundColor: '#ff6b35' }}>
                 <span className="text-white font-bold text-sm">SA</span>
-              </div>
-              <h2 className="text-xl font-bold text-white">SkillsAmigo</h2>
+              </div> */}
+              <Image
+                src="/skill_logo.svg"
+                alt="Logo"
+                width={45}
+                height={45}
+                className="w-12 h-12"
+              />
+              <h2 className="text-xl font-bold text-jet-stream-100">SkillsAmigo</h2>
             </div>
 
             <nav className="space-y-2">

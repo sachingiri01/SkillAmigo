@@ -19,7 +19,7 @@ const FullScreenBackgroundHero = () => {
         playsInline
         preload="auto"
       >
-        <source src="https://v3.fal.media/files/lion/oILpeJgOgmvPl2-ATCAwd_output.mp4" type="video/mp4" />
+        <source src="/hero.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       
@@ -32,11 +32,11 @@ const FullScreenBackgroundHero = () => {
       <div className="absolute inset-0 pattern-dots opacity-90 z-20"></div>
       
       {/* Floating Elements for Visual Interest */}
-      <div className="absolute top-20 right-20 w-32 h-32 bg-jet-stream-300/10 rounded-full blur-xl animate-pulse z-25" style={{ animationDuration: '4s' }}></div>
-      <div className="absolute bottom-32 left-16 w-24 h-24 bg-saffron/10 rounded-full blur-xl animate-pulse z-25" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
+      {/* <div className="absolute top-20 right-20 w-32 h-32 bg-jet-stream-300/10 rounded-full blur-xl animate-pulse z-25" style={{ animationDuration: '4s' }}></div>
+      <div className="absolute bottom-32 left-16 w-24 h-24 bg-saffron/10 rounded-full blur-xl animate-pulse z-25" style={{ animationDuration: '6s', animationDelay: '2s' }}></div> */}
       
       <div className="container relative z-30 h-full w-full max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-full w-full flex-col justify-center items-start">
+        <div className="flex h-full w-full flex-col justify-center items-start pt-5">
           {/* Stats Bar */}
           <motion.div 
             initial={{ opacity: 0, y: -30 }}

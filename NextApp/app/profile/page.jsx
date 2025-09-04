@@ -222,7 +222,7 @@ const ReviewsSection = ({ reviews }) => (
 
 // Hero Banner Component with Magazine Layout
 const HeroBanner = ({ user }) => (
-  <section className="relative min-h-[80vh] overflow-hidden bg-gradient-to-tr from-jet-stream-50 via-orange-50 to-jet-stream-100 mt-10">
+  <section className="relative min-h-[80vh] overflow-hidden bg-gradient-to-tr from-jet-stream-50 via-orange-50 to-jet-stream-100 pt-7">
     {/* Organic flowing background */}
     <div className="absolute inset-0">
       <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
@@ -672,10 +672,10 @@ export default function UserProfilePage() {
   // Enhanced dummy user data
   const user = {
     user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    name: "Sachin Giri",
+    name: "Aman Kumar",
     email: "maya.chen@creativestudio.com",
     phone: "+1 (555) 987-6543",
-    profile_picture: "/sa.jpg",
+    profile_picture: "/am.jpg",
     bio: "Creative photographer and visual storyteller based in Portland, Oregon. I specialize in capturing authentic moments that tell compelling stories through the lens of human connection. My work spans from intimate portraits to large-scale commercial campaigns, always with a focus on emotional depth and artistic vision. When I'm not behind the camera, you'll find me exploring hidden coffee shops, hiking Pacific Northwest trails, or experimenting with new post-processing techniques.",
     merit_credits: 6250,
     is_verified: true,
