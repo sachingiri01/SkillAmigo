@@ -797,10 +797,10 @@ const MyGigs = () => {
                     <span className="font-medium">Price:</span> {gig.min_price} - {gig.maxPrice} coins
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Applicants:</span> {gig.applicants || 0}
+                    <span className="font-medium">Applicants:</span> {gig.buyer_count || 0}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Posted:</span> {gig.gig_created_at ? new Date(gig.gig_created_at).toLocaleDateString() : 'N/A'}
+                    <span className="font-medium">Posted:</span> {gig.gig_created_at? new Date(gig.gig_created_at).toLocaleDateString() : 'N/A'}
 
                   </p>
                 </div>
