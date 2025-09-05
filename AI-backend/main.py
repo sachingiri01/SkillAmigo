@@ -9,9 +9,10 @@ from chat_worker import chat_work
 from book_worker import book_task
 from supervisor import surpervisor_work
 from pine import index
-from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig,upload_data_to_pinecone_user
+from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig,upload_data_to_pinecone_user,upload_text_to_pinecone,update_policy_to_pinecone
 from organizer import expand_query
 import requests
+from rag_upload import rag_upload
 import json
 from fastapi.middleware.cors import CORSMiddleware
 # from routers.users import router as users_router
@@ -217,3 +218,45 @@ async def upload_data(request: Request):
 
     except Exception as e:
         return {"status": "error", "msg": str(e)}
+    
+
+@app.post("/update-policy")
+async def upload_data(request: Request):
+    """
+    Endpoint to receive gig JSON and upload to Pinecone.
+    """
+    try:
+        data = await request.json()
+        msg=data.get('msg');
+        doc_id=data.get('doc_id') or "User_manual"
+        source=data.get('source') or "manual"
+        doc_type=data.get('doc_type') or "general"  
+        print("Received user:", data.get('msg'))
+        if(len(msg)==0):
+            return {"status": "success", "msg": f"Nothing to upload"}
+        result = update_policy_to_pinecone(
+              raw_text=msg,
+              doc_id=doc_id,
+              doc_type=doc_type,
+              source=source,
+        )  
+        print("response update",result)
+        return result
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+    
+
+
+@app.get("/rag-upload123098")
+async def upload_data(request: Request):
+    """
+   
+    """
+    try:
+        response=rag_upload();
+        return response
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+    
