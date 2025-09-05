@@ -73,24 +73,23 @@ const Header = ({ user, onLogout, onHome }) => {
       style={{ borderBottomColor: '#e1ecea' }}>
       <div className="px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3 ml-16 lg:ml-0">
+          <div className="flex items-center space-x-1 ml-16 lg:ml-0">
             <a href="/">
               <button
-                // onClick={onHome}
                 className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105"
                 style={{ backgroundColor: '#f3f8f8', color: '#344545' }}
               >
                 <Home className="w-5 h-5" />
                 <span className="font-semibold hidden sm:block">Home</span>
               </button></a>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
+            <div className="flex items-center space-x-1">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
                 <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#344545' }}>
-                  Welcome, {session && session.user?.name}!
+                <h1 className="text-xs sm:text-xl font-bold" style={{ color: '#344545' }}>
+                  <span className='hidden sm:inline'>Welcome,</span> {session && session.user?.name}!
                 </h1>
                 <p className="text-xs sm:text-sm hidden sm:block" style={{ color: '#719f9a' }}>
                   Ready to manage your gigs?
@@ -98,6 +97,43 @@ const Header = ({ user, onLogout, onHome }) => {
               </div>
             </div>
           </div>
+           
+<div className='flex items-center gap-4'>
+
+<div className="hidden sm:flex items-center gap-0 ">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    viewBox="0 0 64 64"
+                    className="animate-none"
+                  >
+                    {/* Outer bright coin ring */}
+                    <circle cx="32" cy="32" r="20" fill="#FFEB3B" />
+                    {/* Inner ring for depth */}
+                    <circle cx="32" cy="32" r="16" fill="#FBC02D" />
+                    {/* Even smaller inner circle for layering */}
+                    <circle cx="32" cy="32" r="16" fill="#FFF176" />
+
+                    {/* Rupee symbol */}
+                    <text
+                      x="32"
+                      y="42"
+                      textAnchor="middle"
+                      fontSize="26"
+                      fontWeight="bold"
+                      fill="#F57F17"
+                      fontFamily="Arial, sans-serif"
+                      stroke="#F57F17"
+                      strokeWidth="0.5"
+                      paintOrder="stroke"
+                    >
+                      ₹
+                    </text>
+                  </svg>
+                  <span className="font-semibold text-yellow-700 text-lg">{session?.user?.balance ?? 0}</span>
+                </div>
+
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
 
@@ -108,6 +144,7 @@ const Header = ({ user, onLogout, onHome }) => {
             <LogOut className="w-4 h-4" />
             <span className="text-sm hidden sm:block">Logout</span>
           </button>
+          </div>
         </div>
       </div>
     </header>
@@ -150,9 +187,9 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
         lg:translate-x-0 lg:w-64 w-64
         top-0 lg:top-20
       `} style={{ backgroundColor: '#141919' }}>
-        <div className="p-4 pt-20 lg:pt-6 relative overflow-hidden">
+        <div className="relative overflow-hidden min-h-screen p-4 pt-20 lg:pt-6">
           {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-90">
+          <div className="absolute inset-0  opacity-90">
             <div className="absolute inset-0" style={{
               backgroundImage: `
                 radial-gradient(circle at 20px 20px, rgba(159, 193, 189, 0.4) 2px, transparent 0),
@@ -164,10 +201,7 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
 
           <div className="relative z-10">
             <div className="flex items-center space-x-1 mb-8">
-              {/* <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: '#ff6b35' }}>
-                <span className="text-white font-bold text-sm">SA</span>
-              </div> */}
+              
               <Image
                 src="/skill_logo.svg"
                 alt="Logo"
@@ -1733,30 +1767,63 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Redeem</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
             {redeemOptions.map((option) => (
+              // <button
+              //   key={option.value}
+              //   onClick={() => handleRedeemCoins(option.value)}
+              //   disabled={loading || option.value > currentBalance}
+              //   className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base hover:scale-105"
+              //   style={{
+              //     backgroundColor: '#f3f8f8',
+              //     color: '#344545'
+              //   }}
+              //   onMouseEnter={(e) => {
+              //     if (!e.target.disabled) {
+              //       e.target.style.backgroundColor = '#ff6b35';
+              //       e.target.style.color = 'white';
+              //     }
+              //   }}
+              //   onMouseLeave={(e) => {
+              //     if (!e.target.disabled) {
+              //       e.target.style.backgroundColor = '#f3f8f8';
+              //       e.target.style.color = '#344545';
+              //     }
+              //   }}
+              // >
+              //   {option.label}
+              // </button>
               <button
-                key={option.value}
-                onClick={() => handleRedeemCoins(option.value)}
-                disabled={loading || option.value > currentBalance}
-                className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base hover:scale-105"
-                style={{
-                  backgroundColor: '#f3f8f8',
-                  color: '#344545'
-                }}
-                onMouseEnter={(e) => {
-                  if (!e.target.disabled) {
-                    e.target.style.backgroundColor = '#ff6b35';
-                    e.target.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!e.target.disabled) {
-                    e.target.style.backgroundColor = '#f3f8f8';
-                    e.target.style.color = '#344545';
-                  }
-                }}
-              >
-                {option.label}
-              </button>
+  key={option.value}
+  onClick={() => handleRedeemCoins(option.value)}
+  disabled={loading || option.value > currentBalance}
+  className="cursor-pointer hover:bg-[#ff6b35]"
+  // className="p-3 sm:p-4 
+  // rounded-xl 
+  // font-semibold text-sm sm:text-base 
+  // bg-[#f3f8f8] text-[#344545] 
+  // hover:bg-[#ff6b35] hover:text-white 
+  // disabled:opacity-50 disabled:cursor-not-allowed 
+  // select-none 
+  // transition-transform duration-200 transform hover:scale-105"
+  // style={{
+  //   backgroundColor: "#f3f8f8",
+  //   color: "#344545",
+  // }}
+  // onMouseEnter={(e) => {
+  //   if (!e.currentTarget.disabled) {
+  //     e.currentTarget.style.backgroundColor = "#ff6b35";
+  //     e.currentTarget.style.color = "white";
+  //   }
+  // }}
+  // onMouseLeave={(e) => {
+  //   if (!e.currentTarget.disabled) {
+  //     e.currentTarget.style.backgroundColor = "#f3f8f8";
+  //     e.currentTarget.style.color = "white";
+  //   }
+  // }}
+>
+  {option.label}
+</button>
+
             ))}
           </div>
 
