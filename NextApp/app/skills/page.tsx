@@ -13,7 +13,7 @@ import { Input } from "../_components/ui/input";
 import { Badge as BadgeComponent } from "../_components/ui/badge";
 import { FullwidthIconNavbar } from "../_components/navbars/fullwidth-icon-navbar";
 import { NewsletterFooter } from "../_components/footers/newsletter-footer";
-
+import { useRouter } from "next/navigation";
 
 const FloatingElement = ({ children, delay = 0, duration = 4 }) => (
   <div
@@ -86,9 +86,8 @@ const GigCard = ({ gig, index, isBooked }) => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  // const [success, setSuccess] = useState('');
   const [scheduledDate, setScheduledDate] = useState('');
-  // const [showDateInput, setShowDateInput] = useState(false);
+
 
   const [showBookingPanel, setShowBookingPanel] = useState(false);
   const [booked, setBooked] = useState(isBooked || false);
@@ -110,11 +109,27 @@ const GigCard = ({ gig, index, isBooked }) => {
     return () => observer.disconnect();
   }, [index]);
 
-
-
+  const { data: session } = useSession();
+  const router = useRouter();
   const submitBooking = async () => {
+  
     if (!scheduledDate || isNaN(Date.parse(scheduledDate))) {
       setError('Please select a valid scheduled date.');
+      return;
+    }
+     if (!session) {
+      alert("Please sign in to book.");
+      return;
+    }
+
+    // Convert both to numbers to be safe
+    
+    const price = Number(gig.price.substr(1));
+  const balance: number = Number((session?.user as any)?.balance ?? 0);;
+     console.log("sejal",price,balance);
+     
+    if (balance < price) {
+      alert("❌ Insufficient balance to book this gig");
       return;
     }
 
@@ -136,18 +151,18 @@ const GigCard = ({ gig, index, isBooked }) => {
 
         }),
       });
-      console.log(gig.price)
+      
 
 
       const data = await response.json();
-      console.log("respose", data);
+     
       if (!response.ok) throw new Error(data.error || 'Failed to book service');
-
-      // setSuccess('Booking successful! 🎉');
+      alert("booking sucessfull")
       setBooked(true);
-      // setShowDateInput(false); // Hide input
       setShowBookingPanel(false);
       setScheduledDate('');
+      router.push("/dashboard");
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -412,6 +427,8 @@ const categories = [
 ];
 
 export default function FindSkillsFeed() {
+  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [filteredGigs, setFilteredGigs] = useState([]);

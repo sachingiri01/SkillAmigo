@@ -4,6 +4,8 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import Link from "next/link";
 
 
 import {
@@ -32,38 +34,7 @@ import {
 } from 'lucide-react';
 import { log } from 'console';
 import { devNull } from 'os';
-interface Gig {
-  gig_id: number;
-  title: string;
-  description: string;
-  category: string;
-  min_price: number;
-  avg_price: number;
-  location: string;
-  picture: string | null;
-  rating: number | null;
-  gig_created_at: string;
-  seller_id: number;
-  seller_name: string;
-  seller_email: string;
-  seller_picture: string | null;
-  booking_id?: number;
-  booking_status?: string | null;
-  booking_date?: string | null;
-  scheduled_date?: string | null;
-  coins_paid?: number | null;
-  buyer_id?: number | null;
-  buyer_name?: string | null;
-  buyer_email?: string | null;
-  buyer_picture?: string | null;
-  status?: string; // if you use it in frontend
-  minPrice?: number; // mapped fields for frontend
-  maxPrice?: number;
-  applicants?: number; // if you want to use this as alias for buyer_count
-  posted?: string;
 
-  buyer_count?: number; // added field from SQL query (number of unique buyers)
-}
 
 
 // Skeleton Loader Component
@@ -128,53 +99,53 @@ const Header = ({ user, onLogout, onHome }) => {
               </div>
             </div>
           </div>
-           
-<div className='flex items-center gap-4'>
 
-<div className="hidden sm:flex items-center gap-0 ">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="40"
-                    height="40"
-                    viewBox="0 0 64 64"
-                    className="animate-none"
-                  >
-                    {/* Outer bright coin ring */}
-                    <circle cx="32" cy="32" r="20" fill="#FFEB3B" />
-                    {/* Inner ring for depth */}
-                    <circle cx="32" cy="32" r="16" fill="#FBC02D" />
-                    {/* Even smaller inner circle for layering */}
-                    <circle cx="32" cy="32" r="16" fill="#FFF176" />
+          <div className='flex items-center gap-4'>
 
-                    {/* Rupee symbol */}
-                    <text
-                      x="32"
-                      y="42"
-                      textAnchor="middle"
-                      fontSize="26"
-                      fontWeight="bold"
-                      fill="#F57F17"
-                      fontFamily="Arial, sans-serif"
-                      stroke="#F57F17"
-                      strokeWidth="0.5"
-                      paintOrder="stroke"
-                    >
-                      ₹
-                    </text>
-                  </svg>
-                  <span className="font-semibold text-yellow-700 text-lg">{session?.user?.balance ?? 0}</span>
-                </div>
+            <div className="hidden sm:flex items-center gap-0 ">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                viewBox="0 0 64 64"
+                className="animate-none"
+              >
+                {/* Outer bright coin ring */}
+                <circle cx="32" cy="32" r="20" fill="#FFEB3B" />
+                {/* Inner ring for depth */}
+                <circle cx="32" cy="32" r="16" fill="#FBC02D" />
+                {/* Even smaller inner circle for layering */}
+                <circle cx="32" cy="32" r="16" fill="#FFF176" />
 
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+                {/* Rupee symbol */}
+                <text
+                  x="32"
+                  y="42"
+                  textAnchor="middle"
+                  fontSize="26"
+                  fontWeight="bold"
+                  fill="#F57F17"
+                  fontFamily="Arial, sans-serif"
+                  stroke="#F57F17"
+                  strokeWidth="0.5"
+                  paintOrder="stroke"
+                >
+                  ₹
+                </text>
+              </svg>
+              <span className="font-semibold text-yellow-700 text-lg">{session?.user?.balance ?? 0}</span>
+            </div>
 
-            className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors duration-200 hover:scale-105"
-            style={{ backgroundColor: '#f3f8f8', color: '#405e5e' }}
-            aria-label="Logout"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="text-sm hidden sm:block">Logout</span>
-          </button>
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+
+              className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors duration-200 hover:scale-105"
+              style={{ backgroundColor: '#f3f8f8', color: '#405e5e' }}
+              aria-label="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-sm hidden sm:block">Logout</span>
+            </button>
           </div>
         </div>
       </div>
@@ -232,7 +203,7 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
 
           <div className="relative z-10">
             <div className="flex items-center space-x-1 mb-8">
-              
+
               <Image
                 src="/skill_logo.svg"
                 alt="Logo"
@@ -688,6 +659,49 @@ const PostGigForm = ({ onSubmit }) => {
     </div>
   );
 };
+interface Gig {
+  gig_id: string; // UUID from DB
+  title: string;
+  description: string;
+  category: string;
+  min_price: string;  // DB returns as string (DECIMAL/NUMERIC)
+  avg_price: string;
+  location: string;
+  picture: string | null;
+  rating: number | null;
+  created_at: string;   // DB field (renamed from gig_created_at)
+  updated_at?: string;
+
+  // Seller info
+  seller_id: string;
+  seller_name: string;
+  seller_email: string;
+  seller_picture: string | null;
+
+  // Booking info (optional, if joined in query)
+  booking_id?: string;
+  booking_status?: string | null;
+  booking_date?: string | null;
+  scheduled_date?: string | null;
+  coins_paid?: number | null;
+
+  // Buyer info (optional, if joined)
+  buyer_id?: string | null;
+  buyer_name?: string | null;
+  buyer_email?: string | null;
+  buyer_picture?: string | null;
+
+  // Aggregates
+  buyer_count?: number; // from COUNT(DISTINCT buyer_id)
+
+  // Optional frontend-only fields (aliases)
+  status?: string;     // e.g. availability || "posted"
+  minPrice?: number;   // parseFloat(min_price)
+  maxPrice?: number;   // parseFloat(avg_price)
+  applicants?: number; // alias for buyer_count
+  posted?: string;     // formatted created_at
+}
+
 
 // My Gigs Component - Gigs posted by user
 const MyGigs = () => {
@@ -735,6 +749,8 @@ const MyGigs = () => {
         const res = await fetch(`/api/users/gigs`);
         if (!res.ok) throw new Error("Failed to fetch gigs");
         const data = await res.json();
+        console.log("what is my gig info", data);
+
         setMyGigs(data);
       } catch (error) {
         console.error("Error fetching gigs:", error);
@@ -834,14 +850,16 @@ const MyGigs = () => {
                     <span className="font-medium">Applicants:</span> {gig.buyer_count || 0}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Posted:</span> {gig.gig_created_at? new Date(gig.gig_created_at).toLocaleDateString() : 'N/A'}
+                    <span className="font-medium">Posted:</span> {gig.created_at ? new Date(gig.created_at).toLocaleDateString() : 'N/A'}
 
                   </p>
                 </div>
 
                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
-                    View Details
+                    
+                      View Details
+                    
                   </button>
                   <button
                     className="text-sm font-medium hover:underline"
@@ -999,7 +1017,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     }}
                   >
                     {(booking.status?.replace("-", " ") ?? "")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      .replace(/\b\w/g, (l) => l.toUpperCase())}
 
                   </span>
                 </div>
@@ -1018,8 +1036,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     {booking.category ?? "N/A"}
                   </p>
                   <p className="text-sm" style={{ color: "#405e5e" }}>
-                    <span className="font-medium">Started:</span>{" "}
-                    {booking.startDate ?? booking.booking_date}
+                    <span className="font-medium">Posted:</span> {booking.booking_date ? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
 
@@ -1030,6 +1047,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                   <button
                     className="text-sm font-medium hover:underline"
                     style={{ color: "#558581" }}
+                    // onClick={() => router.push(`/gig/${gig.gig_id}`)}
                   >
                     View Details
                   </button>
@@ -1110,9 +1128,9 @@ interface BookedGig {
   rating?: number;
   picture?: string;
   category?: string;
-  min_price?:number;
-  avg_price?:number;
-  coins_paid?:number;
+  min_price?: number;
+  avg_price?: number;
+  coins_paid?: number;
   cost?: number;  // Use this for cost if your backend returns it
 }
 
@@ -1187,7 +1205,7 @@ const BookedGigs = () => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
-       console.log("res",res)
+      console.log("res", res)
       if (!res.ok) throw new Error("Failed to update status");
       const updated = await res.json();
 
@@ -1201,7 +1219,7 @@ const BookedGigs = () => {
     }
   };
 
- 
+
 
   // 🌀 Loading state
   if (loading) {
@@ -1217,26 +1235,26 @@ const BookedGigs = () => {
     );
   }
 
-  
 
-return (
-  <div className="space-y-8">
-    <h2 className="text-2xl font-semibold text-gray-800">Your Booked Gigs</h2>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {bookedGigs.map((gig) => {
-        const { bg, text } = getStatusColor(gig.status);
+  return (
+    <div className="space-y-8">
+      <h2 className="text-2xl font-semibold text-gray-800">Your Booked Gigs</h2>
 
-        return (
-          <article
-            key={gig.booking_id}
-            className="border rounded-lg p-5 shadow-sm bg-white space-y-4"
-          >
-            {/* Title */}
-            <h3 className="text-xl font-semibold text-gray-900">{gig.title}</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {bookedGigs.map((gig) => {
+          const { bg, text } = getStatusColor(gig.status);
 
-            {/* Image */}
-            {/* {gig.picture && (
+          return (
+            <article
+              key={gig.booking_id}
+              className="border rounded-lg p-5 shadow-sm bg-white space-y-4"
+            >
+              {/* Title */}
+              <h3 className="text-xl font-semibold text-gray-900">{gig.title}</h3>
+
+              {/* Image */}
+              {/* {gig.picture && (
               <img
                 src={gig.picture}
                 alt={`${gig.title} image`}
@@ -1245,72 +1263,72 @@ return (
               />
             )} */}
 
-            {/* Seller Info */}
-            <div className="text-gray-700 text-sm space-y-0.5">
-              <p>
-                <strong>Seller:</strong> {gig.seller_name}
-              </p>
-              <p>
-                <strong>Location:</strong> {gig.seller_location}
-              </p>
-              <p>
-              <strong>Scheduled For:</strong>{" "}
-              {gig.scheduled_date ? new Date(gig.scheduled_date).toLocaleDateString() : "N/A"}
-              </p>
+              {/* Seller Info */}
+              <div className="text-gray-700 text-sm space-y-0.5">
+                <p>
+                  <strong>Seller:</strong> {gig.seller_name}
+                </p>
+                <p>
+                  <strong>Location:</strong> {gig.seller_location}
+                </p>
+                <p>
+                  <strong>Scheduled For:</strong>{" "}
+                  {gig.scheduled_date ? new Date(gig.scheduled_date).toLocaleDateString() : "N/A"}
+                </p>
 
-              <p>
-               <strong>Booking Date:</strong>{" "}
-              {gig.booking_date ? new Date(gig.booking_date).toLocaleDateString() : "N/A"}
-              </p>
-              <p>
-                <strong>Category:</strong> {gig.category}
-              </p>
-            </div>
+                <p>
+                  <strong>Booking Date:</strong>{" "}
+                  {gig.booking_date ? new Date(gig.booking_date).toLocaleDateString() : "N/A"}
+                </p>
+                <p>
+                  <strong>Category:</strong> {gig.category}
+                </p>
+              </div>
 
-            {/* Pricing Info */}
-            <div className="text-gray-700 text-sm space-y-0.5">
-              <p>
-                <strong>Price Range:</strong> {gig.min_price} – {gig.avg_price} coins
-              </p>
-              <p>
-                <strong>Coins Paid:</strong> {gig.coins_paid}
-              </p>
-            </div>
+              {/* Pricing Info */}
+              <div className="text-gray-700 text-sm space-y-0.5">
+                <p>
+                  <strong>Price Range:</strong> {gig.min_price} – {gig.avg_price} coins
+                </p>
+                <p>
+                  <strong>Coins Paid:</strong> {gig.coins_paid}
+                </p>
+              </div>
 
-            {/* Status & Actions */}
-            <div className="flex items-center justify-between">
-              <span
-                className="px-3 py-1 text-xs font-semibold rounded-full"
-                style={{ backgroundColor: bg, color: text }}
-              >
-                {gig.status ? gig.status.toUpperCase() : "UNKNOWN"}
-              </span>
+              {/* Status & Actions */}
+              <div className="flex items-center justify-between">
+                <span
+                  className="px-3 py-1 text-xs font-semibold rounded-full"
+                  style={{ backgroundColor: bg, color: text }}
+                >
+                  {gig.status ? gig.status.toUpperCase() : "UNKNOWN"}
+                </span>
 
-              {gig.status === "confirmed" && (
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => handleUpdateStatus(gig.booking_id,'complete')}
-                    className="text-green-600 text-sm hover:underline"
-                  >
-                    Mark Complete
-                  </button>
-                  <button
-                    onClick={() => handleUpdateStatus(gig.booking_id,'cancel')}
-                    className="text-red-600 text-sm hover:underline"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
+                {gig.status === "confirmed" && (
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => handleUpdateStatus(gig.booking_id, 'complete')}
+                      className="text-green-600 text-sm hover:underline"
+                    >
+                      Mark Complete
+                    </button>
+                    <button
+                      onClick={() => handleUpdateStatus(gig.booking_id, 'cancel')}
+                      className="text-red-600 text-sm hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
 
-            
-          </article>
-        );
-      })}
+
+            </article>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
 
 };
 
@@ -1779,37 +1797,37 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
               //   {option.label}
               // </button>
               <button
-  key={option.value}
-  onClick={() => handleRedeemCoins(option.value)}
-  disabled={loading || option.value > currentBalance}
-  className="cursor-pointer hover:bg-[#ff6b35]"
-  // className="p-3 sm:p-4 
-  // rounded-xl 
-  // font-semibold text-sm sm:text-base 
-  // bg-[#f3f8f8] text-[#344545] 
-  // hover:bg-[#ff6b35] hover:text-white 
-  // disabled:opacity-50 disabled:cursor-not-allowed 
-  // select-none 
-  // transition-transform duration-200 transform hover:scale-105"
-  // style={{
-  //   backgroundColor: "#f3f8f8",
-  //   color: "#344545",
-  // }}
-  // onMouseEnter={(e) => {
-  //   if (!e.currentTarget.disabled) {
-  //     e.currentTarget.style.backgroundColor = "#ff6b35";
-  //     e.currentTarget.style.color = "white";
-  //   }
-  // }}
-  // onMouseLeave={(e) => {
-  //   if (!e.currentTarget.disabled) {
-  //     e.currentTarget.style.backgroundColor = "#f3f8f8";
-  //     e.currentTarget.style.color = "white";
-  //   }
-  // }}
->
-  {option.label}
-</button>
+                key={option.value}
+                onClick={() => handleRedeemCoins(option.value)}
+                disabled={loading || option.value > currentBalance}
+                className="cursor-pointer hover:bg-[#ff6b35]"
+              // className="p-3 sm:p-4 
+              // rounded-xl 
+              // font-semibold text-sm sm:text-base 
+              // bg-[#f3f8f8] text-[#344545] 
+              // hover:bg-[#ff6b35] hover:text-white 
+              // disabled:opacity-50 disabled:cursor-not-allowed 
+              // select-none 
+              // transition-transform duration-200 transform hover:scale-105"
+              // style={{
+              //   backgroundColor: "#f3f8f8",
+              //   color: "#344545",
+              // }}
+              // onMouseEnter={(e) => {
+              //   if (!e.currentTarget.disabled) {
+              //     e.currentTarget.style.backgroundColor = "#ff6b35";
+              //     e.currentTarget.style.color = "white";
+              //   }
+              // }}
+              // onMouseLeave={(e) => {
+              //   if (!e.currentTarget.disabled) {
+              //     e.currentTarget.style.backgroundColor = "#f3f8f8";
+              //     e.currentTarget.style.color = "white";
+              //   }
+              // }}
+              >
+                {option.label}
+              </button>
 
             ))}
           </div>
