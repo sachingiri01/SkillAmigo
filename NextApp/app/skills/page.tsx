@@ -172,34 +172,6 @@ const GigCard = ({ gig, index, isBooked }) => {
 
 
 
-
-  // useEffect(() => {
-  //   async function fetchBookingStatus() {
-  //     try {
-  //       const res = await fetch(`/api/booking-status?gigId=${gig.id}`);
-  //       if (!res.ok) throw new Error('Failed to fetch booking status');
-  //       const data = await res.json();
-  //       console.log("data for status",data);
-  //       if (data.booked) {
-  //         setBooked(true);
-  //       } else {
-  //         setBooked(false);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching booking status:', error);
-  //       // optionally setBooked(false) or leave as is
-  //     }
-  //   }
-
-  //   fetchBookingStatus();
-  // }, [gig.id]);
-  // useEffect(() => {
-  //   setBooked(isBooked);
-  // }, [isBooked]);
-
-
-
-
   useEffect(() => {
     const handleScroll = () => {
       if (cardRef.current) {

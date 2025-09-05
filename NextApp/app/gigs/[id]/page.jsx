@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Star, MapPin, Clock, DollarSign, MessageCircle, Calendar, Phone, Mail, Globe } from 'lucide-react';
-import { FullwidthIconNavbar } from '../_components/navbars/fullwidth-icon-navbar';
-import { NewsletterFooter } from '../_components/footers/newsletter-footer';
+import { FullwidthIconNavbar } from '../../_components/navbars/fullwidth-icon-navbar';
+import { NewsletterFooter } from '../../_components/footers/newsletter-footer';
+import { useParams } from 'next/navigation';
 
 // Individual Components
 const Hero = ({ title, picture }) => (
@@ -486,53 +487,74 @@ const CTA = () => (
 
 // Main Page Component
 export default function GigDetailPage() {
-  // Dummy data for demonstration - will work without routing
-  const gig = {
-    title: "Professional Wedding Photography",
-    description: "Capture your special day with stunning, timeless photographs that tell your unique love story. With over 8 years of experience in wedding photography, I specialize in candid moments, artistic portraits, and breathtaking venue shots.\n\nMy approach combines photojournalistic storytelling with creative artistry, ensuring every precious moment is beautifully preserved. From intimate ceremonies to grand celebrations, I'll work closely with you to understand your vision and deliver images that exceed your expectations.",
-    category: "Photography & Videography",
-    min_price: 800,
-    avg_price: 1200,
-    availability: {
-      "saturday": ["9:00 AM - 11:00 PM"],
-      "sunday": ["10:00 AM - 8:00 PM"],
-      "friday": ["2:00 PM - 11:00 PM"]
-    },
-    rating: 4.8,
-    picture: "/api/placeholder/800/600"
+    const params = useParams();
+    const [Loading, setLoading] = useState(true)
+    const { id } = params; // gigId from URL
+  const [gigData, setGigData] = useState(null);
+
+const [seller, setSeller] = useState({});
+
+useEffect(() => {
+  if (!id) return;
+  
+  const fetchGig = async () => {
+    try {
+      const res = await fetch(`/api/gigs/${id}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to fetch gig');
+      } else {
+        setGigData(data.gig || null);
+        console.log(data);
+        
+
+        // Safely set seller info if available
+        const {
+          seller_id = '',
+          seller_name = '',
+          seller_email = '',
+          seller_picture = '',
+          seller_bio = '',
+          seller_merit = 0,
+          seller_verified = false
+        } = data.gig || {};
+
+        setSeller({
+          user_id: seller_id,
+          name: seller_name,
+          email: seller_email,
+          profile_picture: seller_picture,
+          bio: seller_bio,
+          merit_credits: seller_merit,
+          is_verified: seller_verified
+        });
+      }
+    } catch (err) {
+      setError('Internal Server Error');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Dummy seller data based on users table structure
-  const seller = {
-    user_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    name: "Sarah Johnson",
-    email: "sarah.johnson@photography.com",
-    phone: "+1 (555) 123-4567",
-    profile_picture: "/api/placeholder/150/150",
-    bio: "Passionate wedding photographer with 8+ years of experience capturing love stories. I believe every couple deserves to have their special moments preserved in the most beautiful way possible. My style blends candid photojournalism with artistic portraiture to create timeless images that will be treasured for generations.",
-    merit_credits: 4850,
-    is_verified: true,
-    role: "photographer",
-    created_at: "2019-03-15T10:30:00Z",
-    updated_at: "2024-12-01T14:20:00Z"
-  };
-
+  fetchGig();
+}, [id]);
   return (
     <main className="min-h-screen">
       <FullwidthIconNavbar />
-      <Hero title={gig.title} picture={gig.picture} />
+      <Hero title={gigData?.title} picture={gigData?.picture} />
       <GigInfo 
-        title={gig.title} 
-        description={gig.description} 
-        category={gig.category} 
+        title={gigData?.title} 
+        description={gigData?.description} 
+        category={gigData?.category} 
       />
       <Pricing 
-        minPrice={gig.min_price} 
-        avgPrice={gig.avg_price} 
-        availability={gig.availability} 
+        minPrice={gigData?.min_price} 
+        avgPrice={gigData?.avg_price} 
+        availability={gigData?.availability} 
       />
       <SellerInfo seller={seller} />
-      <Rating rating={gig.rating} />
+      <Rating rating={gigData?.rating} />
       <CTA />
        <NewsletterFooter />
     </main>

@@ -63,11 +63,7 @@ export async function DELETE(req, { params }) {
 
 export async function GET(req, { params }) {
   const { id: gigId } = params;
-  // ✅ Check session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  
 
   try {
     // Fetch gig with seller info
@@ -84,6 +80,8 @@ export async function GET(req, { params }) {
         g.picture,
         g.created_at,
         g.updated_at,
+        g.availability,
+        g.contact_info,
         -- Seller details
         u.user_id AS seller_id,
         u.name AS seller_name,
@@ -97,6 +95,7 @@ export async function GET(req, { params }) {
       WHERE g.gig_id = $1`,
       [gigId]
     );
+    console.log("bsck",gigRes);
 
     if (gigRes.rowCount === 0) {
       return NextResponse.json({ error: "Gig not found" }, { status: 404 });

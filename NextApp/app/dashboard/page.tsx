@@ -709,7 +709,12 @@ const MyGigs = () => {
   const [myGigs, setMyGigs] = useState<Gig[]>([]);
   const [applicants, setApplicants] = useState({});
   const { data: session } = useSession();
-  
+   const router =  useRouter();
+
+  const hanldegigr=(id)=>{
+    if(!id) return
+    router.push(`/gigs/${id}`);}
+
   const handleDelete = async (gigId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
     if (!confirmDelete) return;
@@ -800,12 +805,8 @@ const MyGigs = () => {
       </div>
     );
   }
-  const router =  useRouter();
-
-  const hanldegigr=(id)=>{
-    if(!id) return
-    router.push(`/gigs/${id}`);
-  }
+ 
+  
 
   return (
     <div className="space-y-6">
