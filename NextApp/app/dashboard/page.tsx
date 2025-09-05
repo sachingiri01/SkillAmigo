@@ -709,8 +709,7 @@ const MyGigs = () => {
   const [myGigs, setMyGigs] = useState<Gig[]>([]);
   const [applicants, setApplicants] = useState({});
   const { data: session } = useSession();
-
-
+  
   const handleDelete = async (gigId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
     if (!confirmDelete) return;
@@ -801,6 +800,12 @@ const MyGigs = () => {
       </div>
     );
   }
+  const router =  useRouter();
+
+  const hanldegigr=(id)=>{
+    if(!id) return
+    router.push(`/gigs/${id}`);
+  }
 
   return (
     <div className="space-y-6">
@@ -856,7 +861,9 @@ const MyGigs = () => {
                 </div>
 
                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}>
+                  <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}
+                  onClick={()=>hanldegigr(gig.gig_id)}
+                  >
                     
                       View Details
                     
