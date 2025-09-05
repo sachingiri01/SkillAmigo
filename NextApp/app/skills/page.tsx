@@ -109,7 +109,7 @@ const GigCard = ({ gig, index, isBooked }) => {
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [index]);
-  
+
 
 
   const submitBooking = async () => {
@@ -120,7 +120,7 @@ const GigCard = ({ gig, index, isBooked }) => {
 
     setLoading(true);
     setError('');
-    
+
 
     try {
       const priceNumber = parseFloat(gig.price.replace(/[^\d.-]/g, ''));
@@ -135,11 +135,12 @@ const GigCard = ({ gig, index, isBooked }) => {
           coin: priceNumber,
 
         }),
-      });     
+      });
+      console.log(gig.price)
 
 
       const data = await response.json();
-     
+      console.log("respose", data);
       if (!response.ok) throw new Error(data.error || 'Failed to book service');
 
       // setSuccess('Booking successful! 🎉');
@@ -157,29 +158,29 @@ const GigCard = ({ gig, index, isBooked }) => {
 
 
 
-useEffect(() => {
-  async function fetchBookingStatus() {
-    try {
-      const res = await fetch(`/api/booking-status?gigId=${gig.id}`);
-      if (!res.ok) throw new Error('Failed to fetch booking status');
-      const data = await res.json();
-      console.log("data for status",data);
-      if (data.booked) {
-        setBooked(true);
-      } else {
-        setBooked(false);
-      }
-    } catch (error) {
-      console.error('Error fetching booking status:', error);
-      // optionally setBooked(false) or leave as is
-    }
-  }
+  // useEffect(() => {
+  //   async function fetchBookingStatus() {
+  //     try {
+  //       const res = await fetch(`/api/booking-status?gigId=${gig.id}`);
+  //       if (!res.ok) throw new Error('Failed to fetch booking status');
+  //       const data = await res.json();
+  //       console.log("data for status",data);
+  //       if (data.booked) {
+  //         setBooked(true);
+  //       } else {
+  //         setBooked(false);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching booking status:', error);
+  //       // optionally setBooked(false) or leave as is
+  //     }
+  //   }
 
-  fetchBookingStatus();
-}, [gig.id]);
-useEffect(() => {
-  setBooked(isBooked);
-}, [isBooked]);
+  //   fetchBookingStatus();
+  // }, [gig.id]);
+  // useEffect(() => {
+  //   setBooked(isBooked);
+  // }, [isBooked]);
 
 
 
@@ -320,7 +321,7 @@ useEffect(() => {
           </Button>
 
           {/* Show Book button only if NOT booked */}
-          {!booked ? (
+          {!gig.hasActiveBooking ? (
             <Button
               size="sm"
               className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-300 hover:scale-105 shadow-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
@@ -328,7 +329,6 @@ useEffect(() => {
                 setShowBookingPanel(true);
                 setScheduledDate('');
                 setError('');
-               
               }}
               disabled={loading}
             >
@@ -337,19 +337,19 @@ useEffect(() => {
             </Button>
           ) : (
             <div
-            className="bg-green-600 text-white rounded px-3 py-1 text-xs sm:text-sm flex items-center space-x-1 cursor-pointer select-none hover:bg-green-700 transition duration-200 ease-in-out"
-            role="button"
-            tabIndex={0}
-            onClick={() => alert('You have already booked this gig.')}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') alert('You have already booked this gig.');
-            }}
-          >
-            <Check className="w-4 h-4" />
-            <span>Booked</span>
-          </div>
-            
+              className="bg-green-600 text-white rounded px-3 py-1 text-xs sm:text-sm flex items-center space-x-1 cursor-pointer select-none hover:bg-green-700 transition duration-200 ease-in-out"
+              role="button"
+              tabIndex={0}
+              onClick={() => alert('You have already booked this gig.')}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') alert('You have already booked this gig.');
+              }}
+            >
+              <Check className="w-4 h-4" />
+              <span>Booked</span>
+            </div>
           )}
+
         </div>
         {showBookingPanel && (
           <div className="mt-3 flex items-center space-x-2">
@@ -374,7 +374,7 @@ useEffect(() => {
                 setShowBookingPanel(false);
                 setScheduledDate('');
                 setError('');
-              
+
               }}
               disabled={loading}
               className="text-gray-500 px-2 py-1 hover:text-gray-700 transition-colors duration-200"
@@ -391,7 +391,7 @@ useEffect(() => {
 
 
       </div>
-       
+
 
 
     </Card>

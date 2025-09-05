@@ -13,8 +13,61 @@ import cloudinary from "../cloudinary";
 //this api fetch all gigs on platform
 
 // GET /api/gigs → fetch all gigs
+// export async function GET() {
+//   try {
+//     const result = await pool.query(`
+//       SELECT 
+//         g.gig_id AS id,
+//         g.title,
+//         g.description,
+//         g.category,
+//         g.avg_price,
+//         g.rating,
+//         g.picture,
+//         g.availability,
+//         u.name AS provider,
+//         u.profile_picture ,
+//         u.is_verified 
+//       FROM gigs g
+//       JOIN users u ON g.seller_id = u.user_id
+//       ORDER BY g.created_at DESC
+//     `);
+  
+
+//     // Map DB fields to card component structure
+//     const gigs = result.rows.map(gig => ({
+//       id: gig.id,
+//       title: gig.title,
+//       description: gig.description,
+//       provider: gig.provider,
+//       profile_picture: gig.profile_picture,
+//       picture: gig.picture,
+//       price: `₹${gig.avg_price}`,
+//       priceType: "per project",
+//       rating: gig.rating || 0,
+//       reviews: 0, // Placeholder until review table exists
+//       distance: "2.3 km", // Placeholder or compute from location
+//       availability: gig.availability?.status || "Available now",
+//       tags: gig.category ? [gig.category] : [],
+//       is_verified: gig.is_verified || false
+//     }));
+//     console.log("row",gigs);
+    
+
+//     return NextResponse.json(gigs, { status: 200 });
+//   } catch (error) {
+//     return NextResponse.json({ error: error.message }, { status: 500 });
+//   }
+// }
+
+
+
+// GET /api/gigs → fetch all gigs
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
     const result = await pool.query(`
       SELECT 
         g.gig_id AS id,
@@ -26,16 +79,33 @@ export async function GET() {
         g.picture,
         g.availability,
         u.name AS provider,
-        u.profile_picture ,
-        u.is_verified 
+        u.profile_picture,
+        u.is_verified
       FROM gigs g
       JOIN users u ON g.seller_id = u.user_id
       ORDER BY g.created_at DESC
     `);
-  
+
+    let gigs = result.rows;
+
+    // If user is logged in, fetch their active bookings
+    let activeGigIds = new Set();
+    if (userId) {
+      const bookingRes = await pool.query(
+        `
+        SELECT gig_id
+        FROM bookings
+        WHERE buyer_id = $1
+          AND status NOT IN ('completed', 'cancelled')
+        `,
+        [userId]
+      );
+
+      bookingRes.rows.forEach(row => activeGigIds.add(row.gig_id));
+    }
 
     // Map DB fields to card component structure
-    const gigs = result.rows.map(gig => ({
+    const mappedGigs = gigs.map(gig => ({
       id: gig.id,
       title: gig.title,
       description: gig.description,
@@ -49,16 +119,17 @@ export async function GET() {
       distance: "2.3 km", // Placeholder or compute from location
       availability: gig.availability?.status || "Available now",
       tags: gig.category ? [gig.category] : [],
-      is_verified: gig.is_verified || false
+      is_verified: gig.is_verified || false,
+      hasActiveBooking: activeGigIds.has(gig.id),
     }));
-    console.log("row",gigs);
-    
 
-    return NextResponse.json(gigs, { status: 200 });
+    return NextResponse.json(mappedGigs, { status: 200 });
   } catch (error) {
+    console.error("Error fetching gigs:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 
 function uploadToCloudinary(buffer) {

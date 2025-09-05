@@ -147,7 +147,7 @@ export async function PUT(req) {
     } catch (syncError) {
       console.error("⚠️ Failed to sync user to Pinecone:", syncError);
     }
-
+   
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error("PUT /api/users/profile error:", error);
