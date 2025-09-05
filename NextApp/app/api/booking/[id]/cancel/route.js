@@ -7,7 +7,7 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 export async function PATCH(req, context) {
   const params = await context.params; // await here
   const bookingId = params.id;
-  
+
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -37,37 +37,51 @@ export async function PATCH(req, context) {
     }
 
     let refundAmount = coins_paid;
-    let penaltyAmount = 0;
+    let adminFee = 0;
+    let sellerfee = 0;
     let cancelBy = userId === seller_id ? "seller" : "buyer";
+    const admin_id = "42f1519e-c88f-4ed7-8675-51b6f5d94d5b"
 
     if (cancelBy === "buyer" && status === "confirmed") {
-      penaltyAmount = coins_paid * 0.1; // 10% penalty
-      refundAmount = coins_paid - penaltyAmount;
+
+      adminFee = coins_paid * 0.02;   // 2% to admin
+      sellerfee = coins_paid * 0.08;
+      refundAmount = coins_paid - (adminFee + sellerfee)
+
 
       // Transfer penalty to seller
       await pool.query(
         `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
-        [penaltyAmount, seller_id]
+        [sellerfee, seller_id]
       );
 
       await pool.query(
         `INSERT INTO transactions (user_id, seller_id, type, amount)
-         VALUES ($1, $2, 'refund', $3)`,
-        [buyer_id, seller_id, penaltyAmount]
+         VALUES ($1, $2, 'earning', $3)`,
+        [buyer_id, seller_id, sellerfee]
+      );
+      await pool.query(
+        `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
+        [adminFee, admin_id]
+      );
+      await pool.query(
+        `INSERT INTO transactions (user_id, seller_id, type, amount)
+     VALUES ($1, $2, 'commission', $3)`,
+        [buyer_id, admin_id, adminFee]
+      );
+      // Refund buyer
+      await pool.query(
+        `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
+        [refundAmount, buyer_id]
+      );
+
+      await pool.query(
+        `INSERT INTO transactions (user_id, seller_id, type, amount)
+       VALUES ($1, $2, 'refund', $3)`,
+        [seller_id, buyer_id, refundAmount]
       );
     }
 
-    // Refund buyer
-    await pool.query(
-      `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
-      [refundAmount, buyer_id]
-    );
-
-    await pool.query(
-      `INSERT INTO transactions (user_id, seller_id, type, amount)
-       VALUES ($1, $2, 'refund', $3)`,
-      [seller_id, buyer_id, refundAmount]
-    );
 
     // Update booking status
     await pool.query(
@@ -75,6 +89,7 @@ export async function PATCH(req, context) {
        WHERE booking_id = $1`,
       [bookingId]
     );
+
 
     return NextResponse.json(
       { success: true, message: "Booking cancelled successfully" },

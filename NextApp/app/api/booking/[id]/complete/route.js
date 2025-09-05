@@ -42,12 +42,20 @@ export async function PATCH(req, context) {
     // Calculate admin fee (2%)
     const adminFee = coins_paid * 0.02;
     const sellerAmount = coins_paid - adminFee;
+    const admin_id="42f1519e-c88f-4ed7-8675-51b6f5d94d5b"
 
     // Transfer funds to seller
     await pool.query(
       `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
       [sellerAmount, seller_id]
     );
+    //transfer to admin
+    await pool.query(
+  `UPDATE users SET balance = balance + $1 WHERE user_id = $2`,
+  [adminFee, admin_id] // replace 1 with your admin user_id
+   );
+   
+
 
     // Log seller credit transaction
     await pool.query(
@@ -60,7 +68,7 @@ export async function PATCH(req, context) {
     await pool.query(
       `INSERT INTO transactions (user_id, seller_id, type, amount)
        VALUES ($1, NULL, 'commission', $2)`,
-      ['42f1519e-c88f-4ed7-8675-51b6f5d94d5b', adminFee] // Use a real admin user_id in production
+      [admin_id, adminFee] // Use a real admin user_id in production
     );
 
     // Update booking status

@@ -109,12 +109,27 @@ const GigCard = ({ gig, index, isBooked }) => {
     return () => observer.disconnect();
   }, [index]);
 
-
+  const { data: session } = useSession();
   const router = useRouter();
   const submitBooking = async () => {
   
     if (!scheduledDate || isNaN(Date.parse(scheduledDate))) {
       setError('Please select a valid scheduled date.');
+      return;
+    }
+     if (!session) {
+      alert("Please sign in to book.");
+      return;
+    }
+
+    // Convert both to numbers to be safe
+    
+    const price = Number(gig.price.substr(1));
+  const balance: number = Number((session?.user as any)?.balance ?? 0);;
+     console.log("sejal",price,balance);
+     
+    if (balance < price) {
+      alert("❌ Insufficient balance to book this gig");
       return;
     }
 
@@ -412,6 +427,8 @@ const categories = [
 ];
 
 export default function FindSkillsFeed() {
+  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [filteredGigs, setFilteredGigs] = useState([]);
