@@ -21,14 +21,14 @@ const [hasMounted, setHasMounted] = useState(false);
  
 
   useEffect(() => {
-    setHasMounted(true); // ✅
+    setHasMounted(true); 
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    if (!hasMounted) return; // ✅
+    if (!hasMounted) return; 
     const newParticles = {};
     nodes.forEach((node) => {
       newParticles[node.id] = [...Array(3)].map((_, i) => ({
@@ -116,7 +116,11 @@ const [hasMounted, setHasMounted] = useState(false);
               style={{
                 left: `${node.x}%`,
                 top: `${node.y}%`,
-                transform: `translate(-50%, -50%) translateZ(${20 + Math.sin(scrollY * 0.01 + node.delay) * 10}px)`,
+                // transform: `translate(-50%, -50%) translateZ(${20 + Math.sin(scrollY * 0.01 + node.delay) * 10}px)`,
+                transform: hasMounted
+  ? `translate(-50%, -50%) translateZ(${20 + Math.sin(scrollY * 0.01 + node.delay) * 10}px)`
+  : 'translate(-50%, -50%) translateZ(0px)',
+
                 animationDelay: `${node.delay}s`
               }}
             >
@@ -125,7 +129,7 @@ const [hasMounted, setHasMounted] = useState(false);
               
               
              {/* Floating particles around nodes */}
-{nodeParticles[node.id]?.map((p, i) => (
+{hasMounted && nodeParticles[node.id]?.map((p, i) => (
   <div
     key={i}
     className="absolute w-1 h-1 bg-jet-stream-600/60 rounded-full animate-ping"
@@ -306,6 +310,20 @@ const SectionSeparator = () => {
 };
 
 export default function AboutPage() {
+
+  
+  const [particles, setParticles] = useState<{ left: string; top: string; delay: string; duration: string }[]>([]);
+
+  useEffect(() => {
+    const generated = [...Array(12)].map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: `${i * 0.3}s`,
+      duration: `${2 + Math.random() * 2}s`
+    }));
+    setParticles(generated);
+  }, []);
+
   const teamMembers = [
     {
       name: "Aman Kumar",
@@ -384,7 +402,7 @@ export default function AboutPage() {
         </ParallaxLayer>
 
         {/* Light Grid Background */}
-        <div className="absolute inset-0 pattern-grid opacity-90" />
+        <div className="absolute inset-0 pattern-grid bg-[length:30px_30px]  opacity-21" />
       </div>
 
       {/* Enhanced Hero Section */}
@@ -418,7 +436,7 @@ export default function AboutPage() {
                 <FloatingNetworkNodes />
                 
                 {/* Floating Particles */}
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                {/* <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                   {[...Array(12)].map((_, i) => (
                     <div
                       key={i}
@@ -431,7 +449,22 @@ export default function AboutPage() {
                       }}
                     />
                   ))}
-                </div>
+                </div> */}
+
+                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 bg-jet-stream-600/60 rounded-full animate-ping"
+          style={{
+            left: p.left,
+            top: p.top,
+            animationDelay: p.delay,
+            animationDuration: p.duration
+          }}
+        />
+      ))}
+    </div>
               </div>
             </div>
 
@@ -689,22 +722,25 @@ export default function AboutPage() {
         }
         
         /* Grid Pattern */
-        .pattern-grid {
-          background-image: 
-            linear-gradient(rgba(159, 193, 189, 0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(159, 193, 189, 0.2) 1px, transparent 1px);
-          background-size: 30px 30px;
-          animation: grid-move 25s linear infinite;
-        }
+//         .pattern-grid {
+//   position: absolute;
+//   inset: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-image: 
+//     linear-gradient(rgba(159, 193, 189, 0.2) 1px, transparent 1px),
+//     linear-gradient(90deg, rgba(159, 193, 189, 0.2) 1px, transparent 1px);
+//   background-size: 30px 30px;
+//   background-position: 0 0;
+//   animation: grid-move 25s linear infinite;
+// }
+
         
-        @keyframes grid-move {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(30px, 30px);
-          }
-        }
+//         @keyframes grid-move {
+//           0% { background-position: 0 0; }
+//   100% { background-position: 30px 30px; }
+
+//         }
         
         /* Gradient Utilities */
         .bg-gradient-radial {

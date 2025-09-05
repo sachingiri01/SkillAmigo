@@ -206,10 +206,10 @@ const GigCard = ({ gig, index, isBooked }) => {
     <Card
 
       ref={cardRef}
-      className={`bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden group hover:shadow-2xl hover:shadow-jet-stream-500/15 transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.02] will-change-transform ${isVisible ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-6 rotate-1'
+      className={`bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden group hover:shadow-2xl hover:shadow-jet-stream-500/15 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] will-change-transform ${isVisible ? 'opacity-100 translate-y-0 rotate-0' : 'opacity-0 translate-y-6 rotate-1'
         }`}
       style={{
-        transitionDelay: isVisible ? `${index * 60}ms` : '0ms',
+        transitionDelay: isVisible ? `${index * 10}ms` : '0ms',
         transform: `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) ${isVisible ? 'translateY(0)' : 'translateY(24px)'}`
       }}
     >
@@ -506,22 +506,10 @@ export default function FindSkillsFeed() {
         ))}
 
         {/* Light Grid Pattern Background */}
-        <div className="absolute inset-0 pattern-grid opacity-51" />
+        <div className="absolute inset-0 pattern-grid bg-[length:30px_30px]  opacity-21" />
 
         {/* Enhanced Animated Grid Pattern */}
-        <div className="absolute inset-0 opacity-15">
-          <div
-            className="w-full h-full bg-gradient-to-b from-transparent via-jet-stream-200/30 to-transparent will-change-transform"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(159, 193, 189, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(159, 193, 189, 0.3) 1px, transparent 1px)
-              `,
-              backgroundSize: '40px 40px',
-              transform: `translate3d(0, ${scrollY * 0.05}px, 0)`
-            }}
-          />
-        </div>
+       
       </div>
 
       {/* Enhanced Hero Section */}
@@ -649,33 +637,33 @@ export default function FindSkillsFeed() {
           }
         }
         
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+        // @keyframes fadeInUp {
+        //   from {
+        //     opacity: 0;
+        //     transform: translateY(30px);
+        //   }
+        //   to {
+        //     opacity: 1;
+        //     transform: translateY(0);
+        //   }
+        // }
         
         /* Animation Classes */
-        .animate-float {
-          animation: float 2s ease-in-out infinite;
-        }
+        // .animate-float {
+        //   animation: float 2s ease-in-out infinite;
+        // }
         
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
+        // .animate-pulse-glow {
+        //   animation: pulse-glow 2s ease-in-out infinite;
+        // }
         
-        .animate-shimmer {
-          animation: shimmer 2s ease-in-out infinite;
-        }
+        // .animate-shimmer {
+        //   animation: shimmer 2s ease-in-out infinite;
+        // }
         
-        .animate-fade-in-up {
-          animation: fadeInUp 0.4s ease-out;
-        }
+        // .animate-fade-in-up {
+        //   animation: fadeInUp 0.4s ease-out;
+        // }
         
         /* Utility Classes */
         .line-clamp-2 {
@@ -804,16 +792,7 @@ export default function FindSkillsFeed() {
           }
         }
 
-        /* Dark Mode Adjustments */
-        @media (prefers-color-scheme: dark) {
-          .bg-white\/95 {
-            background-color: rgba(255, 255, 255, 0.98);
-          }
-          
-          .bg-gradient-to-br {
-            background: linear-gradient(135deg, #f3f8f8 0%, #ffffff 50%, #e1ecea 100%);
-          }
-        }
+        
 
         /* Performance Optimizations */
         .card-container {
@@ -851,22 +830,22 @@ export default function FindSkillsFeed() {
         }
 
         /* Grid Pattern Utility */
-        .pattern-grid {
-          background-image: 
-            linear-gradient(rgba(159, 193, 189, 0.4) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(159, 193, 189, 0.4) 1px, transparent 1px);
-          background-size: 24px 24px;
-          animation: grid-move 20s linear infinite;
-        }
+        // .pattern-grid {
+        //   background-image: 
+        //     linear-gradient(rgba(159, 193, 189, 0.4) 1px, transparent 1px),
+        //     linear-gradient(90deg, rgba(159, 193, 189, 0.4) 1px, transparent 1px);
+        //   background-size: 24px 24px;
+        //   animation: grid-move 20s linear infinite;
+        // }
         
-        @keyframes grid-move {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(24px, 24px);
-          }
-        }
+        // @keyframes grid-move {
+        //   0% {
+        //     transform: translate(0, 0);
+        //   }
+        //   100% {
+        //     transform: translate(24px, 24px);
+        //   }
+        // }
         .btn-enhanced {
           position: relative;
           overflow: hidden;

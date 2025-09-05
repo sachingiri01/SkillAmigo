@@ -94,7 +94,7 @@
       linear-gradient(var(--color-jet-stream-600) 1px, transparent 1px),
       linear-gradient(90deg, var(--color-jet-stream-600) 1px, transparent 1px);
     background-size: 50px 50px;
-    opacity: 0.1;
+    opacity: 0.4;
   }
 
   .pattern-diagonal {
