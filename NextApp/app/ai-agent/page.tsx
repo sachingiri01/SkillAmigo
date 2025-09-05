@@ -436,6 +436,15 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
     }
   };
   const router=useRouter();
+    const [expandedPolicies, setExpandedPolicies] = useState({}); // store which policies are expanded
+
+  const togglePolicy = (doc_id) => {
+    setExpandedPolicies((prev) => ({
+      ...prev,
+      [doc_id]: !prev[doc_id],
+    }));
+  };
+
   return (
     <div 
       className="flex flex-col h-full" 
@@ -544,7 +553,52 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
                   }}
                 >
                   <p className="text-sm">{message.content}</p>
-                  
+                 {message?.policy_seen?.length>0 && (
+                   <p className='font-mono font-bold'>Policy Reference -</p>
+                 )}
+                   <div className='flex gap-2'>
+  {message?.policy_seen?.map((item, index) => {
+    return (
+        
+        <p key={item.doc_id} className='rounded-md bg-slate-200 hover:bg-slate-300 text-red-600 px-1 font-mono'>{item.doc_type.charAt(0).toUpperCase() + item.doc_type.slice(1)}
+</p>
+     
+    )
+  })}
+</div>
+ {/* {message?.policy_seen?.length > 0 && (
+        <>
+          <p className="font-mono font-body mt-2">Policy seen -</p>
+          <div className="flex gap-2 flex-wrap">
+            {message.policy_seen.map((item) => (
+              <div key={item.doc_id}>
+                <p
+                  onClick={() => togglePolicy(item.doc_id)}
+                  className="cursor-pointer rounded-md bg-slate-200 hover:bg-slate-300 text-red-600 px-1 font-mono"
+                >
+                  {item.doc_type}
+                </p>
+
+                {expandedPolicies[item.doc_id] && (
+                  <div className="mt-1 p-2 border rounded bg-gray-50 text-sm text-gray-800">
+                    <p><strong>Doc ID:</strong> {item.doc_id}</p>
+                    <p><strong>Source:</strong> {item.source}</p>
+                    <p><strong>Type:</strong> {item.doc_type}</p>
+                    <p><strong>Details:</strong> {item.chunk_text || "No details"}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )} */}
+
+
+
+
+
+
+
                   <div>
                        {message?.valid=="first" && message.data?.map((item, index) => {                 
   return (
@@ -1244,10 +1298,12 @@ const AgentDashboard = () => {
     setIsLoading(true);
     if(activeAgent.id=="AI ChatBot") { 
       const response=await get_response(activeAgent,messages[activeAgent.id],text);
+      console.log("chatbot response -ff",response);
+      
             const agentMessage = {
         type: 'agent',
-        content:response.data.text || "Please try again",
-        // data:response.data,
+        content:response?.data?.response?.text || "Kindly Reload",
+        policy_seen:response.data.policy_seen,
         timestamp: new Date().toLocaleTimeString()
       };
           setMessages(prev => ({

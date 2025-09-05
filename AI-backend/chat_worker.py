@@ -41,7 +41,7 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains import LLMChain
 from model import get_llm  # You must implement or import your own LLM from model.py
-
+from pine import r1,retriever
 
 # 1. Define the enhanced system prompt
 system_prompt = """
@@ -55,11 +55,11 @@ Capabilities:
 - You assist users in finding gigs, service providers, booking or cancelling gigs, and viewing profiles.
 
 Available APIs:
-- search_user: Search users by name, skill, or location. Body: {"query": "string", "filters": "object"}
-- book_gig: Book a gig for a user. Body: {"gig_id": "string", "user_id": "string", "date": "string"}
-- get_user_profile: Fetch user profile info. Body: {"user_id": "string"}
-- list_gigs: List available gigs. Body: {"category": "string", "location": "string", "price_range": "string"}
-- cancel_booking: Cancel a booked gig. Body: {"booking_id": "string", "user_id": "string", "reason": "string"}
+- search_user: Search users by name, skill, or location. Body: {{"query": "string", "filters": "object"}}
+- book_gig: Book a gig for a user. Body: {{"gig_id": "string", "user_id": "string", "date": "string"}}
+- get_user_profile: Fetch user profile info. Body: {{"user_id": "string"}}
+- list_gigs: List available gigs. Body: {{"category": "string", "location": "string", "price_range": "string"}}
+- cancel_booking: Cancel a booked gig. Body: {{"booking_id": "string", "user_id": "string", "reason": "string"}}
 
 Behavior Guidelines:
 1. Always be polite, helpful, and concise.
@@ -103,11 +103,9 @@ chat_chain = LLMChain(llm=llm, prompt=chat_prompt)
 #     response = chat_chain.invoke({"chat": full_chat})
 #     return response
 
-
-
 def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-mentor"):
     """
-    Handles chat with history and retrieves relevant policies from Pinecone (r1).
+    Handles chat with history and retrieves relevant policies directly from Pinecone (auto-embedding).
     Returns both assistant response and list of seen policies.
     """
     # 1. Rebuild history
@@ -127,18 +125,25 @@ def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-m
     # 2. Append current query
     full_chat += f"User Asking now : {chat_str}"
 
-    # 3. Retrieve relevant policies
-    retrieved = r1.get_relevant_documents(chat_str)
+    # 3. Query Pinecone (same style as got_only_search_user)
+    results = retriever.search(
+        namespace="__default__",
+        query={"inputs": {"text": chat_str}, "top_k": 3},
+        fields=["chunk_text", "doc_id", "doc_type", "source"]
+    )
+
     policy_seen = []
     context_chunks = ""
-    for doc in retrieved:
-        meta = doc.metadata
-        policy_seen.append({
-            "doc_id": meta.get("doc_id", ""),
-            "doc_type": meta.get("doc_type", ""),
-            "source": meta.get("source", ""),
-        })
-        context_chunks += f"- {meta.get('doc_type','Unknown')}: {doc.page_content}\n"
+
+    if results and "result" in results and "hits" in results["result"]:
+        for hit in results["result"]["hits"]:
+            fields = hit.get("fields", {})
+            policy_seen.append({
+                "doc_id": fields.get("doc_id", ""),
+                "doc_type": fields.get("doc_type", ""),
+                "source": fields.get("source", ""),
+            })
+            context_chunks += f"- {fields.get('doc_type','Unknown')}: {fields.get('chunk_text','')}\n"
 
     # 4. Inject retrieved context into the prompt
     augmented_chat = f"""
@@ -158,7 +163,6 @@ Now answer the user politely and concisely, following the assistant rules.
         "response": response,
         "policy_seen": policy_seen
     }
-
 
 
 
