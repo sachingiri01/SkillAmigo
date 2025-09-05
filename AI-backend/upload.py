@@ -1,4 +1,4 @@
-from pine import users_index,index
+from pine import users_index,index,retriever,r1
 import uuid
 
 gigs =[
@@ -376,6 +376,83 @@ def upload_data_to_pinecone_user(user: dict):
             return {"status": "success", "msg": f"Updated user {user_id} in Pinecone"}
         else:
             return {"status": "success", "msg": f"Inserted new user {user_id} in Pinecone"}
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+
+
+
+def upload_text_to_pinecone(raw_text: str, doc_id: str = "User_manual", source: str = "manual", doc_type: str = "general"):
+    """
+    Uploads raw text (split into chunks) into Pinecone with auto-embedding (v3 upsert_records style).
+    """
+    try:
+        def chunk_text(text, chunk_size=500, overlap=50):
+            chunks = []
+            start = 0
+            while start < len(text):
+                end = start + chunk_size
+                chunks.append(text[start:end].strip())
+                start += chunk_size - overlap
+            return chunks
+
+        chunks = chunk_text(raw_text)
+
+        records = []
+        for i, chunk in enumerate(chunks):
+            records.append({
+                "_id": f"{doc_id}-{i}",   # 👈 must be `_id` for v3 upsert_records
+                "chunk_text": chunk,      # 👈 this will be auto-embedded (because of field_map)
+                "text": chunk,            # 👈 optional if your field_map uses "text"
+                "source": source,
+                "doc_type": doc_type,
+                "doc_id": doc_id,
+            })
+
+        # ✅ New SDK style
+        retriever.upsert_records("__default__", records)
+
+        return {"status": "success", "msg": f"Uploaded {len(chunks)} chunks for {doc_id}"}
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}
+
+def update_policy_to_pinecone(raw_text: str, doc_id: str = "User_manual", source: str = "manual", doc_type: str = "general"):
+    """
+    Upserts a policy into Pinecone.
+    If the doc_id already exists → updates it.
+    Otherwise → inserts a new entry.
+    """
+    try:
+        def chunk_text(text, chunk_size=500, overlap=50):
+            chunks = []
+            start = 0
+            while start < len(text):
+                end = start + chunk_size
+                chunks.append(text[start:end].strip())
+                start += chunk_size - overlap
+            return chunks
+
+        chunks = chunk_text(raw_text)
+
+        records = []
+        for i, chunk in enumerate(chunks):
+            records.append({
+                "_id": f"{doc_id}-{i}",   # same id → ensures overwrite on update
+                "chunk_text": chunk,
+                "text": chunk,
+                "source": source,
+                "doc_type": doc_type,
+                "doc_id": doc_id,
+            })
+
+        # Upsert = insert or update
+        retriever.upsert_records("__default__", records)
+
+        return {
+            "status": "success",
+            "msg": f"Upserted {len(chunks)} chunks for policy {doc_id}"
+        }
 
     except Exception as e:
         return {"status": "error", "msg": str(e)}

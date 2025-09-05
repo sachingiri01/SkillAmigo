@@ -51,24 +51,25 @@ SkillAmigo is a platform for exchanging services, booking gigs, negotiating pric
 Capabilities:
 - You can remember the context of previous messages within the current conversation.
 - You use chat history to help clarify follow-up questions, continue tasks, or maintain user preferences during the session.
+- You can access platform policies (refund, cancellation, privacy, etc.) retrieved from the knowledge base.
 - You assist users in finding gigs, service providers, booking or cancelling gigs, and viewing profiles.
 
 Available APIs:
-- search_user: Search users by name, skill, or location. Body: {{"query": "string", "filters": "object"}}
-- book_gig: Book a gig for a user. Body: {{"gig_id": "string", "user_id": "string", "date": "string"}}
-- get_user_profile: Fetch user profile info. Body: {{"user_id": "string"}}
-- list_gigs: List available gigs. Body: {{"category": "string", "location": "string", "price_range": "string"}}
-- cancel_booking: Cancel a booked gig. Body: {{"booking_id": "string", "user_id": "string", "reason": "string"}}
+- search_user: Search users by name, skill, or location. Body: {"query": "string", "filters": "object"}
+- book_gig: Book a gig for a user. Body: {"gig_id": "string", "user_id": "string", "date": "string"}
+- get_user_profile: Fetch user profile info. Body: {"user_id": "string"}
+- list_gigs: List available gigs. Body: {"category": "string", "location": "string", "price_range": "string"}
+- cancel_booking: Cancel a booked gig. Body: {"booking_id": "string", "user_id": "string", "reason": "string"}
 
 Behavior Guidelines:
 1. Always be polite, helpful, and concise.
 2. Use context from previous messages to inform your responses.
-3. Suggest the correct API if the user wants to do something actionable.
-4. Ask clarifying questions if user input is incomplete or ambiguous.
-5. If the request is completely outside the platform’s scope, respond with: "Please contact admin for further assistance."
-6. Reply in short simple not too big msg try always to be as much on the point as possible
+3. Use retrieved policies when user asks about rules, refunds, privacy, or terms.
+4. Suggest the correct API if the user wants to do something actionable.
+5. Ask clarifying questions if user input is incomplete or ambiguous.
+6. If the request is completely outside the platform’s scope, respond with: "Please contact admin for further assistance."
+7. Reply in short simple not too big msg try always to be as much on the point as possible
 """
-
 
 # 2. Setup LangChain prompt
 chat_prompt = ChatPromptTemplate.from_messages([
@@ -81,8 +82,35 @@ chat_prompt = ChatPromptTemplate.from_messages([
 llm = get_llm()
 chat_chain = LLMChain(llm=llm, prompt=chat_prompt)
 
-def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-mentor"):
+# def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-mentor"):
     
+#     if history and agent_key in history:
+#         message_list = history
+#         full_chat = ""
+#         for msg in message_list:
+#             role = msg.get("type")
+#             content = msg.get("content")
+#             if role == "user":
+#                 full_chat += f"User: {content}\n"
+#             elif role == "agent":
+#                 full_chat += f"Assistant: {content}\n"
+#     else:
+#         full_chat = ""
+
+#     # Append current user input
+#     full_chat += f"User Asking now : {chat_str}"
+#     # Get response from chain
+#     response = chat_chain.invoke({"chat": full_chat})
+#     return response
+
+
+
+def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-mentor"):
+    """
+    Handles chat with history and retrieves relevant policies from Pinecone (r1).
+    Returns both assistant response and list of seen policies.
+    """
+    # 1. Rebuild history
     if history and agent_key in history:
         message_list = history
         full_chat = ""
@@ -96,11 +124,44 @@ def chat_work(chat_str: str, history: dict = None, agent_key: str = "knowledge-m
     else:
         full_chat = ""
 
-    # Append current user input
+    # 2. Append current query
     full_chat += f"User Asking now : {chat_str}"
-    # Get response from chain
-    response = chat_chain.invoke({"chat": full_chat})
-    return response
+
+    # 3. Retrieve relevant policies
+    retrieved = r1.get_relevant_documents(chat_str)
+    policy_seen = []
+    context_chunks = ""
+    for doc in retrieved:
+        meta = doc.metadata
+        policy_seen.append({
+            "doc_id": meta.get("doc_id", ""),
+            "doc_type": meta.get("doc_type", ""),
+            "source": meta.get("source", ""),
+        })
+        context_chunks += f"- {meta.get('doc_type','Unknown')}: {doc.page_content}\n"
+
+    # 4. Inject retrieved context into the prompt
+    augmented_chat = f"""
+Previous conversation:
+{full_chat}
+
+Relevant policies from database:
+{context_chunks}
+
+Now answer the user politely and concisely, following the assistant rules.
+"""
+
+    # 5. Get response from LLM
+    response = chat_chain.invoke({"chat": augmented_chat})
+
+    return {
+        "response": response,
+        "policy_seen": policy_seen
+    }
+
+
+
+
 
 
 # 5. Helper to update history

@@ -1125,6 +1125,11 @@ const AgentDashboard = () => {
     //("🔹 Active agent:", active);
     //("🔹 Active agent:", history);
 
+    // it will be used laster to make easy and faster
+    const trimmedHistory = [
+  ...history.slice(0, 1),   // first 5
+  ...history.slice(-5)      // last 5
+];
     const res = await fetch(active.URL, {
       method: active.method || "POST", // fallback to POST if not provided
       headers: {
@@ -1132,7 +1137,8 @@ const AgentDashboard = () => {
       },
       body: JSON.stringify({
         "msg":prompt,
-        "history":history
+        "history":history,
+        // history":trimmedHistory
       }),
       credentials: "include", // include cookies if backend supports it
     });
