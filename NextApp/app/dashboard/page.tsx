@@ -32,38 +32,7 @@ import {
 } from 'lucide-react';
 import { log } from 'console';
 import { devNull } from 'os';
-interface Gig {
-  gig_id: number;
-  title: string;
-  description: string;
-  category: string;
-  min_price: number;
-  avg_price: number;
-  location: string;
-  picture: string | null;
-  rating: number | null;
-  gig_created_at: string;
-  seller_id: number;
-  seller_name: string;
-  seller_email: string;
-  seller_picture: string | null;
-  booking_id?: number;
-  booking_status?: string | null;
-  booking_date?: string | null;
-  scheduled_date?: string | null;
-  coins_paid?: number | null;
-  buyer_id?: number | null;
-  buyer_name?: string | null;
-  buyer_email?: string | null;
-  buyer_picture?: string | null;
-  status?: string; // if you use it in frontend
-  minPrice?: number; // mapped fields for frontend
-  maxPrice?: number;
-  applicants?: number; // if you want to use this as alias for buyer_count
-  posted?: string;
 
-  buyer_count?: number; // added field from SQL query (number of unique buyers)
-}
 
 
 // Skeleton Loader Component
@@ -654,6 +623,49 @@ const PostGigForm = ({ onSubmit }) => {
     </div>
   );
 };
+interface Gig {
+  gig_id: string; // UUID from DB
+  title: string;
+  description: string;
+  category: string;
+  min_price: string;  // DB returns as string (DECIMAL/NUMERIC)
+  avg_price: string;
+  location: string;
+  picture: string | null;
+  rating: number | null;
+  created_at: string;   // DB field (renamed from gig_created_at)
+  updated_at?: string;
+
+  // Seller info
+  seller_id: string;
+  seller_name: string;
+  seller_email: string;
+  seller_picture: string | null;
+
+  // Booking info (optional, if joined in query)
+  booking_id?: string;
+  booking_status?: string | null;
+  booking_date?: string | null;
+  scheduled_date?: string | null;
+  coins_paid?: number | null;
+
+  // Buyer info (optional, if joined)
+  buyer_id?: string | null;
+  buyer_name?: string | null;
+  buyer_email?: string | null;
+  buyer_picture?: string | null;
+
+  // Aggregates
+  buyer_count?: number; // from COUNT(DISTINCT buyer_id)
+
+  // Optional frontend-only fields (aliases)
+  status?: string;     // e.g. availability || "posted"
+  minPrice?: number;   // parseFloat(min_price)
+  maxPrice?: number;   // parseFloat(avg_price)
+  applicants?: number; // alias for buyer_count
+  posted?: string;     // formatted created_at
+}
+
 
 // My Gigs Component - Gigs posted by user
 const MyGigs = () => {
@@ -701,6 +713,8 @@ const MyGigs = () => {
         const res = await fetch(`/api/users/gigs`);
         if (!res.ok) throw new Error("Failed to fetch gigs");
         const data = await res.json();
+        console.log("what is my gig info",data);
+        
         setMyGigs(data);
       } catch (error) {
         console.error("Error fetching gigs:", error);
@@ -800,7 +814,7 @@ const MyGigs = () => {
                     <span className="font-medium">Applicants:</span> {gig.buyer_count || 0}
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
-                    <span className="font-medium">Posted:</span> {gig.gig_created_at? new Date(gig.gig_created_at).toLocaleDateString() : 'N/A'}
+                    <span className="font-medium">Posted:</span> {gig.created_at? new Date(gig.created_at).toLocaleDateString() : 'N/A'}
 
                   </p>
                 </div>
@@ -984,8 +998,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     {booking.category ?? "N/A"}
                   </p>
                   <p className="text-sm" style={{ color: "#405e5e" }}>
-                    <span className="font-medium">Started:</span>{" "}
-                    {booking.startDate ?? booking.booking_date}
+                    <span className="font-medium">Posted:</span> {booking.booking_date? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
 

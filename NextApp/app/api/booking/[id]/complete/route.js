@@ -52,14 +52,14 @@ export async function PATCH(req, context) {
     // Log seller credit transaction
     await pool.query(
       `INSERT INTO transactions (user_id, seller_id, type, amount)
-       VALUES ($1, $2, 'purchase', $3)`,
+       VALUES ($1, $2, 'earning', $3)`,
       [buyer_id, seller_id, sellerAmount]
     );
 
     // Optionally, log admin commission
     await pool.query(
       `INSERT INTO transactions (user_id, seller_id, type, amount)
-       VALUES ($1, NULL, 'purchase', $2)`,
+       VALUES ($1, NULL, 'commission', $2)`,
       ['42f1519e-c88f-4ed7-8675-51b6f5d94d5b', adminFee] // Use a real admin user_id in production
     );
 
