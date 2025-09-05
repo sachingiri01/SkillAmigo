@@ -1,13 +1,14 @@
 // app/api/gigs/[id]/route.js
 
 //this for deleting user own gig//
+// app/api/gigs/[id]/route.js
+
 import pool from "../../db";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function DELETE(req, { params }) {
-  console.log("DELETE route hit with ID:", params.id);
   const { id: gigId } = params;
 
   try {
@@ -15,24 +16,20 @@ export async function DELETE(req, { params }) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
 
     const sellerId = session.user.id;
-    console.log("saler",sellerId);
-    
-    
 
-    // Check if gig belongs to seller
+    // Verify gig ownership
     const gigRes = await pool.query(
       `SELECT seller_id FROM gigs WHERE gig_id = $1`,
       [gigId]
     );
+
     if (gigRes.rowCount === 0 || gigRes.rows[0].seller_id !== sellerId) {
       return NextResponse.json({ error: "Gig not found or unauthorized" }, { status: 404 });
     }
-    console.log("gig",gigRes.rows[0].seller_id)
 
-    // Check bookings
+    // Check for active bookings (prevent deletion)
     const bookingRes = await pool.query(
       `SELECT COUNT(*) AS active_bookings
        FROM bookings
@@ -47,12 +44,24 @@ export async function DELETE(req, { params }) {
       );
     }
 
+    // Start transaction
+    await pool.query('BEGIN');
+
+    // Delete dependent data first (bookings, chats, collaborations, etc.)
+    await pool.query(`DELETE FROM chat WHERE gig_id = $1`, [gigId]);
+    await pool.query(`DELETE FROM collaborations WHERE gig_id = $1`, [gigId]);
+    await pool.query(`DELETE FROM bookings WHERE gig_id = $1`, [gigId]);
+
     // Delete gig
     await pool.query(`DELETE FROM gigs WHERE gig_id = $1`, [gigId]);
+
+    // Commit transaction
+    await pool.query('COMMIT');
 
     return NextResponse.json({ success: true, message: "Gig deleted successfully" });
   } catch (error) {
     console.error("Delete gig error:", error);
+    await pool.query('ROLLBACK');
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

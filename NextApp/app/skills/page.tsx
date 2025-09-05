@@ -135,12 +135,11 @@ const GigCard = ({ gig, index, isBooked }) => {
           coin: priceNumber,
 
         }),
-      });
-      console.log(gig.price)
+      });     
 
 
       const data = await response.json();
-      console.log("respose", data);
+     
       if (!response.ok) throw new Error(data.error || 'Failed to book service');
 
       // setSuccess('Booking successful! 🎉');
