@@ -16,17 +16,19 @@ import { FullwidthIconNavbar } from '../_components/navbars/fullwidth-icon-navba
 const FloatingNetworkNodes = () => {
   const [scrollY, setScrollY] = useState(0);
     const [nodeParticles, setNodeParticles] = useState({});
-
+const [hasMounted, setHasMounted] = useState(false);
   
  
 
   useEffect(() => {
+    setHasMounted(true); // ✅
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
+    if (!hasMounted) return; // ✅
     const newParticles = {};
     nodes.forEach((node) => {
       newParticles[node.id] = [...Array(3)].map((_, i) => ({

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { 
   Menu, 
+  Home,
   X, 
   MessageSquare, 
   Send, 
@@ -248,7 +249,7 @@ const Header = ({ activeAgent, onNewChat, onToggleSidebar }) => {
       }}
     >
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-95">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="headerDots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
@@ -338,6 +339,15 @@ const Header = ({ activeAgent, onNewChat, onToggleSidebar }) => {
         </div>
         
         {/* Actions */}
+        <div className='flex items-center gap-2'>
+        <a href="/">
+              <button
+                className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105"
+                style={{ backgroundColor: '#f3f8f8', color: '#344545' }}
+              >
+                <Home className="w-5 h-5" />
+                <span className="font-semibold hidden sm:block">Home</span>
+              </button></a>
         <button
           onClick={onNewChat}
           className="flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors"
@@ -355,6 +365,7 @@ const Header = ({ activeAgent, onNewChat, onToggleSidebar }) => {
           <Plus className="w-4 h-4" />
           <span className="hidden sm:block">New Chat</span>
         </button>
+        </div>
       </div>
     </header>
   );
