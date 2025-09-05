@@ -3,6 +3,7 @@
 import { MessageCircle, Instagram, Youtube, Linkedin, Twitter, Phone, Mail } from "lucide-react";
 import React from "react";
 import { useState } from "react";
+import Link from "next/link";
 
 const navigation = [
   {
@@ -169,7 +170,7 @@ export const NewsletterFooter = () => {
             Need help? We're here for you!
           </p>
           <p className="text-xs text-gray-300 font-body">
-            Chat with our support team or browse our help center for quick answers.
+            Chat with <span className="text-orange-400 hover:underline"><Link href="/ai-agent">Ai-agent</Link></span> or browse our FAQs section for quick answers.
           </p>
         </div>
       )}
