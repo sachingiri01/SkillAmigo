@@ -78,9 +78,9 @@ const WireframeElement = ({ index, scrollY }) => {
 
 
 // Enhanced GigCard with jet-stream colors and removed elements
-const GigCard = ({ gig, index, isBooked }) => {
+const GigCard = ({ gig, index }) => {
 
-
+const isBooked=false;
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -232,7 +232,11 @@ const GigCard = ({ gig, index, isBooked }) => {
       <div className="p-4 sm:p-6 relative bg-white/95">
         <div className="flex items-start justify-between mb-3 sm:mb-4">
           <div className="flex items-center space-x-2 sm:space-x-3">
+            <div 
+            onClick={()=>router.push(`/profile/${gig.seller_id}`)}
+            >
             <div className="relative">
+              
               <img
                 src={gig.profile_picture}
                 alt={gig.provider}
@@ -242,6 +246,7 @@ const GigCard = ({ gig, index, isBooked }) => {
             </div>
             <div>
               <p className="font-semibold text-sm sm:text-base text-jet-stream-900 group-hover:text-jet-stream-700 transition-colors duration-300">{gig.provider}</p>
+              </div>
               <div className="flex items-center space-x-1 text-xs text-jet-stream-600">
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                 <span>{gig.rating}</span>

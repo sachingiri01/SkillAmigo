@@ -1,6 +1,6 @@
 
 'use client'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Image from 'next/image';
 import { 
   Star, 
@@ -26,8 +26,9 @@ import {
   Palette,
   Coffee
 } from 'lucide-react';
-import { FullwidthIconNavbar } from '../_components/navbars/fullwidth-icon-navbar';
-import { NewsletterFooter } from '../_components/footers/newsletter-footer';
+import { FullwidthIconNavbar } from '../../_components/navbars/fullwidth-icon-navbar';
+import { NewsletterFooter } from '../../_components/footers/newsletter-footer';
+import { useParams } from "next/navigation";
 
 // Contact & Details Component
 const ContactDetails = ({ user }) => (
@@ -670,7 +671,7 @@ const StatsSection = ({ user }) => {
 // Main Profile Page Component
 export default function UserProfilePage() {
   // Enhanced dummy user data
-  const user = {
+  const users = {
     user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     name: "Aman Kumar",
     email: "maya.chen@creativestudio.com",
@@ -685,7 +686,7 @@ export default function UserProfilePage() {
   };
 
   // Enhanced gigs data with more variety
-  const gigs = [
+  const gig = [
     {
       title: "Editorial Portrait Sessions",
       description: "Professional portrait photography for magazines, brands, and personal branding. Capturing personality and professionalism in every frame.",
@@ -768,11 +769,48 @@ export default function UserProfilePage() {
       project: "Corporate Event"
     }
   ];
+ const { id } = useParams(); // userId from URL
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [user, setUser] = useState(null);
+  const [gigs, setGigs] = useState([]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`/api/profile/${id}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "Failed to fetch profile");
+        } else {
+          setUser(data.user || null);
+          setGigs(data.gigs || []);
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        setError("Internal Server Error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!user) return <p>No user found</p>;
+
+
   return (
     <main className="min-h-screen">
       <FullwidthIconNavbar />
       <HeroBanner user={user} />
-      {/* <ProfileHeader user={user} /> */}
+    
       <ContactDetails user={user} />
       <SkillsShowcase user={user} />
       <PortfolioMasonry gigs={gigs} />

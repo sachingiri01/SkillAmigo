@@ -72,6 +72,7 @@ export async function GET() {
       SELECT 
         g.gig_id AS id,
         g.title,
+        g.seller_id,
         g.description,
         g.category,
         g.avg_price,
@@ -108,6 +109,7 @@ export async function GET() {
     const mappedGigs = gigs.map(gig => ({
       id: gig.id,
       title: gig.title,
+      seller_id:gig.seller_id,
       description: gig.description,
       provider: gig.provider,
       profile_picture: gig.profile_picture,

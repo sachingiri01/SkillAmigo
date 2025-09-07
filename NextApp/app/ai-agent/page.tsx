@@ -324,7 +324,7 @@ const Header = ({ activeAgent, onNewChat, onToggleSidebar }) => {
                 </span>
                 {activeAgent && (
                   <span 
-                    className="text-xs" 
+                    className="text-xs hidden sm:flex" 
                     style={{ 
                       color: 'var(--color-jet-stream-600)',
                       ...CSS_VARIABLES
@@ -553,10 +553,10 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
                   }}
                 >
                   <p className="text-sm">{message.content}</p>
-                 {message?.policy_seen?.length>0 && (
+                 {/* {message?.policy_seen?.length>0 && (
                    <p className='font-mono font-bold'>Policy Reference -</p>
-                 )}
-                   <div className='flex gap-2'>
+                 )} */}
+                   {/* <div className='flex gap-2'>
   {message?.policy_seen?.map((item, index) => {
     return (
         
@@ -565,7 +565,7 @@ const ChatWindow = ({ activeAgent, messages, onSendMessage, isLoading }) => {
      
     )
   })}
-</div>
+</div> */}
  {/* {message?.policy_seen?.length > 0 && (
         <>
           <p className="font-mono font-body mt-2">Policy seen -</p>
@@ -1303,7 +1303,6 @@ const AgentDashboard = () => {
             const agentMessage = {
         type: 'agent',
         content:response?.data?.response?.text || "Kindly Reload",
-        policy_seen:response.data.policy_seen,
         timestamp: new Date().toLocaleTimeString()
       };
           setMessages(prev => ({
@@ -1387,41 +1386,41 @@ const AgentDashboard = () => {
   };
 
   // Generate AI responses based on agent
-  const generateAgentResponse = (agent, userInput) => {
-    const responses = {
-      'skill-matcher': [
-        "I found 3 perfect gigs matching your skills! The top one is a React project paying 2,500 coins.",
-        "Your profile shows strong expertise in web development. I recommend applying to frontend positions.",
-        "Based on your experience, you'd be great for this mobile app development project.",
-        "I see you're interested in " + userInput + ". Let me find relevant opportunities for you.",
-        "Here are some skill-matched recommendations based on your query about " + userInput + "."
-      ],
-      'deal-negotiator': [
-        "For this project scope, I'd recommend pricing between $50-70 per hour based on market rates.",
-        "Here's a contract template that protects both parties and ensures fair payment terms.",
-        "You could negotiate for milestone-based payments to reduce risk and improve cash flow.",
-        "Regarding " + userInput + ", I suggest considering the market value and your experience level.",
-        "Based on your question about " + userInput + ", here's my negotiation strategy recommendation."
-      ],
-      'knowledge-mentor': [
-        "Here's a step-by-step guide to help you with that. First, make sure your profile is complete...",
-        "Great question! The coin system works as an escrow - coins are held securely until project completion.",
-        "For best results, I recommend updating your portfolio with recent work and client testimonials.",
-        "I understand you're asking about " + userInput + ". Let me break this down for you step by step.",
-        "That's a common question about " + userInput + ". Here's what you need to know..."
-      ],
-      'collaboration-assistant': [
-        "I found a team that needs exactly your skills! They're working on an e-commerce platform.",
-        "Consider partnering with a designer for this project - it could increase your rate by 40%.",
-        "This client often has follow-up projects. Building a good relationship here could lead to more work.",
-        "For " + userInput + ", I recommend finding complementary team members to strengthen your proposal.",
-        "Based on your interest in " + userInput + ", here are some collaboration opportunities I found."
-      ]
-    };
+  // const generateAgentResponse = (agent, userInput) => {
+  //   const responses = {
+  //     'skill-matcher': [
+  //       "I found 3 perfect gigs matching your skills! The top one is a React project paying 2,500 coins.",
+  //       "Your profile shows strong expertise in web development. I recommend applying to frontend positions.",
+  //       "Based on your experience, you'd be great for this mobile app development project.",
+  //       "I see you're interested in " + userInput + ". Let me find relevant opportunities for you.",
+  //       "Here are some skill-matched recommendations based on your query about " + userInput + "."
+  //     ],
+  //     'deal-negotiator': [
+  //       "For this project scope, I'd recommend pricing between $50-70 per hour based on market rates.",
+  //       "Here's a contract template that protects both parties and ensures fair payment terms.",
+  //       "You could negotiate for milestone-based payments to reduce risk and improve cash flow.",
+  //       "Regarding " + userInput + ", I suggest considering the market value and your experience level.",
+  //       "Based on your question about " + userInput + ", here's my negotiation strategy recommendation."
+  //     ],
+  //     'knowledge-mentor': [
+  //       "Here's a step-by-step guide to help you with that. First, make sure your profile is complete...",
+  //       "Great question! The coin system works as an escrow - coins are held securely until project completion.",
+  //       "For best results, I recommend updating your portfolio with recent work and client testimonials.",
+  //       "I understand you're asking about " + userInput + ". Let me break this down for you step by step.",
+  //       "That's a common question about " + userInput + ". Here's what you need to know..."
+  //     ],
+  //     'collaboration-assistant': [
+  //       "I found a team that needs exactly your skills! They're working on an e-commerce platform.",
+  //       "Consider partnering with a designer for this project - it could increase your rate by 40%.",
+  //       "This client often has follow-up projects. Building a good relationship here could lead to more work.",
+  //       "For " + userInput + ", I recommend finding complementary team members to strengthen your proposal.",
+  //       "Based on your interest in " + userInput + ", here are some collaboration opportunities I found."
+  //     ]
+  //   };
 
-    const agentResponses = responses[agent.id] || ["I'm here to help! Let me analyze your request..."];
-    return agentResponses[Math.floor(Math.random() * agentResponses.length)];
-  };
+  //   const agentResponses = responses[agent.id] || ["I'm here to help! Let me analyze your request..."];
+  //   return agentResponses[Math.floor(Math.random() * agentResponses.length)];
+  // };
 
   // Handle new chat
   const handleNewChat = () => {

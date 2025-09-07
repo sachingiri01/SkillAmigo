@@ -5,7 +5,11 @@
 
 'use client'
 import React, { useState, useEffect } from 'react';
-import { DollarSign,Menu, X, Bell, User, LogOut, Settings as SettingsIcon, BarChart3, Users, Briefcase, Coins, FileText, ChevronDown, Home, Eye, Check, XCircle, Filter, Calendar, Download, Edit, Trash2, Plus, Search } from 'lucide-react';
+import { Clock,DollarSign,Menu, X, Bell, User, LogOut, Settings as SettingsIcon, BarChart3, Users, Briefcase, Coins, FileText, ChevronDown, Home, Eye, Check, XCircle, Filter, Calendar, Download, Edit, Trash2, Plus, Search,ArrowUp } from 'lucide-react';
+import { useRouter } from "next/navigation";
+
+
+  
 
 // Utility function for CSV export
 const downloadCSV = (data, filename) => {
@@ -137,7 +141,7 @@ const MobileNavigation = ({ activePage, setActivePage }) => {
     { id: 'users', label: 'Users', icon: Users },
     { id: 'gigs', label: 'Gigs', icon: Briefcase },
     { id: 'transactions', label: 'Coins', icon: Coins },
-    { id: 'analytics', label: 'Reports', icon: BarChart3 },
+    { id: 'analytics', label: 'Requests', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
@@ -170,13 +174,13 @@ const DesktopSidebar = ({ activePage, setActivePage }) => {
     { id: 'users', label: 'Manage Users', icon: Users },
     { id: 'gigs', label: 'Manage Gigs', icon: Briefcase },
     { id: 'transactions', label: 'Transactions & Coins', icon: Coins },
-    { id: 'analytics', label: 'Reports & Analytics', icon: BarChart3 },
+    { id: 'analytics', label: 'Coin Requests', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   return (
     <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:top-20 lg:bottom-0">
-      <div className="flex-1 flex flex-col bg-gradient-to-b from-teal-600 to-cyan-700 rounded-tr-xl shadow-lg">
+      <div className="flex-1 flex flex-col bg-gradient-to-b from-teal-600 to-cyan-700  shadow-lg">
         <div className="flex-1 flex flex-col overflow-y-auto">
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navItems.map(({ id, label, icon: Icon }) => (
@@ -201,13 +205,79 @@ const DesktopSidebar = ({ activePage, setActivePage }) => {
 };
 
 // Overview Cards Component
+interface OverviewData {
+  totalUsers: number;
+  usersChange: number;
+  totalGigs: number;
+  gigsChange: number;
+  coins: number;
+  coinsChange: number;
+  revenue: number;
+  revenueChange: number;
+  
+}
+
+
+interface OverData {
+
+  topEarners: { username: string; coins: number }[];
+  recentUsers: { username: string; created_at: string }[];
+}
+
+
 const OverviewCards = ({ isLoading }) => {
-  const cards = [
-    { title: 'Total Users', value: '12,456', change: '+12%', icon: Users, color: 'from-blue-500 to-blue-600' },
-    { title: 'Total Gigs Posted', value: '3,241', change: '+8%', icon: Briefcase, color: 'from-green-500 to-green-600' },
-    { title: 'Coins in Circulation', value: '892,341', change: '+24%', icon: Coins, color: 'from-yellow-500 to-yellow-600' },
-    { title: 'Total Revenue', value: '$45,231', change: '+18%', icon: BarChart3, color: 'from-purple-500 to-purple-600' },
-  ];
+  
+  const [data, setData] = useState<OverviewData | null>(null);
+  const [loading, setLoading] = useState(isLoading);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/overview_das");
+        const json = await res.json()
+        setData(json);
+      } catch (err) {
+        console.error("Fetch overview error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  
+  const cards = data
+  ? [
+      {
+        title: "Total Users",
+        value: data?.totalUsers?.toLocaleString(),
+        change: `${data?.usersChange?.toFixed(1)}%`,
+        icon: Users,
+        color: "from-blue-500 to-blue-600",
+      },
+      {
+        title: "Total Gigs Posted",
+        value: data?.totalGigs?.toLocaleString(),
+        change: `${data?.gigsChange?.toFixed(1)}%`,
+        icon: Briefcase,
+        color: "from-green-500 to-green-600",
+      },
+      {
+        title: "Coins in Circulation",
+        value: data?.coins?.toLocaleString(),
+        change: `${data?.coinsChange?.toFixed(1)}%`,
+        icon: Coins,
+        color: "from-yellow-500 to-yellow-600",
+      },
+      {
+        title: "Total Revenue",
+        value: `$${data?.revenue?.toLocaleString()}`,
+        change: `${data?.revenueChange?.toFixed(1)}%`,
+        icon: BarChart3,
+        color: "from-purple-500 to-purple-600",
+      },
+    ]
+  : [];
 
   const handleExport = () => {
     const exportData = cards.map(card => ({
@@ -258,21 +328,60 @@ const OverviewCards = ({ isLoading }) => {
   );
 };
 
+
+
+interface UserData {
+  user_id: string;
+  username: string;
+  email: string;
+  coins: number;
+  status: string;
+  joinDate: string;
+}
 // User Table Component
 const UserTable = ({ isLoading }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
+  const [users, setUsers] = useState<UserData[]>([]);
+ const [loading, setLoading] = useState(isLoading);
 
-  const users = [
-    { id: 1, username: 'john_doe', email: 'john@example.com', status: 'Active', coins: 1250, joinDate: '2025-01-15' },
-    { id: 2, username: 'sarah_smith', email: 'sarah@example.com', status: 'Active', coins: 890, joinDate: '2025-02-20' },
-    { id: 3, username: 'mike_jones', email: 'mike@example.com', status: 'Suspended', coins: 0, joinDate: '2025-01-10' },
-    { id: 4, username: 'emily_davis', email: 'emily@example.com', status: 'Active', coins: 2100, joinDate: '2025-03-05' },
-    { id: 5, username: 'alex_wilson', email: 'alex@example.com', status: 'Active', coins: 750, joinDate: '2025-02-28' },
-    { id: 6, username: 'lisa_brown', email: 'lisa@example.com', status: 'Active', coins: 1680, joinDate: '2025-03-12' },
-  ];
+const router = useRouter();
 
+const handleDelete = async (userId: string) => {
+  if (!confirm("Are you sure you want to delete this user?")) return;
+
+  try {
+    const res = await fetch(`/api/deleteuser?id=${userId}`, { method: "DELETE" });
+    const json = await res.json();
+
+    if (!res.ok) throw new Error(json.error || "Delete failed");
+
+    // Update local state to remove the user
+    setUsers((prev) => prev.filter((user) => user.user_id !== userId));
+    alert("User deleted successfully");
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Failed to delete user");
+  }
+};
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("/api/fetchuser");
+        const data: UserData[] = await res.json();
+        setUsers(data);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+if (loading) return <SkeletonTable />;
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -284,7 +393,7 @@ const UserTable = ({ isLoading }) => {
 
   const handleExport = () => {
     const exportData = filteredUsers.map(user => ({
-      ID: user.id,
+      ID: user.user_id,
       Username: user.username,
       Email: user.email,
       Status: user.status,
@@ -309,7 +418,7 @@ const UserTable = ({ isLoading }) => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full sm:w-64 text-sm"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full sm:w-64 text-sm text-slate-900"
               />
             </div>
             <div className="flex gap-2">
@@ -317,14 +426,10 @@ const UserTable = ({ isLoading }) => {
                 onClick={handleExport}
                 className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
               >
-                <Download className="w-4 h-4" />
-                <span>Export</span>
+                <Download className="w-4 h-4 text-slate-800" />
+                <span className='text-slate-900'>Export</span>
               </button>
-              <button className="bg-teal-600 text-white px-3 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2 text-sm">
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Add User</span>
-                <span className="sm:hidden">Add</span>
-              </button>
+              
             </div>
           </div>
         </div>
@@ -333,7 +438,7 @@ const UserTable = ({ isLoading }) => {
       {/* Mobile Card View */}
       <div className="block sm:hidden">
         {currentUsers.map((user) => (
-          <div key={user.id} className="p-4 border-b border-gray-200 hover:bg-gray-50">
+          <div key={user.user_id} className="p-4 border-b border-gray-200 hover:bg-gray-50">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full flex items-center justify-center">
@@ -355,10 +460,12 @@ const UserTable = ({ isLoading }) => {
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">{user.coins.toLocaleString()} coins</span>
               <div className="flex space-x-2">
-                <button className="text-teal-600 hover:text-teal-900">
-                  <Edit className="w-4 h-4" />
+                <button className="text-teal-600 hover:text-teal-900"
+                onClick={() => router.push(`/profile/${user.user_id}`)}>
+                    <span>View</span>
                 </button>
-                <button className="text-red-600 hover:text-red-900">
+                <button className="text-red-600 hover:text-red-900"
+                onClick={() => handleDelete(user.user_id)}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -381,7 +488,7 @@ const UserTable = ({ isLoading }) => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {currentUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.user_id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full flex items-center justify-center">
@@ -405,10 +512,12 @@ const UserTable = ({ isLoading }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.coins.toLocaleString()}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button className="text-teal-600 hover:text-teal-900">
-                      <Edit className="w-4 h-4" />
+                    <button className="text-teal-600 hover:text-teal-900"
+                    onClick={() => router.push(`/profile/${user.user_id}`)}>
+                      <span>View</span>
                     </button>
-                    <button className="text-red-600 hover:text-red-900">
+                    <button className="text-red-600 hover:text-red-900"
+                    onClick={() => handleDelete(user.user_id)}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -427,14 +536,14 @@ const UserTable = ({ isLoading }) => {
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 text-slate-800"
           >
             Previous
           </button>
           <button
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 text-slate-800"
           >
             Next
           </button>
@@ -447,89 +556,71 @@ const UserTable = ({ isLoading }) => {
 
 
 
-
+interface Gig {
+  id: string;
+  title: string;
+  seller: string;
+  category: string;
+  price: number;
+  status: string;
+  rating: number;
+  createdDate: string;
+}
 // gig management
 const GigTable = ({ isLoading }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const gigsPerPage = 10;
 
-  const gigs = [
-    { 
-      id: 1, 
-      title: 'Website Design for E-commerce Store', 
-      seller: 'john_designer', 
-      category: 'Design', 
-      price: 150, 
-      status: 'Active', 
-      orders: 23, 
-      rating: 4.8,
-      createdDate: '2025-01-15'
-    },
-    { 
-      id: 2, 
-      title: 'React App Development', 
-      seller: 'sarah_dev', 
-      category: 'Programming', 
-      price: 300, 
-      status: 'Active', 
-      orders: 15, 
-      rating: 4.9,
-      createdDate: '2025-02-20'
-    },
-    { 
-      id: 3, 
-      title: 'Content Writing for Blog Posts', 
-      seller: 'mike_writer', 
-      category: 'Writing', 
-      price: 50, 
-      status: 'Pending', 
-      orders: 8, 
-      rating: 4.5,
-      createdDate: '2025-01-10'
-    },
-    { 
-      id: 4, 
-      title: 'Digital Marketing Campaign', 
-      seller: 'emily_marketer', 
-      category: 'Marketing', 
-      price: 200, 
-      status: 'Active', 
-      orders: 31, 
-      rating: 4.7,
-      createdDate: '2025-03-05'
-    },
-    { 
-      id: 5, 
-      title: 'Business Consultation Services', 
-      seller: 'alex_consultant', 
-      category: 'Consulting', 
-      price: 120, 
-      status: 'Suspended', 
-      orders: 5, 
-      rating: 4.3,
-      createdDate: '2025-02-28'
-    },
-    { 
-      id: 6, 
-      title: 'Logo Design Package', 
-      seller: 'lisa_creative', 
-      category: 'Design', 
-      price: 80, 
-      status: 'Active', 
-      orders: 42, 
-      rating: 4.9,
-      createdDate: '2025-03-12'
-    },
-  ];
+  const gigsPerPage = 10;
+const [gigs, setGigs] = useState<Gig[]>([]);
+const [loading, setLoading] = useState(true);
+
+const router = useRouter();
+
+const handleDelete = async (gigId: string) => {
+  if (!confirm("Are you sure you want to delete this gig?")) return;
+
+  try {
+    const res = await fetch(`/api/gigs?id=${gigId}`, { method: "DELETE" });
+    const data = await res.json();
+
+    if (res.ok) {
+      alert(data.message);
+      fetchGigs(); // refresh gigs list
+    } else {
+      alert(data.error);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete gig");
+  }
+};
+
+
+  const fetchGigs = async () => {
+    try {
+      const res = await fetch("/api/getgig"); // your API endpoint
+      const data = await res.json();
+      setGigs(data);
+    } catch (err) {
+      console.error("Failed to fetch gigs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGigs();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   const filteredGigs = gigs.filter(gig => {
     const matchesSearch = gig.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          gig.seller.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          gig.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || gig.status.toLowerCase() === statusFilter.toLowerCase();
-    return matchesSearch && matchesStatus;
+    
+    return matchesSearch;
   });
 
   const totalPages = Math.ceil(filteredGigs.length / gigsPerPage);
@@ -544,7 +635,6 @@ const GigTable = ({ isLoading }) => {
       Category: gig.category,
       Price: gig.price,
       Status: gig.status,
-      Orders: gig.orders,
       Rating: gig.rating,
       'Created Date': gig.createdDate,
     }));
@@ -586,32 +676,19 @@ const GigTable = ({ isLoading }) => {
                 placeholder="Search gigs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full sm:w-64 text-sm"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full sm:w-64 text-sm text-slate-900"
               />
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="suspended">Suspended</option>
-            </select>
+            
             <div className="flex gap-2">
               <button
                 onClick={handleExport}
-                className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm text-slate-900"
               >
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
-              <button className="bg-teal-600 text-white px-3 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2 text-sm">
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Add Gig</span>
-                <span className="sm:hidden">Add</span>
-              </button>
+              
             </div>
           </div>
         </div>
@@ -642,23 +719,19 @@ const GigTable = ({ isLoading }) => {
                   <DollarSign className="w-3 h-3 mr-1" />
                   ${gig.price}
                 </span>
-                <span className="flex items-center">
-                  <User className="w-3 h-3 mr-1" />
-                  {gig.orders} orders
-                </span>
+               
                 <span>⭐ {gig.rating}</span>
               </div>
             </div>
             <div className="flex space-x-2">
-              <button className="text-blue-600 hover:text-blue-900 flex items-center text-xs">
+              <button className="text-blue-600 hover:text-blue-900 flex items-center text-xs"
+              onClick={() => router.push(`/gigs/${gig.id}`)}>
                 <Eye className="w-4 h-4 mr-1" />
                 View
               </button>
-              <button className="text-teal-600 hover:text-teal-900 flex items-center text-xs">
-                <Edit className="w-4 h-4 mr-1" />
-                Edit
-              </button>
-              <button className="text-red-600 hover:text-red-900 flex items-center text-xs">
+              
+              <button className="text-red-600 hover:text-red-900 flex items-center text-xs"
+              onClick={() => handleDelete(gig.id)}>
                 <Trash2 className="w-4 h-4 mr-1" />
                 Delete
               </button>
@@ -691,7 +764,7 @@ const GigTable = ({ isLoading }) => {
                     </div>
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-900 max-w-xs truncate">{gig.title}</div>
-                      <div className="text-sm text-gray-500">ID: {gig.id}</div>
+                      
                     </div>
                   </div>
                 </td>
@@ -712,18 +785,18 @@ const GigTable = ({ isLoading }) => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{gig.orders} orders</div>
+
                   <div className="text-sm text-gray-500">⭐ {gig.rating} rating</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
+                    <button className="text-blue-600 hover:text-blue-900"
+                    onClick={() => router.push(`/gigs/${gig.id}`)}>
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button className="text-teal-600 hover:text-teal-900">
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
+                    
+                    <button className="text-red-600 hover:text-red-900"
+                    onClick={() => handleDelete(gig.id)}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -742,14 +815,14 @@ const GigTable = ({ isLoading }) => {
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 text-slate-800"
           >
             Previous
           </button>
           <button
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 text-slate-800"
           >
             Next
           </button>
@@ -761,15 +834,49 @@ const GigTable = ({ isLoading }) => {
 
 
 
+
+
+
+
+interface Transaction {
+  id: string;
+  user: string;
+  seller: string | null;   // seller may be null if not applicable
+  amount: number;
+  type: "purchase" | "refund" | "withdrawal" | "earning" | "commission";
+  date: string; // ISO date string
+}
+interface TransactionOverview {
+  total_transactions: number;
+  coins_purchased: number;
+  coins_withdrawn: number;
+}
+
 // Transaction Component
 const TransactionTable = ({ isLoading }) => {
-  const transactions = [
-    { id: 'TXN001', user: 'john_doe', amount: 500, type: 'Credit', date: '2025-08-22', description: 'Gig completion bonus' },
-    { id: 'TXN002', user: 'sarah_smith', amount: 250, type: 'Debit', date: '2025-08-21', description: 'Service fee' },
-    { id: 'TXN003', user: 'mike_jones', amount: 1000, type: 'Credit', date: '2025-08-20', description: 'Coin purchase' },
-    { id: 'TXN004', user: 'emily_davis', amount: 750, type: 'Debit', date: '2025-08-19', description: 'Withdrawal' },
-    { id: 'TXN005', user: 'alex_wilson', amount: 300, type: 'Credit', date: '2025-08-18', description: 'Referral bonus' },
-  ];
+  // const transactions = [
+  //   { id: 'TXN001', user: 'john_doe', amount: 500, type: 'Credit', date: '2025-08-22', seller: 'Gig completion bonus' },
+  //   { id: 'TXN002', user: 'sarah_smith', amount: 250, type: 'Debit', date: '2025-08-21', seller: 'Service fee' },
+  //   { id: 'TXN003', user: 'mike_jones', amount: 1000, type: 'Credit', date: '2025-08-20', seller: 'Coin purchase' },
+  //   { id: 'TXN004', user: 'emily_davis', amount: 750, type: 'Debit', date: '2025-08-19', seller: 'Withdrawal' },
+  //   { id: 'TXN005', user: 'alex_wilson', amount: 300, type: 'Credit', date: '2025-08-18', seller: 'Referral bonus' },
+  // ];
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [overview, setOverview] = useState<TransactionOverview | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [txRes, overviewRes] = await Promise.all([
+        fetch("/api/transactions").then(res => res.json()),
+        fetch("/api/transactions/overview").then(res => res.json())
+      ]);
+
+      if (txRes.success) setTransactions(txRes.transactions);
+      if (overviewRes.success) setOverview(overviewRes.overview);
+    };
+
+    fetchData();
+  }, []);
 
   const handleExportTransactions = () => {
     const exportData = transactions.map(transaction => ({
@@ -778,19 +885,36 @@ const TransactionTable = ({ isLoading }) => {
       Amount: transaction.amount,
       Type: transaction.type,
       Date: transaction.date,
-      Description: transaction.description,
     }));
     downloadCSV(exportData, 'transactions_data');
   };
 
   const handleExportOverview = () => {
-    const overviewData = [
-      { Metric: 'Total Transactions', Value: '15,432', Change: '+5.2%' },
-      { Metric: 'Coins Purchased', Value: '234,567', Change: '+12.8%' },
-      { Metric: 'Coins Withdrawn', Value: '45,890', Change: '+2.1%' },
-    ];
+    if (!overview) return;
+
+  const overviewData = [
+    {
+      "Total Transactions": overview.total_transactions,
+      "Coins Purchased": overview.coins_purchased,
+      "Coins Withdrawn": overview.coins_withdrawn,
+    },
+  ];
     downloadCSV(overviewData, 'transaction_overview');
   };
+  const getBadgeClasses = (type: string) => {
+  switch (type) {
+    case "purchase":
+    case "earning":
+      return "bg-green-100 text-green-800"; // positive inflow
+    case "refund":
+      return "bg-yellow-100 text-yellow-800"; // neutral-ish
+    case "withdrawal":
+    case "commission":
+      return "bg-red-100 text-red-800"; // money going out
+    default:
+      return "bg-gray-100 text-gray-800"; // fallback
+  }
+};
 
   if (isLoading) return <SkeletonTable />;
 
@@ -811,18 +935,18 @@ const TransactionTable = ({ isLoading }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Total Transactions</h3>
-            <p className="text-2xl font-bold text-gray-900">15,432</p>
-            <p className="text-sm text-green-600 mt-1">+5.2% from last week</p>
+            <p className="text-2xl font-bold text-gray-900">{overview?.total_transactions}</p>
+            {/* <p className="text-sm text-green-600 mt-1">+5.2% from last week</p> */}
           </div>
           <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Coins Purchased</h3>
-            <p className="text-2xl font-bold text-gray-900">234,567</p>
-            <p className="text-sm text-green-600 mt-1">+12.8% from last week</p>
+            <p className="text-2xl font-bold text-gray-900">{overview?.coins_purchased}</p>
+            {/* <p className="text-sm text-green-600 mt-1">+12.8% from last week</p> */}
           </div>
           <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Coins Withdrawn</h3>
-            <p className="text-2xl font-bold text-gray-900">45,890</p>
-            <p className="text-sm text-red-600 mt-1">+2.1% from last week</p>
+            <p className="text-2xl font-bold text-gray-900">{overview?.coins_withdrawn}</p>
+            {/* <p className="text-sm text-red-600 mt-1">+2.1% from last week</p> */}
           </div>
         </div>
       </div>
@@ -833,15 +957,15 @@ const TransactionTable = ({ isLoading }) => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Recent Transactions</h3>
             <div className="flex flex-wrap gap-2">
-              <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+              {/* <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
                 <Filter className="w-4 h-4" />
                 <span>Filter</span>
-              </button>
-              <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+              </button> */}
+              {/* <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
                 <Calendar className="w-4 h-4" />
                 <span className="hidden sm:inline">Date Range</span>
                 <span className="sm:hidden">Date</span>
-              </button>
+              </button> */}
               <button
                 onClick={handleExportTransactions}
                 className="flex items-center space-x-2 px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm"
@@ -859,17 +983,13 @@ const TransactionTable = ({ isLoading }) => {
             <div key={transaction.id} className="p-4 border-b border-gray-200 hover:bg-gray-50">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900">{transaction.id}</div>
+                  <div className="text-sm font-medium text-gray-900">{transaction.seller}</div>
                   <div className="text-sm text-gray-600">{transaction.user}</div>
-                  <div className="text-xs text-gray-500 mt-1">{transaction.description}</div>
+                  
                 </div>
                 <div className="text-right flex-shrink-0 ml-4">
                   <div className="text-sm font-medium text-gray-900">{transaction.amount} coins</div>
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    transaction.type === 'Credit' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getBadgeClasses(transaction.type)}`}>
                     {transaction.type}
                   </span>
                 </div>
@@ -884,31 +1004,27 @@ const TransactionTable = ({ isLoading }) => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transaction ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Seller</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {transactions.map((transaction) => (
                 <tr key={transaction.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{transaction.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{transaction.seller}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.user}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.amount} coins</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      transaction.type === 'Credit' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getBadgeClasses(transaction.type)}`}>
                       {transaction.type}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.description}</td>
+                 
                 </tr>
               ))}
             </tbody>
@@ -919,217 +1035,277 @@ const TransactionTable = ({ isLoading }) => {
   );
 };
 
-// Analytics Component
-const AnalyticsCharts = ({ isLoading }) => {
-  const [selectedChart, setSelectedChart] = useState('users');
-
-  const chartData = {
-    users: [
-      { month: 'Jan', value: 1200 },
-      { month: 'Feb', value: 1800 },
-      { month: 'Mar', value: 2400 },
-      { month: 'Apr', value: 3200 },
-      { month: 'May', value: 4100 },
-      { month: 'Jun', value: 5200 },
-    ],
-    gigs: [
-      { category: 'Design', value: 35, color: '#0891b2' },
-      { category: 'Programming', value: 25, color: '#14b8a6' },
-      { category: 'Writing', value: 20, color: '#06b6d4' },
-      { category: 'Marketing', value: 15, color: '#0e7490' },
-      { category: 'Other', value: 5, color: '#155e75' },
-    ],
-    coins: [
-      { month: 'Jan', purchased: 15000, withdrawn: 8000 },
-      { month: 'Feb', purchased: 18000, withdrawn: 12000 },
-      { month: 'Mar', purchased: 22000, withdrawn: 15000 },
-      { month: 'Apr', purchased: 28000, withdrawn: 18000 },
-      { month: 'May', purchased: 35000, withdrawn: 22000 },
-      { month: 'Jun', purchased: 42000, withdrawn: 28000 },
-    ],
-  };
-
-  const handleExportChart = () => {
-    let exportData = [];
-    let filename = '';
-
-    switch (selectedChart) {
-      case 'users':
-        exportData = chartData.users.map(item => ({
-          Month: item.month,
-          'User Count': item.value,
-        }));
-        filename = 'user_growth_data';
-        break;
-      case 'gigs':
-        exportData = chartData.gigs.map(item => ({
-          Category: item.category,
-          Percentage: item.value,
-        }));
-        filename = 'gigs_by_category_data';
-        break;
-      case 'coins':
-        exportData = chartData.coins.map(item => ({
-          Month: item.month,
-          'Coins Purchased': item.purchased,
-          'Coins Withdrawn': item.withdrawn,
-        }));
-        filename = 'coin_flow_data';
-        break;
+const CoinRequestsManagement = ({ isLoading }) => {
+  const [requests, setRequests] = useState([
+    {
+      id: 1,
+      user: {
+        name: 'Alice Johnson',
+        email: 'alice@example.com',
+        avatar: 'AJ'
+      },
+      amount: 500,
+      reason: 'Completed website design project for local business',
+      requestDate: '2024-01-15',
+      status: 'pending'
+    },
+    {
+      id: 2,
+      user: {
+        name: 'Bob Smith',
+        email: 'bob@example.com',
+        avatar: 'BS'
+      },
+      amount: 250,
+      reason: 'Writing articles for company blog',
+      requestDate: '2024-01-14',
+      status: 'pending'
+    },
+    {
+      id: 3,
+      user: {
+        name: 'Carol Davis',
+        email: 'carol@example.com',
+        avatar: 'CD'
+      },
+      amount: 1000,
+      reason: 'Mobile app development - milestone completion',
+      requestDate: '2024-01-13',
+      status: 'approved'
+    },
+    {
+      id: 4,
+      user: {
+        name: 'David Wilson',
+        email: 'david@example.com',
+        avatar: 'DW'
+      },
+      amount: 150,
+      reason: 'Social media marketing campaign',
+      requestDate: '2024-01-12',
+      status: 'rejected'
+    },
+    {
+      id: 5,
+      user: {
+        name: 'Emma Brown',
+        email: 'emma@example.com',
+        avatar: 'EB'
+      },
+      amount: 750,
+      reason: 'Logo design and branding package',
+      requestDate: '2024-01-11',
+      status: 'pending'
     }
+  ]);
 
-    downloadCSV(exportData, filename);
+  const [filter, setFilter] = useState('all');
+
+  const handleApprove = (requestId) => {
+    setRequests(prevRequests =>
+      prevRequests.map(request =>
+        request.id === requestId
+          ? { ...request, status: 'approved' }
+          : request
+      )
+    );
   };
 
-  const handleExportPDF = () => {
-    const title = `Analytics Report - ${selectedChart.charAt(0).toUpperCase() + selectedChart.slice(1)} Data`;
-    let data = chartData[selectedChart];
-    downloadPDF(title, data);
+  const handleReject = (requestId) => {
+    setRequests(prevRequests =>
+      prevRequests.map(request =>
+        request.id === requestId
+          ? { ...request, status: 'rejected' }
+          : request
+      )
+    );
+  };
+
+  const filteredRequests = requests.filter(request => {
+    if (filter === 'all') return true;
+    return request.status === filter;
+  });
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
+      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'pending': return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'approved': return <Check className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'rejected': return <X className="w-3 h-3 sm:w-4 sm:h-4" />;
+      default: return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <SkeletonCard />
-        <SkeletonCard />
+      <div className="space-y-4 p-4 sm:p-0">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border animate-pulse">
+            <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full"></div>
+              <div className="flex-1">
+                <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                <div className="h-2 sm:h-3 bg-gray-200 rounded w-1/3"></div>
+              </div>
+            </div>
+            <div className="h-3 sm:h-4 bg-gray-200 rounded w-full mb-2"></div>
+            <div className="h-3 sm:h-4 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        ))}
       </div>
     );
   }
 
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  const totalCoins = filteredRequests.reduce((sum, request) => sum + request.amount, 0);
+
   return (
-    <div className="space-y-6">
-      {/* Chart Selection */}
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
+      {/* Header */}
       <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Analytics Dashboard</h3>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={handleExportChart}
-              className="flex items-center space-x-2 px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors text-sm"
-            >
-              <Download className="w-4 h-4" />
-              <span>Export CSV</span>
-            </button>
-            <button
-              onClick={handleExportPDF}
-              className="flex items-center space-x-2 px-3 py-2 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition-colors text-sm"
-            >
-              <Download className="w-4 h-4" />
-              <span>Export PDF</span>
-            </button>
+        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Coin Requests</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
+              {pendingCount} pending request{pendingCount !== 1 ? 's' : ''} awaiting review
+            </p>
+          </div>
+          <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
+            <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>Total: {totalCoins.toLocaleString()} coins</span>
           </div>
         </div>
+      </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
+      {/* Filter Tabs */}
+      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border">
+        <div className="grid grid-cols-2 sm:flex gap-2">
           <button
-            onClick={() => setSelectedChart('users')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedChart === 'users'
+            onClick={() => setFilter('all')}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              filter === 'all'
                 ? 'bg-teal-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            User Growth
+            <span className="block sm:hidden">All</span>
+            <span className="hidden sm:block">All Requests</span>
+            <span className="ml-1">({requests.length})</span>
           </button>
           <button
-            onClick={() => setSelectedChart('gigs')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedChart === 'gigs'
+            onClick={() => setFilter('pending')}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              filter === 'pending'
                 ? 'bg-teal-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Gigs by Category
+            <span className="block sm:hidden">Pending</span>
+            <span className="hidden sm:block">Pending</span>
+            <span className="ml-1">({requests.filter(r => r.status === 'pending').length})</span>
           </button>
           <button
-            onClick={() => setSelectedChart('coins')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedChart === 'coins'
+            onClick={() => setFilter('approved')}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              filter === 'approved'
                 ? 'bg-teal-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Coin Flow
+            <span className="block sm:hidden">Approved</span>
+            <span className="hidden sm:block">Approved</span>
+            <span className="ml-1">({requests.filter(r => r.status === 'approved').length})</span>
+          </button>
+          <button
+            onClick={() => setFilter('rejected')}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              filter === 'rejected'
+                ? 'bg-teal-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <span className="block sm:hidden">Rejected</span>
+            <span className="hidden sm:block">Rejected</span>
+            <span className="ml-1">({requests.filter(r => r.status === 'rejected').length})</span>
           </button>
         </div>
+      </div>
 
-        {/* Chart Display */}
-        <div className="h-64 sm:h-80 flex items-center justify-center bg-gray-50 rounded-lg">
-          {selectedChart === 'users' && (
-            <div className="w-full h-full flex items-end space-x-2 sm:space-x-4 p-4">
-              {chartData.users.map((item, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div
-                    className="w-full bg-gradient-to-t from-teal-500 to-cyan-400 rounded-t transition-all duration-500"
-                    style={{ height: `${(item.value / 5200) * 100}%`, minHeight: '20px' }}
-                  ></div>
-                  <span className="text-xs text-gray-600 mt-2">{item.month}</span>
-                  <span className="text-xs font-medium text-gray-900">{item.value.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {selectedChart === 'gigs' && (
-            <div className="w-full h-full flex items-center justify-center p-4">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 w-full">
-                {chartData.gigs.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div
-                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-sm sm:text-base transition-transform hover:scale-110"
-                      style={{ backgroundColor: item.color }}
-                    >
-                      {item.value}%
-                    </div>
-                    <span className="text-xs text-gray-600 block">{item.category}</span>
+      {/* Request Cards */}
+      <div className="space-y-3 sm:space-y-4">
+        {filteredRequests.length === 0 ? (
+          <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border text-center">
+            <Coins className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+            <p className="text-sm sm:text-base text-gray-500">No requests found for the selected filter.</p>
+          </div>
+        ) : (
+          filteredRequests.map((request) => (
+            <div key={request.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
+              <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-start sm:justify-between mb-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center font-semibold text-sm sm:text-base">
+                    {request.user.avatar}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {selectedChart === 'coins' && (
-            <div className="w-full h-full flex items-end space-x-1 sm:space-x-2 p-4">
-              {chartData.coins.map((item, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div className="w-full flex flex-col space-y-1">
-                    <div
-                      className="w-full bg-green-500 rounded-t transition-all duration-500"
-                      style={{ height: `${(item.purchased / 42000) * 80}px`, minHeight: '10px' }}
-                      title={`Purchased: ${item.purchased.toLocaleString()}`}
-                    ></div>
-                    <div
-                      className="w-full bg-red-500 transition-all duration-500"
-                      style={{ height: `${(item.withdrawn / 42000) * 80}px`, minHeight: '10px' }}
-                      title={`Withdrawn: ${item.withdrawn.toLocaleString()}`}
-                    ></div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{request.user.name}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">{request.user.email}</p>
                   </div>
-                  <span className="text-xs text-gray-600 mt-2">{item.month}</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <div className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium border flex items-center space-x-1 self-start ${getStatusColor(request.status)}`}>
+                  {getStatusIcon(request.status)}
+                  <span className="capitalize">{request.status}</span>
+                </div>
+              </div>
 
-        {/* Chart Legend */}
-        <div className="mt-4 flex justify-center">
-          {selectedChart === 'coins' && (
-            <div className="flex items-center space-x-4 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded"></div>
-                <span>Purchased</span>
+              <div className="mb-4">
+                <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-3">
+                  <div className="flex items-center space-x-1">
+                    <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="font-semibold text-gray-900 text-sm sm:text-base">{request.amount.toLocaleString()} coins</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>{new Date(request.requestDate).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{request.reason}</p>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded"></div>
-                <span>Withdrawn</span>
-              </div>
+
+              {request.status === 'pending' && (
+                <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3">
+                  <button
+                    onClick={() => handleApprove(request.id)}
+                    className="flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Approve</span>
+                  </button>
+                  <button
+                    onClick={() => handleReject(request.id)}
+                    className="flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Reject</span>
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          ))
+        )}
       </div>
     </div>
   );
 };
+
+
 
 
 
@@ -1339,57 +1515,89 @@ const SkillsAmigoAdmin = () => {
       users: 'Manage Users',
       gigs: 'Manage Gigs',
       transactions: 'Transactions & Coins',
-      analytics: 'Reports & Analytics',
+      analytics: 'Coins Requests',
       settings: 'Settings',
     };
     return titles[page] || 'Dashboard';
   };
 
-  const renderPageContent = () => {
-    switch (activePage) {
-      case 'overview':
-        return (
-          <div className="space-y-6">
-            <OverviewCards isLoading={isLoading} />
-            {!isLoading && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Earners</h3>
-                  <div className="space-y-3">
-                    {[
-                      { name: 'sarah_smith', earnings: '2,450 coins' },
-                      { name: 'john_doe', earnings: '2,100 coins' },
-                      { name: 'emily_davis', earnings: '1,890 coins' },
-                    ].map((user, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm font-bold text-teal-600">#{index + 1}</span>
-                          <span className="text-sm font-medium text-gray-900">{user.name}</span>
-                        </div>
-                        <span className="text-sm text-gray-600">{user.earnings}</span>
+const [overviewData, setOverviewData] = useState<OverData | null>(null);
+
+// ✅ Fetch overview when page loads
+useEffect(() => {
+  const getOverview = async () => {
+    try {
+      const res = await fetch("/api/overview_res");
+      const json: OverData = await res.json();
+      setOverviewData(json); // ✅ update the same state you render from
+    } catch (error) {
+      console.error("Error fetching overview:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  getOverview();
+}, []);
+
+const renderPageContent = () => {
+  switch (activePage) {
+    case "overview":
+      return (
+        <div className="space-y-6">
+          <OverviewCards isLoading={isLoading} />
+
+          {!isLoading && overviewData && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Top Earners */}
+              <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Top Earners
+                </h3>
+                <div className="space-y-3">
+                  {overviewData?.topEarners?.map((user, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <span className="text-sm font-bold text-teal-600">
+                          #{index + 1}
+                        </span>
+                        <span className="text-sm font-medium text-gray-900">
+                          {user.username}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-                  <div className="space-y-3">
-                    {[
-                      { action: 'New user registered', time: '2 minutes ago' },
-                      { action: 'Gig approved', time: '15 minutes ago' },
-                      { action: 'Transaction completed', time: '1 hour ago' },
-                    ].map((activity, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-900">{activity.action}</span>
-                        <span className="text-xs text-gray-500">{activity.time}</span>
-                      </div>
-                    ))}
-                  </div>
+                      <span className="text-sm text-gray-600">
+                        {user.coins} coins
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
-          </div>
-        );
+
+              {/* Recent Activity */}
+              <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Recent Registered Users
+                </h3>
+                <div className="space-y-3">
+                  {overviewData?.recentUsers?.map((user, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
+                      <span className="text-sm text-gray-900">{user.username}</span>
+                      <span className="text-xs text-gray-500">
+                        {user.created_at?new Date(user.created_at).toLocaleDateString():"N/A"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
       case 'users':
         return <UserTable isLoading={isLoading} />;
       case 'gigs':
@@ -1397,7 +1605,7 @@ const SkillsAmigoAdmin = () => {
       case 'transactions':
         return <TransactionTable isLoading={isLoading} />;
       case 'analytics':
-        return <AnalyticsCharts isLoading={isLoading} />;
+        return <CoinRequestsManagement isLoading={isLoading} />;
       case 'settings':
         return <PolicyUpdatePanel isLoading={isLoading} />;
       default:
@@ -1406,14 +1614,14 @@ const SkillsAmigoAdmin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Full Width Header */}
       <Header
         currentPage={getPageTitle(activePage)}
         userProfile={userProfile}
       />
 
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Desktop Sidebar */}
         <DesktopSidebar
           activePage={activePage}
