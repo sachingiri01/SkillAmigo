@@ -1309,22 +1309,29 @@ const CoinRequestsManagement = ({ isLoading }) => {
 
 
 
-
 const PolicyUpdatePanel = ({ isLoading }) => {
   const [activeSection, setActiveSection] = useState('update');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [policyContent, setPolicyContent] = useState('');
 
   const policyCategories = [
-    { value: 'privacy', label: 'Privacy Policy' },
-    { value: 'terms', label: 'Terms of Service' },
-    { value: 'usage', label: 'Usage Guidelines' },
-    { value: 'data', label: 'Data Protection' },
-    { value: 'content', label: 'Content Moderation' },
-    { value: 'safety', label: 'Safety Guidelines' },
-    { value: 'conduct', label: 'Code of Conduct' },
-    { value: 'refund', label: 'Refund Policy' }
-  ];
+  { doc_id: "policy_1", source: "manual", doc_type: "user_policy", label: "User Policy" },
+  { doc_id: "policy_2", source: "manual", doc_type: "content_policy", label: "Content Policy" },
+  { doc_id: "policy_3", source: "manual", doc_type: "security_policy", label: "Security Policy" },
+  { doc_id: "policy_4", source: "manual", doc_type: "ip_policy", label: "IP Policy" },
+  { doc_id: "policy_5", source: "manual", doc_type: "privacy_policy", label: "Privacy Policy" },
+  { doc_id: "policy_6", source: "manual", doc_type: "pricing_policy", label: "Pricing Policy" },
+  { doc_id: "policy_7", source: "manual", doc_type: "payment_policy", label: "Payment Policy" },
+  { doc_id: "policy_8", source: "manual", doc_type: "refund_policy", label: "Refund Policy" },
+  { doc_id: "policy_9", source: "manual", doc_type: "verification_policy", label: "Verification Policy" },
+  { doc_id: "policy_10", source: "manual", doc_type: "review_policy", label: "Review Policy" },
+  { doc_id: "policy_11", source: "manual", doc_type: "promotion_policy", label: "Promotion Policy" },
+  { doc_id: "policy_12", source: "manual", doc_type: "content_policy", label: "Content Policy" },
+  { doc_id: "policy_13", source: "manual", doc_type: "dispute_policy", label: "Dispute Policy" },
+  { doc_id: "policy_14", source: "manual", doc_type: "account_policy", label: "Account Policy" },
+  { doc_id: "policy_15", source: "manual", doc_type: "security_policy", label: "Security Policy" }
+];
+
 
   const existingPolicies = [
     { id: 1, category: 'Privacy Policy', lastUpdated: '2024-01-15', status: 'Active' },
@@ -1333,18 +1340,51 @@ const PolicyUpdatePanel = ({ isLoading }) => {
     { id: 4, category: 'Data Protection', lastUpdated: '2024-01-03', status: 'Active' }
   ];
 
-  const handleSubmit = () => {
-    if (!selectedCategory || !policyContent.trim()) {
-      alert('Please select a category and enter policy content');
-      return;
-    }
-    // Handle form submission here
-    console.log('Policy Update:', { category: selectedCategory, content: policyContent });
-    alert('Policy updated successfully!');
+  const handleSubmit = async () => {
+  if (!selectedCategory || !policyContent.trim()) {
+    alert('Please select a category and enter policy content');
+    return;
+  }
+
+  // Find the selected category object
+  const selectedPolicy = policyCategories.find(
+    (p) => p.label === selectedCategory
+  );
+
+  if (!selectedPolicy) {
+    alert('Invalid policy category selected');
+    return;
+  }
+
+  const payload = {
+    doc_id: selectedPolicy.doc_id,
+    source: selectedPolicy.source,
+    doc_type: selectedPolicy.doc_type,
+    context: policyContent.trim()
+  };
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/update-policy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    alert(data.message || 'Policy updated successfully!');
+
     // Reset form
     setSelectedCategory('');
     setPolicyContent('');
-  };
+  } catch (error) {
+    console.error('Error updating policy:', error);
+    alert('Failed to update policy. Please try again.');
+  }
+};
+
+
 
   if (isLoading) return <SkeletonTable />;
 
@@ -1378,7 +1418,7 @@ const PolicyUpdatePanel = ({ isLoading }) => {
       </div>
 
       {/* Update Policy Section */}
-      {activeSection === 'update' && (
+       {activeSection === 'update' && (
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
           <h4 className="text-md font-semibold text-gray-900 mb-4">Update Chatbot Policy</h4>
           <div className="space-y-6">
@@ -1386,14 +1426,13 @@ const PolicyUpdatePanel = ({ isLoading }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Policy Category</label>
               <select
                 value={selectedCategory}
-                
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-jet-stream-50 text-slate-900"
                 required
               >
-                {/* <option value="">Select a policy category</option> */}
+                <option value="">Select a policy category</option>
                 {policyCategories.map((category) => (
-                  <option key={category.value} value={category.value}>
+                  <option key={category.doc_id} value={category.label}>
                     {category.label}
                   </option>
                 ))}

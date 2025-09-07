@@ -227,7 +227,7 @@ async def upload_data(request: Request):
     """
     try:
         data = await request.json()
-        msg=data.get('msg');
+        msg=data.get('context');
         doc_id=data.get('doc_id') or "User_manual"
         source=data.get('source') or "manual"
         doc_type=data.get('doc_type') or "general"  

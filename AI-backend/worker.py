@@ -156,7 +156,7 @@ Rules:
    - "second one" → history[1]
    - "third one" → history[2]
    - "last one" → history[-1]
-   - "book all" → all items in history
+   - "book all or book" → all items in history
    - "book 2 and 3" → history[1] and history[2]
 
 3. Always resolve these references to the correct gig(s) from history.
