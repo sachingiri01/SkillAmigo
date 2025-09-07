@@ -18,6 +18,7 @@ Available categories:
 {categories}
 
 Rules:
+0: You can select atmost only 5, always try to not repeat the categories all must be unique so select which is best outcome must very important rule
 1. Only choose from the given categories.
 2. Pick all categories that are relevant to the user request.
 3. Rank them in logical order (most relevant first).
@@ -94,84 +95,11 @@ decision_chain = LLMChain(llm=llm, prompt=decision_prompt)
 async def fetch_categories(ap=None):
     try:
         data = hit_collaborator()
-        return data.get("categories", []) 
+        return data 
     except Exception as e:
         print(f"❌ Error fetching categories: {e}")
         return []
 
-
-# --- Expand user query or book task ---
-# async def expand_query(user_query, history):
-#     print("organizer")
-#     try:
-#         # Step 1: Decide what to do
-#         decision_raw = decision_chain.invoke({"user_query": user_query,"history":history})
-#         if isinstance(decision_raw, dict) and "text" in decision_raw:
-#             decision_raw = decision_raw["text"]
-#         print("raw descion : ",decision_raw)
-#         if isinstance(decision_raw, str):
-#             try:
-#                 decision = json.loads(decision_raw)
-#             except:
-#                 decision = {"action": "collaborate"}
-#         else:
-#             decision = decision_raw  # already dict
-
-#         print("Decision: ", decision)
-
-#         # Step 2: If booking, call book_task_collab
-#         if decision.get("action") == "book":
-#             return await book_task_collab(user_query, history)
-
-#         # Step 3: If collaborate, expand categories
-#         categories = [
-#             'decorator','cake maker','party scheduler',
-#             'contructor','plumber','electrician','worker','cleaner'
-#         ]
-#         # categories = await fetch_categories()
-
-#         if not categories:
-#             return {"chosen_categories": [], "message": "Sorry, no categories found.", "data": []}
-
-#         raw = expander_chain.invoke({
-#             "user_query": user_query,
-#             "categories": ", ".join(categories)
-#         })
-
-#         if isinstance(raw, dict) and "text" in raw:
-#             raw = raw["text"]
-
-#         try:
-#             result = json.loads(raw)
-#         except:
-#             cleaned = (
-#                 raw.strip()
-#                 .removeprefix("```json")
-#                 .removesuffix("```")
-#                 .strip()
-#             )
-#             result = json.loads(cleaned)
-
-#         # Ensure message exists
-#         if "message" not in result:
-#             result["message"] = "Here’s what we can do to help you with your request."
-
-#         # Attach search results
-#         result["data"] = []
-#         if result.get("chosen_categories"):
-#             for c in result["chosen_categories"]:
-#                 data = await got_only_search_collab(c)
-#                 result["data"].append(data)
-
-#         return result
-
-#     except Exception as e:
-#         print(f"❌ Error in expand_query: {e}")
-#         return {
-#             "chosen_categories": [],
-#             "message": "Something went wrong, please try again.",
-#             "data": []
-#         }
 
 import json
 
@@ -207,11 +135,18 @@ async def expand_query(user_query, history,logged_user_id=None):
             return await book_task_collab(user_query, history,logged_user_id)
 
         # Step 3: If collaborate, expand categories
-        categories = [
-            'Voice', 'Writing', 'Video',
-            'Marketing', 'Design', 'Design', 'Development', 'Marketing',"Data Science"
-        ]
-        # categories = await fetch_categories()
+        categories =[]
+        catt = await fetch_categories()
+        if catt['success']:
+
+               # checks boolean True
+            categories = catt.get('message', [])
+        else:
+           return {
+        "chosen_categories": [],
+        "message": "Something went wrong, please try again.",
+        "data": []
+    }
 
         if not categories:
             return {"chosen_categories": [], "message": "Sorry, no categories found.", "data": []}

@@ -5,6 +5,7 @@ export async function DELETE(req) {
   if (!gigId) return NextResponse.json({ error: "Missing gig ID" }, { status: 400 });
 
   try {
+      
     await pool.query("DELETE FROM gigs WHERE gig_id = $1", [gigId]);
     return NextResponse.json({ message: "Gig deleted successfully" });
   } catch (err) {

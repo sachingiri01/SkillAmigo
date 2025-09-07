@@ -1,4 +1,8 @@
 import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
+BACKEND_API_KEY = os.getenv("BACKEND_URL")
 async def hit_chosen_api(chain_result):
     api = chain_result['chosen_api']
     url = api['api_url']
@@ -18,15 +22,14 @@ async def hit_chosen_api(chain_result):
         return response.text
 
 
-async def hit_collaborator():
-    url="localhost:3000/api/get-categories"
-    response =requests.get(url);
-
+def hit_collaborator():
+    url = f"{BACKEND_API_KEY}/get-cat-list"
+    print("back ", url)
     try:
+        response = requests.get(url)
         return response.json()
-    except Exception:
-        return response.text
-
+    except Exception as e:
+        return {"error": str(e)}
 import requests
 import json
 

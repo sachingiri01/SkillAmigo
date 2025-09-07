@@ -456,3 +456,18 @@ def update_policy_to_pinecone(raw_text: str, doc_id: str = "User_manual", source
 
     except Exception as e:
         return {"status": "error", "msg": str(e)}
+
+def delete_gig_from_pinecone(gig_id):
+    """
+    Deletes a gig from Pinecone using its ID.
+    """
+    try:
+        namespace = "__default__"  # same namespace used for upload
+
+        # Pinecone v2 SDK
+        index.delete(ids=[str(gig_id)], namespace=namespace)
+
+        return {"status": "success", "msg": f"Deleted gig {gig_id} from Pinecone"}
+
+    except Exception as e:
+        return {"status": "error", "msg": str(e)}

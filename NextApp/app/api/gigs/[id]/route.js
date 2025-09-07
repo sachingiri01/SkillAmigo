@@ -48,6 +48,20 @@ export async function DELETE(req, { params }) {
     }
 
     // Delete gig
+     const response = await fetch("http://127.0.0.1:8000/delete-gig-pincone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({id:gigId}),
+    });
+    if (!response.ok) {
+          const errText = await response.text();
+          console.error("Django API error:", errText);
+          return NextResponse.json(
+            { error: "Gig falied to delete from pincone try again later :(" },
+            { status: 500 }
+          );
+        }
+    
     await pool.query(`DELETE FROM gigs WHERE gig_id = $1`, [gigId]);
 
     return NextResponse.json({ success: true, message: "Gig deleted successfully" });

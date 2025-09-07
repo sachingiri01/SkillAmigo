@@ -6,10 +6,11 @@ from search_work import searching
 from pydantic import BaseModel
 from fastapi import FastAPI, Request
 from chat_worker import chat_work
+from hit_wroker import hit_collaborator
 from book_worker import book_task
 from supervisor import surpervisor_work
 from pine import index
-from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig,upload_data_to_pinecone_user,upload_text_to_pinecone,update_policy_to_pinecone
+from upload import upload_data_to_pinecone,upload_data_to_pinecone_gig,upload_data_to_pinecone_user,upload_text_to_pinecone,update_policy_to_pinecone,delete_gig_from_pinecone
 from organizer import expand_query
 import requests
 from rag_upload import rag_upload
@@ -260,3 +261,12 @@ async def upload_data(request: Request):
     except Exception as e:
         return {"status": "error", "msg": str(e)}
     
+
+@app.post("/delete-gig-pincone")
+async def upload_data(request: Request):
+    print("getting here data to Pinecone...")
+    data = await request.json()
+    # print("dl gig -> ",data['id']);
+    id=data['id']
+    result = delete_gig_from_pinecone(id);
+    return result
