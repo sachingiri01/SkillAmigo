@@ -309,7 +309,7 @@ const SellerInfo = ({ seller }) => (
                 About the Provider
               </h4>
               
-              {seller.bio ? (
+              {/* {seller.bio ? (
                 <p className="text-jet-stream-700 leading-relaxed mb-6 flex-grow">
                   {seller.bio}
                 </p>
@@ -317,7 +317,7 @@ const SellerInfo = ({ seller }) => (
                 <p className="text-jet-stream-500 italic mb-6 flex-grow">
                   This provider hasn't added a bio yet, but their work speaks for itself!
                 </p>
-              )}
+              )} */}
               
               {/* Contact Information */}
               <div className="space-y-3">
@@ -351,10 +351,9 @@ const SellerInfo = ({ seller }) => (
                   <div>
                     <p className="text-xs text-jet-stream-500 uppercase tracking-wider">Member Since</p>
                     <p className="text-jet-stream-700 font-medium">
-                      {new Date(seller.created_at).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long' 
-                      })}
+                      {seller?.s_created_at 
+    ? new Date(seller.s_created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) 
+    : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -503,7 +502,7 @@ useEffect(() => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to fetch gig');
+        // setError(data.error || 'Failed to fetch gig');
       } else {
         setGigData(data.gig || null);
         console.log(data);
@@ -517,7 +516,8 @@ useEffect(() => {
           seller_picture = '',
           seller_bio = '',
           seller_merit = 0,
-          seller_verified = false
+          seller_verified = false,
+          s_created_at = null
         } = data.gig || {};
 
         setSeller({
@@ -527,7 +527,8 @@ useEffect(() => {
           profile_picture: seller_picture,
           bio: seller_bio,
           merit_credits: seller_merit,
-          is_verified: seller_verified
+          is_verified: seller_verified,
+          s_created_at
         });
       }
     } catch (err) {

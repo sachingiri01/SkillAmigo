@@ -2,6 +2,7 @@
 'use client'
 import { useState,useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from "next/navigation";
 import { 
   Star, 
   MapPin, 
@@ -496,8 +497,9 @@ const SkillsShowcase = ({ user }) => {
 };
 
 // Portfolio Masonry Layout
-const PortfolioMasonry = ({ gigs }) => (
-  <section className="relative py-20 bg-gradient-to-br from-jet-stream-50 via-orange-25 to-jet-stream-100">
+const PortfolioMasonry = ({ gigs }) => {
+  const router = useRouter();
+  return(<section className="relative py-20 bg-gradient-to-br from-jet-stream-50 via-orange-25 to-jet-stream-100">
     {/* Flowing background shapes */}
     <div className="absolute inset-0 overflow-hidden opacity-20">
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 600">
@@ -571,11 +573,14 @@ const PortfolioMasonry = ({ gigs }) => (
                     <span className="text-sm font-semibold">{gig.rating}</span>
                     <span className="text-jet-stream-400 text-sm ml-1">({gig.reviews} reviews)</span>
                   </div>
-                  
+                  <button
+                  className="border-jet-stream-300 text-jet-stream-600 hover:bg-jet-stream-50 hover:border-jet-stream-500 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
+              onClick={()=>router.push(`/gigs/${gig.gig_id}`)}>
                   <div className="flex items-center text-jet-stream-500 text-sm">
                     <Eye className="w-4 h-4 mr-1" />
-                    <span>{gig.views}</span>
+                    <span>view</span>
                   </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -593,7 +598,7 @@ const PortfolioMasonry = ({ gigs }) => (
     </div>
   </section>
 );
-
+}
 // Statistics & Achievements
 const StatsSection = ({ user }) => {
   const stats = [
@@ -671,83 +676,83 @@ const StatsSection = ({ user }) => {
 // Main Profile Page Component
 export default function UserProfilePage() {
   // Enhanced dummy user data
-  const users = {
-    user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    name: "Aman Kumar",
-    email: "maya.chen@creativestudio.com",
-    phone: "+1 (555) 987-6543",
-    profile_picture: "/am.jpg",
-    bio: "Creative photographer and visual storyteller based in Portland, Oregon. I specialize in capturing authentic moments that tell compelling stories through the lens of human connection. My work spans from intimate portraits to large-scale commercial campaigns, always with a focus on emotional depth and artistic vision. When I'm not behind the camera, you'll find me exploring hidden coffee shops, hiking Pacific Northwest trails, or experimenting with new post-processing techniques.",
-    merit_credits: 6250,
-    is_verified: true,
-    role: "photographer",
-    created_at: "2018-07-20T09:15:00Z",
-    updated_at: "2024-12-15T16:45:00Z"
-  };
+  // const users = {
+  //   user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  //   name: "Aman Kumar",
+  //   email: "maya.chen@creativestudio.com",
+  //   phone: "+1 (555) 987-6543",
+  //   profile_picture: "/am.jpg",
+  //   bio: "Creative photographer and visual storyteller based in Portland, Oregon. I specialize in capturing authentic moments that tell compelling stories through the lens of human connection. My work spans from intimate portraits to large-scale commercial campaigns, always with a focus on emotional depth and artistic vision. When I'm not behind the camera, you'll find me exploring hidden coffee shops, hiking Pacific Northwest trails, or experimenting with new post-processing techniques.",
+  //   merit_credits: 6250,
+  //   is_verified: true,
+  //   role: "photographer",
+  //   created_at: "2018-07-20T09:15:00Z",
+  //   updated_at: "2024-12-15T16:45:00Z"
+  // };
 
   // Enhanced gigs data with more variety
-  const gig = [
-    {
-      title: "Editorial Portrait Sessions",
-      description: "Professional portrait photography for magazines, brands, and personal branding. Capturing personality and professionalism in every frame.",
-      category: "Portrait",
-      min_price: 450,
-      rating: 4.9,
-      reviews: 34,
-      views: 1250,
-      picture: "/api/placeholder/400/500"
-    },
-    {
-      title: "Brand Campaign Photography",
-      description: "Complete visual storytelling for brands looking to connect with their audience through powerful imagery and creative direction.",
-      category: "Commercial",
-      min_price: 1200,
-      rating: 5.0,
-      reviews: 18,
-      views: 890,
-      picture: "/api/placeholder/400/350"
-    },
-    {
-      title: "Lifestyle Photography",
-      description: "Authentic lifestyle moments captured in natural settings. Perfect for social media, websites, and personal storytelling.",
-      category: "Lifestyle",
-      min_price: 350,
-      rating: 4.8,
-      reviews: 42,
-      views: 1580,
-      picture: "/api/placeholder/400/450"
-    },
-    {
-      title: "Product Photography",
-      description: "Clean, professional product shots that make your items shine. From e-commerce to luxury brands.",
-      category: "Product",
-      min_price: 200,
-      rating: 4.9,
-      reviews: 67,
-      views: 2100,
-      picture: "/api/placeholder/400/300"
-    },
-    {
-      title: "Event Documentation",
-      description: "Comprehensive event coverage that captures the energy, emotions, and key moments of your special occasions.",
-      category: "Events",
-      min_price: 600,
-      rating: 4.7,
-      reviews: 28,
-      views: 950,
-      picture: "/api/placeholder/400/550"
-    },
-    {
-      title: "Creative Headshots",
-      description: "Professional headshots that showcase personality and professionalism for actors, entrepreneurs, and professionals.",
-      category: "Portrait",
-      min_price: 250,
-      rating: 4.9,
-      reviews: 89,
-      views: 1750,
-      picture: "/api/placeholder/400/400"
-    }
-  ];
+  // const gig = [
+  //   {
+  //     title: "Editorial Portrait Sessions",
+  //     description: "Professional portrait photography for magazines, brands, and personal branding. Capturing personality and professionalism in every frame.",
+  //     category: "Portrait",
+  //     min_price: 450,
+  //     rating: 4.9,
+  //     reviews: 34,
+  //     views: 1250,
+  //     picture: "/api/placeholder/400/500"
+  //   },
+  //   {
+  //     title: "Brand Campaign Photography",
+  //     description: "Complete visual storytelling for brands looking to connect with their audience through powerful imagery and creative direction.",
+  //     category: "Commercial",
+  //     min_price: 1200,
+  //     rating: 5.0,
+  //     reviews: 18,
+  //     views: 890,
+  //     picture: "/api/placeholder/400/350"
+  //   },
+  //   {
+  //     title: "Lifestyle Photography",
+  //     description: "Authentic lifestyle moments captured in natural settings. Perfect for social media, websites, and personal storytelling.",
+  //     category: "Lifestyle",
+  //     min_price: 350,
+  //     rating: 4.8,
+  //     reviews: 42,
+  //     views: 1580,
+  //     picture: "/api/placeholder/400/450"
+  //   },
+  //   {
+  //     title: "Product Photography",
+  //     description: "Clean, professional product shots that make your items shine. From e-commerce to luxury brands.",
+  //     category: "Product",
+  //     min_price: 200,
+  //     rating: 4.9,
+  //     reviews: 67,
+  //     views: 2100,
+  //     picture: "/api/placeholder/400/300"
+  //   },
+  //   {
+  //     title: "Event Documentation",
+  //     description: "Comprehensive event coverage that captures the energy, emotions, and key moments of your special occasions.",
+  //     category: "Events",
+  //     min_price: 600,
+  //     rating: 4.7,
+  //     reviews: 28,
+  //     views: 950,
+  //     picture: "/api/placeholder/400/550"
+  //   },
+  //   {
+  //     title: "Creative Headshots",
+  //     description: "Professional headshots that showcase personality and professionalism for actors, entrepreneurs, and professionals.",
+  //     category: "Portrait",
+  //     min_price: 250,
+  //     rating: 4.9,
+  //     reviews: 89,
+  //     views: 1750,
+  //     picture: "/api/placeholder/400/400"
+  //   }
+  // ];
 
     const reviews = [
     {

@@ -111,6 +111,7 @@ const isBooked=false;
 
   const { data: session } = useSession();
   const router = useRouter();
+  
   const submitBooking = async () => {
   
     if (!scheduledDate || isNaN(Date.parse(scheduledDate))) {
@@ -283,8 +284,8 @@ const isBooked=false;
 
         <div className="flex items-center justify-between mb-3 sm:mb-4 text-xs sm:text-sm text-jet-stream-600">
           <div className="flex items-center space-x-1">
-            <MapPin className="w-3 h-3 text-jet-stream-500" />
-            <span>{gig.distance}</span>
+            {/* <MapPin className="w-3 h-3 text-jet-stream-500" />
+            <span>{gig.distance}</span> */}
           </div>
           <div className="flex items-center space-x-1">
             <Clock className="w-3 h-3 text-jet-stream-500" />
@@ -307,9 +308,10 @@ const isBooked=false;
             size="sm"
             variant="outline"
             className="border-jet-stream-300 text-jet-stream-600 hover:bg-jet-stream-50 hover:border-jet-stream-500 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
+              onClick={()=>router.push(`/gigs/${gig.id}`)}
           >
-            <MessageCircle className="w-3 h-3 sm:mr-1" />
-            <span className="hidden sm:inline">Chat</span>
+            <TrendingUp className="w-3 h-3 sm:mr-1" />
+            <span className="hidden sm:inline">view</span>
           </Button>
 
           {/* Show Book button only if NOT booked */}

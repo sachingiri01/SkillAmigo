@@ -89,7 +89,8 @@ export async function GET(req, { params }) {
         u.profile_picture AS seller_picture,
         u.bio AS seller_bio,
         u.merit_credits AS seller_merit,
-        u.is_verified AS seller_verified
+        u.is_verified AS seller_verified,
+        u.created_at As s_created_at
       FROM gigs g
       JOIN users u ON g.seller_id = u.user_id
       WHERE g.gig_id = $1`,

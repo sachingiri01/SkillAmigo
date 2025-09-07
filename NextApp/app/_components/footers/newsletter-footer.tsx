@@ -157,7 +157,7 @@ export const NewsletterFooter = () => {
       {/* Floating Help Button */}
       <button
         onClick={() => setIsHelpOpen(!isHelpOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-saffron text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:glow-md focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-jet-stream-975"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-saffron text-jet-stream-500 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:glow-md focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-jet-stream-975"
         aria-label="Open help chat"
       >
         <MessageCircle className="h-6 w-6" />
