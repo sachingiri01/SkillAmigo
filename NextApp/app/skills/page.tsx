@@ -15,6 +15,73 @@ import { FullwidthIconNavbar } from "../_components/navbars/fullwidth-icon-navba
 import { NewsletterFooter } from "../_components/footers/newsletter-footer";
 import { useRouter } from "next/navigation";
 
+
+
+
+
+const Skeleton=({ className = "" }: { className?: string }) =>{
+  
+  return (
+    <div className={`animate-pulse bg-gray-200 rounded-md ${className}`} />
+  );
+}
+
+const GigCardSkeleton=({ count = 6 }: { count?: number }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+      {[...Array(count)].map((_, i) => (
+        <div
+          key={i}
+          className="bg-gradient-to-br from-white/95 to-jet-stream-50/95 backdrop-blur-sm border border-jet-stream-200/60 overflow-hidden rounded-2xl shadow-md p-4 sm:p-6 animate-pulse"
+        >
+          {/* Image placeholder */}
+          <div className="w-full h-40 sm:h-48 bg-jet-stream-200/40 rounded-xl mb-4" />
+
+          {/* Top Row: Avatar + Name + Rating */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-jet-stream-200/50" />
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-24 bg-jet-stream-200/50 rounded-md" />
+                <div className="h-3 w-16 bg-jet-stream-200/40 rounded-md" />
+              </div>
+            </div>
+            <div className="h-6 w-16 bg-jet-stream-200/50 rounded-full" />
+          </div>
+
+          {/* Title */}
+          <div className="h-5 w-3/4 bg-jet-stream-200/50 rounded-md mb-3" />
+
+          {/* Description */}
+          <div className="h-4 w-full bg-jet-stream-200/40 rounded-md mb-2" />
+          <div className="h-4 w-5/6 bg-jet-stream-200/40 rounded-md mb-4" />
+
+          {/* Tags */}
+          <div className="flex gap-2 mb-4">
+            <div className="h-6 w-14 bg-jet-stream-200/40 rounded-full" />
+            <div className="h-6 w-16 bg-jet-stream-200/40 rounded-full" />
+            <div className="h-6 w-12 bg-jet-stream-200/40 rounded-full" />
+          </div>
+
+          {/* Availability + Price */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-4 w-20 bg-jet-stream-200/40 rounded-md" />
+            <div className="h-4 w-24 bg-jet-stream-200/40 rounded-md" />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end space-x-2">
+            <div className="h-8 w-20 bg-jet-stream-200/50 rounded-md" />
+            <div className="h-8 w-24 bg-orange-200/50 rounded-md" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
 const FloatingElement = ({ children, delay = 0, duration = 4 }) => (
   <div
     className="animate-float opacity-50"
@@ -111,7 +178,7 @@ const isBooked=false;
 
   const { data: session } = useSession();
   const router = useRouter();
-  
+
   const submitBooking = async () => {
   
     if (!scheduledDate || isNaN(Date.parse(scheduledDate))) {
@@ -562,7 +629,7 @@ export default function FindSkillsFeed() {
       </section>
 
       {/* Enhanced Gigs Feed */}
-      <section className="pb-20 sm:pb-40">
+      {/* <section className="pb-20 sm:pb-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {gigChunks.map((chunk, chunkIndex) => (
             <div key={chunkIndex} className="mb-16 sm:mb-20">
@@ -597,7 +664,47 @@ export default function FindSkillsFeed() {
             </div>
           )}
         </div>
-      </section>
+      </section> */}
+<section className="pb-20 sm:pb-40">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    {loading ? (
+      <GigCardSkeleton count={9} />
+    ) : (
+      gigChunks.map((chunk, chunkIndex) => (
+        <div key={chunkIndex} className="mb-16 sm:mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-16 sm:mb-20">
+            {chunk.map((gig, index) => (
+              <GigCard
+                key={gig.id}
+                gig={gig}
+                index={chunkIndex * chunkSize + index}
+              />
+            ))}
+          </div>
+        </div>
+      ))
+    )}
+
+    {!loading && filteredGigs.length === 0 && (
+      <div className="text-center py-20 sm:py-40 px-4">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-radial from-jet-stream-300/10 to-transparent blur-3xl" />
+          <div className="relative bg-white/95 backdrop-blur-sm border border-jet-stream-200 rounded-2xl sm:rounded-3xl p-8 sm:p-16 max-w-lg mx-auto shadow-xl">
+            <div className="text-jet-stream-600 text-lg sm:text-xl mb-6 sm:mb-8">
+              No skills found matching your search
+            </div>
+            <Button
+              onClick={() => setSearchTerm("")}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 px-6 sm:px-10 py-3 sm:py-4 hover:scale-105 transition-all duration-500 shadow-lg text-sm sm:text-base"
+            >
+              Clear Search
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
 
       <NewsletterFooter />
 

@@ -3,11 +3,12 @@
 
 'use client';
 
-import React, { useRef ,useState} from 'react';
+import React, { useRef ,useState,useEffect} from 'react';
 import ElectricBorder from './_components/ElectricBorder';
 import Squares from './_components/grid';
 import DotGrid from './_components/dotgrid';
 import Lightning from './_components/Lightining';
+import SkillsAmigoLoader from './_components/laoder';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { 
   HelpCircle,
@@ -65,6 +66,7 @@ const StatsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+
   const stats = [
     { number: "10K+", label: "Active Providers", icon: Users },
     { number: "50K+", label: "Services Completed", icon: CheckCircle },
@@ -73,7 +75,12 @@ const StatsSection = () => {
   ];
 
   return (
-    <section ref={ref} className="py-24 px-8 relative overflow-hidden bg-jet-stream-50">
+    
+
+
+
+
+   <section ref={ref} className="py-24 px-8 relative overflow-hidden bg-jet-stream-50">
       <FloatingElements count={3} />
       
       <div className="max-w-6xl mx-auto relative z-10">
@@ -491,9 +498,33 @@ const HowPage = () => {
       details: "Trust and safety built into every interaction."
     }
   ];
+const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial page load
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-jet-stream-975 text-jet-stream-50 overflow-x-hidden" style={{
+
+<>
+      <SkillsAmigoLoader
+        isVisible={isLoading}
+        duration={3000}
+        onComplete={() => setIsLoading(false)}
+        customTexts={[
+          "Connecting seekers with providers...",
+          "Syncing AI availability...",
+          "Loading your experience...",
+          "Almost ready..."
+        ]}
+      />
+
+    {!isLoading && (<div className="min-h-screen bg-jet-stream-975 text-jet-stream-50 overflow-x-hidden" style={{
       '--color-jet-stream-50': '#f3f8f8',
       '--color-jet-stream-100': '#e1ecea',
       '--color-jet-stream-200': '#bbd3d0',
@@ -714,104 +745,12 @@ const HowPage = () => {
     </motion.div>
   </motion.div>
 </section>
-      {/* Hero Section with Full Background */}
-      {/* <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-jet-stream-1000"> */}
-        {/* Full background Squares component */}
-        {/* <div className="absolute inset-0 z-0">
-          <Squares 
-            speed={0.5} 
-            squareSize={40}
-            direction='diagonal' 
-            borderColor='#719f9a'
-            hoverFillColor='#ff7d4d'
-          />
-          
-        </div>
-         */}
-        
-{/*         
-        <motion.div
-          className="text-center z-10 px-8 relative max-w-6xl mx-auto"
-          style={{ y: textY }}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-8"
-          >
-            <motion.h1 
-              className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-jet-stream-200 via-jet-stream-300 to-jet-stream-200 bg-clip-text text-transparent leading-tight"
-              animate={{ 
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{ 
-                duration: 4, 
-                repeat: Infinity, 
-                ease: "linear" 
-              }}
-              style={{ backgroundSize: '200% 200%' }}
-            >
-              How SkillsAmigo Works
-            </motion.h1>
-            
-            <motion.p 
-              className="text-lg md:text-xl lg:text-2xl text-jet-stream-200 max-w-4xl mx-auto leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            >
-              Your trusted space to connect seekers and providers in a vibrant digital ecosystem powered by intelligent AI.
-            </motion.p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-jet-stream-300"
-          >
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 animate-pulse" />
-              <span className="text-base font-medium">AI Intelligence</span>
-            </div>
-            <div className="hidden sm:block w-1 h-1 bg-jet-stream-400 rounded-full"></div>
-            <div className="flex items-center space-x-2">
-              <Globe className="w-5 h-5" />
-              <span className="text-base font-medium">Global Community</span>
-            </div>
-            <div className="hidden sm:block w-1 h-1 bg-jet-stream-400 rounded-full"></div>
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-base font-medium">Growing Fast</span>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="w-6 h-10 border-2 border-jet-stream-300 rounded-full flex justify-center backdrop-blur-sm bg-jet-stream-900/30">
-            <motion.div
-              className="w-1 h-3 bg-jet-stream-300 rounded-full mt-2"
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            />
-          </div>
-        </motion.div>
-      </section> */}
-
-      {/* Stats Section */}
+     
       <StatsSection />
 
       {/* Steps Section - Optimized */}
       <section className="py-1 px-8 relative bg-jet-stream-1000 pb-20 pt-20">
-        {/* <motion.div 
-          className="max-w-6xl mx-auto"
-          style={{ y: backgroundY }}
-        > */}
+        
 
 
         
@@ -877,20 +816,7 @@ const HowPage = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
-            {/* <motion.button
-              className="group relative px-10 py-4 bg-gradient-to-r from-jet-stream-400 to-jet-stream-600 rounded-full text-white font-semibold text-lg overflow-hidden shadow-lg opacity-90"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-jet-stream-300 to-jet-stream-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              />
-              <span className="relative z-10 flex items-center">
-                Start as Provider
-                <Rocket className="w-5 h-5 ml-2 group-hover:animate-pulse" />
-              </span>
-            </motion.button> */}
+            
             
             <motion.button
               className="group relative px-10 py-4 border-2 border-jet-stream-300 rounded-full text-jet-stream-200 font-semibold text-lg overflow-hidden backdrop-blur-sm"
@@ -928,6 +854,8 @@ const HowPage = () => {
       </section>
       <NewsletterFooter/>
     </div>
+     )}
+    </>
   );
 };
 
@@ -1019,3 +947,4 @@ const StepCard = ({ step, index }) => {
   );
 };
 export default HowPage;
+

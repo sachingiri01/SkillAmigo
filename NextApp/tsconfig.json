@@ -29,8 +29,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/how-works/page.tsx"
-  ],
+    "app/how-works/page.jsx"
+, "app/dashboard/page.tsx"  ],
   "exclude": [
     "node_modules"
   ]
