@@ -355,8 +355,8 @@ const isBooked=false;
             <span>{gig.distance}</span> */}
           </div>
           <div className="flex items-center space-x-1">
-            <Clock className="w-3 h-3 text-jet-stream-500" />
-            <span className="truncate">{gig.availability}</span>
+            <MapPin className="w-3 h-3 text-jet-stream-500" />
+            <span className="truncate">{gig.location}</span>
 
           </div>
 
