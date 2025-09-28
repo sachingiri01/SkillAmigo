@@ -138,7 +138,7 @@ decide_chain = LLMChain(llm=llm, prompt=prompt_decide)
 # index = pinecone.Index(INDEX_NAME)
 # ===== Orchestration Function =====
 def get_data(api_prompt):
-    print("api promtpt in get deata ",api_prompt)
+    # print("api promtpt in get deata ",api_prompt)
     extracted_raw = extract_chain.run(user_input=api_prompt, format_instructions=format_extract)
     extracted = parser_extract.parse(extracted_raw)
     return extracted
@@ -176,54 +176,6 @@ def process_request(api_prompt):
             "response": llm_chain(extracted['query'])
         }
 
-# def got_only_search(api_prompt, top_k=5, namespace="__default__"):
-#     results = index.search(
-#         namespace=namespace,
-#         query={"inputs": {"text": api_prompt}, "top_k": top_k},
-#         fields=["chunk_text", "type", "title", "category", "price", "rating"]
-#     )
-
-#     processed = []
-#     if results and "result" in results and "hits" in results["result"]:
-#         for hit in results["result"]["hits"]:
-#             processed.append({
-#                 "id": hit.get("_id"),
-#                 "score": hit.get("_score"),
-#                 "metadata": hit.get("fields", {}),
-#                 "chunk_text": hit.get("fields", {}).get("chunk_text")
-#             })
-
-#     return {
-#         "api_prompt": api_prompt,
-#         "pinecone_results": processed,
-#         "success": True
-#     }
-
-
-
-# def got_only_search_user(api_prompt, top_k=5, namespace="__default__"):
-
-#     results = users_index.search(
-#         namespace=namespace,
-#         query={"inputs": {"text": api_prompt}, "top_k": top_k},
-#         fields=["chunk_text","name", "skills", "gig", "experience", "location"]
-#     )
-
-#     processed = []
-#     if results and "result" in results and "hits" in results["result"]:
-#         for hit in results["result"]["hits"]:
-#             processed.append({
-#                 "id": hit.get("_id"),
-#                 "score": hit.get("_score"),
-#                 "metadata": hit.get("fields", {}),
-#                 "chunk_text": hit.get("fields", {}).get("chunk_text")
-#             })
-
-#     return {
-#         "api_prompt": api_prompt,
-#         "pinecone_results": processed,
-#         "success": True
-#     }
 def got_only_search_user(api_prompt, top_k=5, namespace="__default__"):
     results = users_index.search(
         namespace=namespace,
@@ -334,30 +286,6 @@ def got_only_search(api_prompt, top_k=5, namespace="__default__"):
         "pinecone_results": processed,
         "success": bool(processed)
     }
-
-
-# async def got_only_search_collab(api_prompt, top_k=1, namespace="__default__"):
-#     results = index.search(
-#         namespace=namespace,
-#         query={"inputs": {"text": api_prompt}, "top_k": top_k},
-#         fields=["chunk_text", "type", "title", "category", "price", "rating"]
-#     )
-
-#     processed = []
-#     if results and "result" in results and "hits" in results["result"]:
-#         for hit in results["result"]["hits"]:
-#             processed.append({
-#                 "id": hit.get("_id"),
-#                 "score": hit.get("_score"),
-#                 "metadata": hit.get("fields", {}),
-#                 "chunk_text": hit.get("fields", {}).get("chunk_text")
-#             })
-
-#     return {
-#         "api_prompt": api_prompt,
-#         "pinecone_results": processed,
-#         "success": True
-#     }
 
 
 async def got_only_search_collab(api_prompt, top_k=1, namespace="__default__"):
