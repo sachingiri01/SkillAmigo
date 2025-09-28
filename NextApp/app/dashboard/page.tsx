@@ -1141,6 +1141,11 @@ interface BookedGig {
   coins_paid?: number;
   cost?: number;  // Use this for cost if your backend returns it
 }
+interface ReviewData {
+  rating: number;
+  review_text: string;
+  image?: string;
+}
 
 
 const BookedGigs = () => {
@@ -1148,6 +1153,13 @@ const BookedGigs = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewData, setReviewData] = useState<Record<string, any>>({});
   const [submittingReview, setSubmittingReview] = useState(false);
+   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedGig, setSelectedGig] = useState<BookedGig | null>(null);
+  const [currentReview, setCurrentReview] = useState<ReviewData>({
+    rating: 5,
+    review_text: '',
+    image: ''
+  });
 
   const getStatusColor = (status: BookedGig["status"]) => {
     switch (status) {
@@ -1181,31 +1193,7 @@ const BookedGigs = () => {
     fetchBookings();
   }, []);
 
-  // const handleComplete = async (id: string) => {
-  //   try {
-  //     const res = await fetch(`/api/booking/${id}/complete`, { method: "PATCH" });
-  //     if (!res.ok){ 
-  //       const errorData = await res.json();
-  //       throw new Error(errorData.error ||"Failed to complete booking");}
-  //     setBookedGigs((prev) =>
-  //       prev.map((b) => (b.booking_id === id ? { ...b, status: "completed" } : b))
-  //     );
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
-  // const handleCancel = async (id: string) => {
-  //   try {
-  //     const res = await fetch(`/api/booking/${id}/cancel`, { method: "PATCH" });
-  //     if (!res.ok) throw new Error("Failed to cancel booking");
-  //     setBookedGigs((prev) =>
-  //       prev.map((b) => (b.booking_id === id ? { ...b, status: "cancelled" } : b))
-  //     );
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
     try {
@@ -1225,6 +1213,56 @@ const BookedGigs = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+  const handleMarkComplete = (gig: BookedGig) => {
+    setSelectedGig(gig);
+    setShowReviewModal(true);
+    setCurrentReview({
+      rating: 5,
+      review_text: '',
+      image: ''
+    });
+  };
+  const handleSubmitReview = async () => {
+    if (!selectedGig) return;
+    
+    setSubmittingReview(true);
+    try {
+      // Submit review first
+      const reviewRes = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gig_id: selectedGig.gig_id,
+          rating: currentReview.rating,
+          review_text: currentReview.review_text,
+          image: currentReview.image
+        })
+      });
+
+      if (!reviewRes.ok) throw new Error('Failed to submit review');
+
+      // Then mark as complete
+      await handleUpdateStatus(selectedGig.booking_id, 'complete');
+      
+      // Close modal
+      setShowReviewModal(false);
+      setSelectedGig(null);
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const closeReviewModal = () => {
+    setShowReviewModal(false);
+    setSelectedGig(null);
+    setCurrentReview({
+      rating: 5,
+      review_text: '',
+      image: ''
+    });
   };
 
 
@@ -1315,7 +1353,7 @@ const BookedGigs = () => {
                 {gig.status === "confirmed" && (
                   <div className="flex gap-4">
                     <button
-                      onClick={() => handleUpdateStatus(gig.booking_id, 'complete')}
+                      onClick={() => handleMarkComplete(gig)}
                       className="text-green-600 text-sm hover:underline"
                     >
                       Mark Complete
@@ -1335,6 +1373,87 @@ const BookedGigs = () => {
           );
         })}
       </div>
+      {/* Review Modal */}
+      {showReviewModal && selectedGig && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Review: {selectedGig.title}
+            </h3>
+            
+            {/* Rating */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Rating
+              </label>
+              <div className="flex space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setCurrentReview(prev => ({ ...prev, rating: star }))}
+                    className={`text-2xl ${
+                      star <= currentReview.rating 
+                        ? 'text-yellow-400' 
+                        : 'text-gray-300'
+                    } hover:text-yellow-400 transition-colors`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Review Text */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Review
+              </label>
+              <textarea
+                value={currentReview.review_text}
+                onChange={(e) => setCurrentReview(prev => ({ ...prev, review_text: e.target.value }))}
+                placeholder="Share your experience..."
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Image URL (Optional) */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image URL (Optional)
+              </label>
+              <input
+                type="url"
+                value={currentReview.image}
+                onChange={(e) => setCurrentReview(prev => ({ ...prev, image: e.target.value }))}
+                placeholder="https://example.com/image.jpg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={closeReviewModal}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                disabled={submittingReview}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmitReview}
+                disabled={submittingReview || !currentReview.review_text.trim()}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review & Complete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
