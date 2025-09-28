@@ -104,14 +104,14 @@ async def fetch_categories(ap=None):
 import json
 
 async def expand_query(user_query, history,logged_user_id=None):
-    print("organizer")
+    # print("organizer")
     try:
         # Step 1: Decide what to do
         decision_raw = decision_chain.invoke({"user_query": user_query, "history": history})
         if isinstance(decision_raw, dict) and "text" in decision_raw:
             decision_raw = decision_raw["text"]
 
-        print("raw decision : ", decision_raw)
+        # print("raw decision : ", decision_raw)
 
         # Clean decision string if needed
         if isinstance(decision_raw, str):
@@ -128,7 +128,7 @@ async def expand_query(user_query, history,logged_user_id=None):
         else:
             decision = decision_raw  # already dict
 
-        print("Decision: ", decision)
+        # print("Decision: ", decision)
 
         # Step 2: If booking, call book_task_collab
         if decision.get("action") == "book":

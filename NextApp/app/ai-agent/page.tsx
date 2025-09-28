@@ -1191,8 +1191,8 @@ const AgentDashboard = () => {
       },
       body: JSON.stringify({
         "msg":prompt,
-        "history":history,
-        // history":trimmedHistory
+        // "history":history,
+        "history":trimmedHistory
       }),
       credentials: "include", // include cookies if backend supports it
     });

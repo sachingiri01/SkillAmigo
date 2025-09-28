@@ -1035,208 +1035,387 @@ const TransactionTable = ({ isLoading }) => {
   );
 };
 
-const CoinRequestsManagement = ({ isLoading }) => {
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      user: {
-        name: 'Alice Johnson',
-        email: 'alice@example.com',
-        avatar: 'AJ'
-      },
-      amount: 500,
-      reason: 'Completed website design project for local business',
-      requestDate: '2024-01-15',
-      status: 'pending'
-    },
-    {
-      id: 2,
-      user: {
-        name: 'Bob Smith',
-        email: 'bob@example.com',
-        avatar: 'BS'
-      },
-      amount: 250,
-      reason: 'Writing articles for company blog',
-      requestDate: '2024-01-14',
-      status: 'pending'
-    },
-    {
-      id: 3,
-      user: {
-        name: 'Carol Davis',
-        email: 'carol@example.com',
-        avatar: 'CD'
-      },
-      amount: 1000,
-      reason: 'Mobile app development - milestone completion',
-      requestDate: '2024-01-13',
-      status: 'approved'
-    },
-    {
-      id: 4,
-      user: {
-        name: 'David Wilson',
-        email: 'david@example.com',
-        avatar: 'DW'
-      },
-      amount: 150,
-      reason: 'Social media marketing campaign',
-      requestDate: '2024-01-12',
-      status: 'rejected'
-    },
-    {
-      id: 5,
-      user: {
-        name: 'Emma Brown',
-        email: 'emma@example.com',
-        avatar: 'EB'
-      },
-      amount: 750,
-      reason: 'Logo design and branding package',
-      requestDate: '2024-01-11',
-      status: 'pending'
+// const CoinRequestsManagement = ({ isLoading }) => {
+//   const [requests, setRequests] = useState([
+//     {
+//       id: 1,
+//       user: {
+//         name: 'Alice Johnson',
+//         email: 'alice@example.com',
+//         avatar: 'AJ'
+//       },
+//       amount: 500,
+//       reason: 'Completed website design project for local business',
+//       requestDate: '2024-01-15',
+//       status: 'pending'
+//     },
+//     {
+//       id: 2,
+//       user: {
+//         name: 'Bob Smith',
+//         email: 'bob@example.com',
+//         avatar: 'BS'
+//       },
+//       amount: 250,
+//       reason: 'Writing articles for company blog',
+//       requestDate: '2024-01-14',
+//       status: 'pending'
+//     },
+//     {
+//       id: 3,
+//       user: {
+//         name: 'Carol Davis',
+//         email: 'carol@example.com',
+//         avatar: 'CD'
+//       },
+//       amount: 1000,
+//       reason: 'Mobile app development - milestone completion',
+//       requestDate: '2024-01-13',
+//       status: 'approved'
+//     },
+//     {
+//       id: 4,
+//       user: {
+//         name: 'David Wilson',
+//         email: 'david@example.com',
+//         avatar: 'DW'
+//       },
+//       amount: 150,
+//       reason: 'Social media marketing campaign',
+//       requestDate: '2024-01-12',
+//       status: 'rejected'
+//     },
+//     {
+//       id: 5,
+//       user: {
+//         name: 'Emma Brown',
+//         email: 'emma@example.com',
+//         avatar: 'EB'
+//       },
+//       amount: 750,
+//       reason: 'Logo design and branding package',
+//       requestDate: '2024-01-11',
+//       status: 'pending'
+//     }
+//   ]);
+
+//   const [filter, setFilter] = useState('all');
+
+//   const handleApprove = (requestId) => {
+//     setRequests(prevRequests =>
+//       prevRequests.map(request =>
+//         request.id === requestId
+//           ? { ...request, status: 'approved' }
+//           : request
+//       )
+//     );
+//   };
+
+//   const handleReject = (requestId) => {
+//     setRequests(prevRequests =>
+//       prevRequests.map(request =>
+//         request.id === requestId
+//           ? { ...request, status: 'rejected' }
+//           : request
+//       )
+//     );
+//   };
+
+//   const filteredRequests = requests.filter(request => {
+//     if (filter === 'all') return true;
+//     return request.status === filter;
+//   });
+
+//   const getStatusColor = (status) => {
+//     switch (status) {
+//       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+//       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
+//       case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
+//       default: return 'bg-gray-100 text-gray-800 border-gray-200';
+//     }
+//   };
+
+//   const getStatusIcon = (status) => {
+//     switch (status) {
+//       case 'pending': return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
+//       case 'approved': return <Check className="w-3 h-3 sm:w-4 sm:h-4" />;
+//       case 'rejected': return <X className="w-3 h-3 sm:w-4 sm:h-4" />;
+//       default: return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
+//     }
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="space-y-4 p-4 sm:p-0">
+//         {[...Array(3)].map((_, i) => (
+//           <div key={i} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border animate-pulse">
+//             <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
+//               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full"></div>
+//               <div className="flex-1">
+//                 <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+//                 <div className="h-2 sm:h-3 bg-gray-200 rounded w-1/3"></div>
+//               </div>
+//             </div>
+//             <div className="h-3 sm:h-4 bg-gray-200 rounded w-full mb-2"></div>
+//             <div className="h-3 sm:h-4 bg-gray-200 rounded w-2/3"></div>
+//           </div>
+//         ))}
+//       </div>
+//     );
+//   }
+
+//   const pendingCount = requests.filter(r => r.status === 'pending').length;
+//   const totalCoins = filteredRequests.reduce((sum, request) => sum + request.amount, 0);
+
+//   return (
+//     <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
+//       {/* Header */}
+//       <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
+//         <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+//           <div>
+//             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Coin Requests</h2>
+//             <p className="text-sm sm:text-base text-gray-600 mt-1">
+//               {pendingCount} pending request{pendingCount !== 1 ? 's' : ''} awaiting review
+//             </p>
+//           </div>
+//           <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
+//             <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
+//             <span>Total: {totalCoins.toLocaleString()} coins</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Filter Tabs */}
+//       <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border">
+//         <div className="grid grid-cols-2 sm:flex gap-2">
+//           <button
+//             onClick={() => setFilter('all')}
+//             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+//               filter === 'all'
+//                 ? 'bg-teal-600 text-white'
+//                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+//             }`}
+//           >
+//             <span className="block sm:hidden">All</span>
+//             <span className="hidden sm:block">All Requests</span>
+//             <span className="ml-1">({requests.length})</span>
+//           </button>
+//           <button
+//             onClick={() => setFilter('pending')}
+//             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+//               filter === 'pending'
+//                 ? 'bg-teal-600 text-white'
+//                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+//             }`}
+//           >
+//             <span className="block sm:hidden">Pending</span>
+//             <span className="hidden sm:block">Pending</span>
+//             <span className="ml-1">({requests.filter(r => r.status === 'pending').length})</span>
+//           </button>
+//           <button
+//             onClick={() => setFilter('approved')}
+//             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+//               filter === 'approved'
+//                 ? 'bg-teal-600 text-white'
+//                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+//             }`}
+//           >
+//             <span className="block sm:hidden">Approved</span>
+//             <span className="hidden sm:block">Approved</span>
+//             <span className="ml-1">({requests.filter(r => r.status === 'approved').length})</span>
+//           </button>
+//           <button
+//             onClick={() => setFilter('rejected')}
+//             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+//               filter === 'rejected'
+//                 ? 'bg-teal-600 text-white'
+//                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+//             }`}
+//           >
+//             <span className="block sm:hidden">Rejected</span>
+//             <span className="hidden sm:block">Rejected</span>
+//             <span className="ml-1">({requests.filter(r => r.status === 'rejected').length})</span>
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* Request Cards */}
+//       <div className="space-y-3 sm:space-y-4">
+//         {filteredRequests.length === 0 ? (
+//           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border text-center">
+//             <Coins className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+//             <p className="text-sm sm:text-base text-gray-500">No requests found for the selected filter.</p>
+//           </div>
+//         ) : (
+//           filteredRequests.map((request) => (
+//             <div key={request.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
+//               <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-start sm:justify-between mb-4">
+//                 <div className="flex items-center space-x-3 sm:space-x-4">
+//                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center font-semibold text-sm sm:text-base">
+//                     {request.user.avatar}
+//                   </div>
+//                   <div className="min-w-0 flex-1">
+//                     <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{request.user.name}</h3>
+//                     <p className="text-xs sm:text-sm text-gray-600 truncate">{request.user.email}</p>
+//                   </div>
+//                 </div>
+//                 <div className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium border flex items-center space-x-1 self-start ${getStatusColor(request.status)}`}>
+//                   {getStatusIcon(request.status)}
+//                   <span className="capitalize">{request.status}</span>
+//                 </div>
+//               </div>
+
+//               <div className="mb-4">
+//                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-3">
+//                   <div className="flex items-center space-x-1">
+//                     <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
+//                     <span className="font-semibold text-gray-900 text-sm sm:text-base">{request.amount.toLocaleString()} coins</span>
+//                   </div>
+//                   <div className="flex items-center space-x-1">
+//                     <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+//                     <span>{new Date(request.requestDate).toLocaleDateString()}</span>
+//                   </div>
+//                 </div>
+//                 <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{request.reason}</p>
+//               </div>
+
+//               {request.status === 'pending' && (
+//                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3">
+//                   <button
+//                     onClick={() => handleApprove(request.id)}
+//                     className="flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+//                   >
+//                     <Check className="w-4 h-4" />
+//                     <span>Approve</span>
+//                   </button>
+//                   <button
+//                     onClick={() => handleReject(request.id)}
+//                     className="flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+//                   >
+//                     <X className="w-4 h-4" />
+//                     <span>Reject</span>
+//                   </button>
+//                 </div>
+//               )}
+//             </div>
+//           ))
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
+const CoinRequestsManagement = ({ isLoading: initialLoading }) => {
+  const [requests, setRequests] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [loadingRequests, setLoadingRequests] = useState(initialLoading);
+
+  // Fetch requests
+  const fetchRequests = async () => {
+    try {
+      setLoadingRequests(true);
+      const res = await fetch("/api/get-coin-update-admin", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setRequests(data.requests || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingRequests(false);
     }
-  ]);
-
-  const [filter, setFilter] = useState('all');
-
-  const handleApprove = (requestId) => {
-    setRequests(prevRequests =>
-      prevRequests.map(request =>
-        request.id === requestId
-          ? { ...request, status: 'approved' }
-          : request
-      )
-    );
   };
 
-  const handleReject = (requestId) => {
-    setRequests(prevRequests =>
-      prevRequests.map(request =>
-        request.id === requestId
-          ? { ...request, status: 'rejected' }
-          : request
-      )
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // Approve / Cancel
+  const updateStatus = async (requestId, status) => {
+    // Map "rejected" to "cancelled"
+    const dbStatus = status === "rejected" ? "cancelled" : status;
+
+    // Optimistic update
+    setRequests((prev) =>
+      prev.map((r) => (r.id === requestId ? { ...r, status: dbStatus } : r))
     );
+
+    try {
+      const res = await fetch("/api/update-coin-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ requestId, status }),
+      });
+      const result = await res.json();
+      alert(result?.message);
+    } catch (err) {
+      console.error(err);
+      fetchRequests(); // revert on failure
+    }
   };
 
-  const filteredRequests = requests.filter(request => {
-    if (filter === 'all') return true;
-    return request.status === filter;
-  });
+  const handleApprove = (id) => updateStatus(id, "approved");
+  const handleCancel = (id) => updateStatus(id, "rejected"); // still send "rejected" to API, will be mapped in backend
+
+  const filteredRequests = requests.filter((r) =>
+    filter === "all" ? true : r.status === filter
+  );
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "approved": return "bg-green-100 text-green-800 border-green-200";
+      case "cancelled": return "bg-red-100 text-red-800 border-red-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending': return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
-      case 'approved': return <Check className="w-3 h-3 sm:w-4 sm:h-4" />;
-      case 'rejected': return <X className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "pending": return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "approved": return <Check className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "cancelled": return <X className="w-3 h-3 sm:w-4 sm:h-4" />;
       default: return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 p-4 sm:p-0">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border animate-pulse">
-            <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full"></div>
-              <div className="flex-1">
-                <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                <div className="h-2 sm:h-3 bg-gray-200 rounded w-1/3"></div>
-              </div>
-            </div>
-            <div className="h-3 sm:h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-3 sm:h-4 bg-gray-200 rounded w-2/3"></div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  if (loadingRequests) return <p>Loading coin requests...</p>;
 
-  const pendingCount = requests.filter(r => r.status === 'pending').length;
-  const totalCoins = filteredRequests.reduce((sum, request) => sum + request.amount, 0);
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
+  const totalCoins = filteredRequests.reduce((sum, r) => sum + Number(r.amount), 0);
 
   return (
     <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
       {/* Header */}
-      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border">
-        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Coin Requests</h2>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">
-              {pendingCount} pending request{pendingCount !== 1 ? 's' : ''} awaiting review
-            </p>
-          </div>
-          <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
-            <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span>Total: {totalCoins.toLocaleString()} coins</span>
-          </div>
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border flex flex-col sm:flex-row sm:justify-between sm:items-center">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Coin Requests</h2>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
+            {pendingCount} pending request{pendingCount !== 1 ? "s" : ""} awaiting review
+          </p>
+        </div>
+        <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
+          <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span>Total: {totalCoins.toLocaleString()} coins</span>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border">
-        <div className="grid grid-cols-2 sm:flex gap-2">
+      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border grid grid-cols-2 sm:flex gap-2">
+        {["all", "pending", "approved", "cancelled"].map((f) => (
           <button
-            onClick={() => setFilter('all')}
+            key={f}
+            onClick={() => setFilter(f)}
             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-              filter === 'all'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              filter === f ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
-            <span className="block sm:hidden">All</span>
-            <span className="hidden sm:block">All Requests</span>
-            <span className="ml-1">({requests.length})</span>
+            <span className="capitalize">{f === "all" ? "All Requests" : f}</span>
+            <span className="ml-1">({f === "all" ? requests.length : requests.filter((r) => r.status === f).length})</span>
           </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-              filter === 'pending'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <span className="block sm:hidden">Pending</span>
-            <span className="hidden sm:block">Pending</span>
-            <span className="ml-1">({requests.filter(r => r.status === 'pending').length})</span>
-          </button>
-          <button
-            onClick={() => setFilter('approved')}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-              filter === 'approved'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <span className="block sm:hidden">Approved</span>
-            <span className="hidden sm:block">Approved</span>
-            <span className="ml-1">({requests.filter(r => r.status === 'approved').length})</span>
-          </button>
-          <button
-            onClick={() => setFilter('rejected')}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-              filter === 'rejected'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <span className="block sm:hidden">Rejected</span>
-            <span className="hidden sm:block">Rejected</span>
-            <span className="ml-1">({requests.filter(r => r.status === 'rejected').length})</span>
-          </button>
-        </div>
+        ))}
       </div>
 
       {/* Request Cards */}
@@ -1269,7 +1448,7 @@ const CoinRequestsManagement = ({ isLoading }) => {
                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-3">
                   <div className="flex items-center space-x-1">
                     <Coins className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="font-semibold text-gray-900 text-sm sm:text-base">{request.amount.toLocaleString()} coins</span>
+                    <span className="font-semibold text-gray-900 text-sm sm:text-base">{Number(request.amount).toLocaleString()} coins</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -1279,7 +1458,7 @@ const CoinRequestsManagement = ({ isLoading }) => {
                 <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{request.reason}</p>
               </div>
 
-              {request.status === 'pending' && (
+              {request.status === "pending" && (
                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3">
                   <button
                     onClick={() => handleApprove(request.id)}
@@ -1289,11 +1468,11 @@ const CoinRequestsManagement = ({ isLoading }) => {
                     <span>Approve</span>
                   </button>
                   <button
-                    onClick={() => handleReject(request.id)}
+                    onClick={() => handleCancel(request.id)}
                     className="flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
                   >
                     <X className="w-4 h-4" />
-                    <span>Reject</span>
+                    <span>Cancel</span>
                   </button>
                 </div>
               )}
@@ -1304,8 +1483,6 @@ const CoinRequestsManagement = ({ isLoading }) => {
     </div>
   );
 };
-
-
 
 
 
