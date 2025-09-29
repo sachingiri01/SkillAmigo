@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock,DollarSign,Menu, X, Bell, User, LogOut, Settings as SettingsIcon, BarChart3, Users, Briefcase, Coins, FileText, ChevronDown, Home, Eye, Check, XCircle, Filter, Calendar, Download, Edit, Trash2, Plus, Search,ArrowUp } from 'lucide-react';
 import { useRouter } from "next/navigation";
 
+import { useSession } from "next-auth/react";
 
   
 
@@ -1713,7 +1714,12 @@ const Footer = () => (
 const SkillsAmigoAdmin = () => {
   const [activePage, setActivePage] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
+const { data: session, status } = useSession();
+  const router = useRouter();
 
+
+
+  
   const userProfile = {
     name: 'Admin User',
     email: 'admin@skillsamigo.com',
@@ -1754,6 +1760,34 @@ useEffect(() => {
   };
   getOverview();
 }, []);
+
+
+if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center h-screen bg-jet-stream-100">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-orange-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600 text-lg">Checking access...</p>
+        </div>
+      </div>
+    );
+  }
+if (!session?.user || session.user.role !== "admin") {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">❌ Access Denied</h1>
+        <p className="text-gray-700 mb-6">
+          Please sign in as <strong>Admin</strong> to view this page.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Go to Home
+        </button>
+      </div>
+    );
+  }
 
 const renderPageContent = () => {
   switch (activePage) {
