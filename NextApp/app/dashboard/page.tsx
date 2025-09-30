@@ -1415,7 +1415,8 @@ const BookedGigs = () => {
                 onChange={(e) => setCurrentReview(prev => ({ ...prev, review_text: e.target.value }))}
                 placeholder="Share your experience..."
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
+
               />
             </div>
 
@@ -1429,7 +1430,7 @@ const BookedGigs = () => {
                 value={currentReview.image}
                 onChange={(e) => setCurrentReview(prev => ({ ...prev, image: e.target.value }))}
                 placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparenttext-black"
               />
             </div>
 
