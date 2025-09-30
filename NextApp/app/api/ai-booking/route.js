@@ -45,7 +45,6 @@ export async function POST(req) {
     );
     if (gigRes.rowCount === 0) {
       return NextResponse.json({ message: "Gig not found" }, { status: 404 });
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const sellerId = gigRes.rows[0].seller_id;
 

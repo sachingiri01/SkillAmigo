@@ -54,15 +54,6 @@ const AI_AGENTS = [
     color: 'text-blue-500'
   },
   {
-    id: 'deal-negotiator',
-    name: 'Deal Negotiator',
-    description: 'Optimize pricing and contracts',
-    icon: DollarSign,
-    method:"POST",
-    URL:`${process.env.NEXT_PUBLIC_BACKEND_URL}/negotiator`,
-    color: 'text-green-500'
-  },
-  {
     id: 'AI ChatBot',
     name: 'AI ChatBot',
     description: 'Get help and guidance',
@@ -1166,20 +1157,6 @@ const AgentDashboard = () => {
           description: 'Your profile views increased by 25% this week',
           type: 'insight',
           data: { trend: 'up', change: '25%' }
-        }
-      ],
-      'deal-negotiator': [
-        {
-          title: 'Optimal Price Range',
-          description: 'Based on market analysis, price between $45-65/hour',
-          type: 'insight',
-          data: { coins: 55 }
-        },
-        {
-          title: 'Contract Template',
-          description: 'Use our AI-optimized contract template',
-          type: 'action',
-          action: { label: 'Get Template', onClick: () => alert('Opening contract template...') }
         }
       ],
       'knowledge-mentor': [

@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { log } from 'console';
 import { devNull } from 'os';
+import { number } from 'motion';
 
 
 
@@ -2950,315 +2951,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
 
 
 
-// coines
-
-// const AddCoins = ({ currentBalance, onAddCoins }) => {
-//   const [amount, setAmount] = useState('');
-//   const [loading, setLoading] = useState(false);
-
-//   const predefinedAmounts = [50, 100, 250, 500, 1000];
-
-//   const handleAddCoins = async (coinAmount) => {
-//     setLoading(true);
-
-//     await new Promise(resolve => setTimeout(resolve, 2000));
-
-//     onAddCoins(coinAmount);
-//     setAmount('');
-//     setLoading(false);
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-//         Add Coins
-//       </h2>
-
-//       <div className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
-//         style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
-//         {/* Background Pattern */}
-//         <div className="absolute inset-0 opacity-10">
-//           <div className="absolute inset-0" style={{
-//             backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.3) 2px, transparent 0)`,
-//             backgroundSize: '50px 50px'
-//           }} />
-//         </div>
-
-//         <div className="relative z-10">
-//           <h3 className="text-lg font-semibold mb-2">Current Balance</h3>
-//           <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
-//         </div>
-//       </div>
-
-//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-//         {/* Background Pattern */}
-//         <div className="absolute inset-0 opacity-5">
-//           <div className="absolute inset-0" style={{
-//             backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-//             backgroundSize: '40px 40px'
-//           }} />
-//         </div>
-
-//         <div className="relative z-10">
-//           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Add</h3>
-//           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-//             {predefinedAmounts.map((coins) => (
-//               <button
-//                 key={coins}
-//                 onClick={() => handleAddCoins(coins)}
-//                 disabled={loading}
-//                 className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 text-sm sm:text-base hover:scale-105"
-//                 style={{
-//                   backgroundColor: '#f3f8f8',
-//                   color: '#344545'
-//                 }}
-//                 onMouseEnter={(e) => {
-//                   e.target.style.backgroundColor = '#558581';
-//                   e.target.style.color = 'white';
-//                 }}
-//                 onMouseLeave={(e) => {
-//                   e.target.style.backgroundColor = '#f3f8f8';
-//                   e.target.style.color = '#344545';
-//                 }}
-//               >
-//                 {coins} Coins
-//               </button>
-//             ))}
-//           </div>
-
-//           <div className="border-t pt-6" style={{ borderColor: '#e1ecea' }}>
-//             <h3 className="text-lg font-semibold mb-4" style={{ color: '#344545' }}>Custom Amount</h3>
-//             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-//               <input
-//                 type="number"
-//                 value={amount}
-//                 onChange={(e) => setAmount(e.target.value)}
-//                 placeholder="Enter amount..."
-//                 className="flex-1 px-4 py-3 border rounded-xl transition-all duration-200"
-//                 style={{
-//                   borderColor: '#bbd3d0',
-//                   backgroundColor: '#f3f8f8'
-//                 }}
-//                 onFocus={(e) => {
-//                   e.target.style.borderColor = '#558581';
-//                   e.target.style.boxShadow = '0 0 0 3px rgba(85, 133, 129, 0.1)';
-//                 }}
-//                 onBlur={(e) => {
-//                   e.target.style.borderColor = '#bbd3d0';
-//                   e.target.style.boxShadow = 'none';
-//                 }}
-//               />
-//               <button
-//                 onClick={() => amount && handleAddCoins(parseInt(amount))}
-//                 disabled={loading || !amount}
-//                 className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
-//                 style={{ backgroundColor: '#ff6b35' }}
-//               >
-//                 {loading ? (
-//                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-//                 ) : (
-//                   'Add Coins'
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// const AddCoins = ({ currentBalance, onAddCoins }) => {
-//   const [amount, setAmount] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const [history, setHistory] = useState([]); // coin request history
-
-//   const predefinedAmounts = [50, 100, 250, 500, 1000];
-
-//   // ✅ Fetch previous coin requests
-//   useEffect(() => {
-//     const fetchHistory = async () => {
-//       try {
-//         const res = await fetch("/api/get-coin-status/");
-//         const data = await res.json();
-//         setHistory(data); // assume API returns [{id, amount, status, created_at}, ...]
-//       } catch (err) {
-//         console.error("Error fetching coin history:", err);
-//       }
-//     };
-
-//     fetchHistory();
-//   }, []);
-
-//   // ✅ Handle Add Coins
-//   const handleAddCoins = async (coinAmount) => {
-//     setLoading(true);
-
-//     try {
-//       const res = await fetch("/api/add-coin/", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         credentials:"include",
-//         body: JSON.stringify({ amount: coinAmount }),
-//       });
-
-//       if (!res.ok) throw new Error("Failed to add coins");
-
-//       const newRequest = await res.json(); 
- 
-//       if(newRequest.success==false){
-//         alert(newRequest.message);
-//         return;
-//       }
-//       onAddCoins(coinAmount);
-//         console.log(newRequest);
-        
-//       // update history instantly
-//       setHistory((prev) => [newRequest, ...prev]);
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setAmount("");
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Balance Card */}
-//       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: "#344545" }}>
-//         Add Coins
-//       </h2>
-//       <div
-//         className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden"
-//         style={{ background: "linear-gradient(135deg, #344545 0%, #558581 100%)" }}
-//       >
-//         <div className="absolute inset-0 opacity-10">
-//           <div
-//             className="absolute inset-0"
-//             style={{
-//               backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.3) 2px, transparent 0)`,
-//               backgroundSize: "50px 50px",
-//             }}
-//           />
-//         </div>
-//         <div className="relative z-10">
-//           <h3 className="text-lg font-semibold mb-2">Current Balance</h3>
-//           <p className="text-3xl sm:text-4xl font-bold">{currentBalance} Coins</p>
-//         </div>
-//       </div>
-
-//       {/* Quick Add + Custom */}
-//       <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-//         <div className="absolute inset-0 opacity-5">
-//           <div
-//             className="absolute inset-0"
-//             style={{
-//               backgroundImage: `radial-gradient(circle at 20px 20px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-//               backgroundSize: "40px 40px",
-//             }}
-//           />
-//         </div>
-
-//         <div className="relative z-10">
-//           <h3 className="text-xl font-semibold mb-6" style={{ color: "#344545" }}>
-//             Quick Add
-//           </h3>
-
-//           {/* Predefined Buttons */}
-//           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-//             {predefinedAmounts.map((coins) => (
-//               <button
-//                 key={coins}
-//                 onClick={() => handleAddCoins(coins)}
-//                 disabled={loading}
-//                 className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 text-sm sm:text-base hover:scale-105"
-//                 style={{ backgroundColor: "#f3f8f8", color: "#344545" }}
-//                 onMouseEnter={(e) => {
-//                   e.target.style.backgroundColor = "#558581";
-//                   e.target.style.color = "white";
-//                 }}
-//                 onMouseLeave={(e) => {
-//                   e.target.style.backgroundColor = "#f3f8f8";
-//                   e.target.style.color = "#344545";
-//                 }}
-//               >
-//                 {coins} Coins
-//               </button>
-//             ))}
-//           </div>
-
-//           {/* Custom Input */}
-//           <div className="border-t pt-6" style={{ borderColor: "#e1ecea" }}>
-//             <h3 className="text-lg font-semibold mb-4" style={{ color: "#344545" }}>
-//               Custom Amount
-//             </h3>
-//             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-//               <input
-//                 type="number"
-//                 value={amount}
-//                 onChange={(e) => setAmount(e.target.value)}
-//                 placeholder="Enter amount..."
-//                 className="flex-1 px-4 py-3 border rounded-xl transition-all duration-200"
-//                 style={{
-//                   borderColor: "#bbd3d0",
-//                   backgroundColor: "#f3f8f8",
-//                 }}
-//               />
-//               <button
-//                 onClick={() => amount && handleAddCoins(parseInt(amount))}
-//                 disabled={loading || !amount}
-//                 className="text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
-//                 style={{ backgroundColor: "#ff6b35" }}
-//               >
-//                 {loading ? (
-//                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-//                 ) : (
-//                   "Add Coins"
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* ✅ Coin Request History */}
-//       <div className="bg-gray-300 rounded-2xl shadow-md p-4 sm:p-6">
-//         <h3 className="text-xl font-semibold mb-4" style={{ color: "#344545" }}>
-//           Coin Request History
-//         </h3>
-//         {history.length === 0 ? (
-//           <p className="text-gray-500">No requests yet.</p>
-//         ) : (
-//           <ul className="space-y-3">
-//             {history.map((req) => (
-//               <li
-//                 key={req.id}
-//                 className="flex justify-between items-center px-4 py-3 bg-slate-500 rounded-lg"
-//               >
-//                 <span className="font-medium">{req.amount} Coins</span>
-//                 <span
-//                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
-//                     req.status === "approved"
-//                       ? "bg-green-100 text-green-600"
-//                       : req.status === "pending"
-//                       ? "bg-yellow-100 text-yellow-600"
-//                       : "bg-red-100 text-red-600"
-//                   }`}
-//                 >
-//                   {req.status}
-//                 </span>
-//               </li>
-//             ))}
-//           </ul>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
 
 const AddCoins = ({ currentBalance, onAddCoins }) => {
+
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]); // coin request history
@@ -3285,8 +2980,7 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
         const res = await fetch("/api/get-coin-status/", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to fetch history");
         const data = await res.json();
-        console.log("ddd ",data);
-        
+     
         // normalize array of requests
         const items = Array.isArray(data.requests)
           ? data.requests
@@ -3324,7 +3018,7 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
 
       const data = await res.json();
 
-      if (data.success === false) {
+      if (data?.success === false) {
         alert(data.message);
         setLoading(false);
         return;
@@ -3856,8 +3550,13 @@ const UserDashboard = () => {
   });
   const { data: session ,status} = useSession();
   const router=useRouter();
-  const [coinBalance, setCoinBalance] = useState<number>(session?.user?.balance ??0 );
+  const [coinBalance, setCoinBalance] = useState(session?.user?.balance);
 
+  useEffect(() => {
+  if (session?.user?.balance !== undefined) {
+    setCoinBalance(session.user.balance);
+  }
+}, [session]);
   useEffect(() => {
     // Simulate initial data loading
     const timer = setTimeout(() => {
@@ -3927,8 +3626,7 @@ if (status === "loading") {
   };
 
   const handleAddCoins = (amount) => {
-    setCoinBalance(prev => prev + amount);
-    alert(`${amount} coins added successfully!`);
+    alert(`${amount} coins Requested Successfully!`);
   };
 
   const handleRedeemCoins = (amount) => {
