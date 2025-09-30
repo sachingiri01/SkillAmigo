@@ -1,10 +1,21 @@
 // app/api/transactions/route.js
 import pool from "../db";
 import { NextResponse } from "next/server";
-
+import { getServerSession } from "next-auth";
+    import { authOptions } from '../auth/[...nextauth]/route';
 // GET /api/transactions
 export async function GET() {
   try {
+    // Get session info
+        const session = await getServerSession(authOptions);
+        if (!session) {
+          return NextResponse.json({ msg: "Not authenticated" }, { status: 401 });
+        }
+    
+        // Only admin can access
+        if (session.user.role !== "admin") {
+          return NextResponse.json({ msg: "Unauthorized" }, { status: 403 });
+        }
     const query = `
       SELECT 
         t.transaction_id AS id,

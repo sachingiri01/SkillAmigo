@@ -73,6 +73,8 @@ export async function GET() {
         g.gig_id AS id,
         g.title,
         g.seller_id,
+        g.location,
+
         g.description,
         g.category,
         g.avg_price,
@@ -108,6 +110,7 @@ export async function GET() {
     // Map DB fields to card component structure
     const mappedGigs = gigs.map(gig => ({
       id: gig.id,
+      location:gig.location,
       title: gig.title,
       seller_id:gig.seller_id,
       description: gig.description,

@@ -1093,11 +1093,41 @@ const AgentDashboard = () => {
   const router=useRouter();
   const { data: session,status  } = useSession(); 
     useEffect(() => {
-    if (status === "unauthenticated") {  // only redirect if unauthenticated
-      router.push('/');
-    }
-  }, [status, router]);
   
+
+  if (session?.user && session.user.role === "admin") {
+   router.push('/dashboard/admin');
+  }
+  
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center h-screen bg-jet-stream-100">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-orange-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session?.user ) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">❌ Access Denied</h1>
+        <p className="text-gray-700 mb-6">
+          Please sign in to view this page.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Go to Home
+        </button>
+      </div>
+    );
+  }
   // Handle agent selection
   const handleSelectAgent = (agent) => {
     setActiveAgent(agent);
