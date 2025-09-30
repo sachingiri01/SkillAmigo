@@ -114,7 +114,7 @@ const AnimatedLogo = ({ className = "" }: { className?: string }) => {
 const FullwidthIconNavbar = ({
   menu = [
     { title: "Find Skills", url: "/skills" },
-    { title: "Offer Skills", url: "/dashboard" },
+    { title: "Dashboard", url: "/dashboard" },
     { title: "How It Works", url: "/how-works" },
     { title: "About Us", url: "/about" },
     { title: "Ai-Agent", url: "/ai-agent" },
@@ -451,10 +451,10 @@ const FullwidthIconNavbar = ({
                     size="lg"
                     className="w-full bg-saffron hover:bg-saffron/90 text-white hover:scale-105 hover:shadow-[0_0_25px_rgba(230,126,34,0.6)] transition-all duration-300"
                   >
-                    <a href="/auth/facebook" className="flex items-center gap-3 justify-center">
+                    {/* <a href="/auth/facebook" className="flex items-center gap-3 justify-center">
                       <Facebook className="w-5 h-5" />
                       Login with Facebook
-                    </a>
+                    </a> */}
                   </Button>
                 </div>
               </div>
