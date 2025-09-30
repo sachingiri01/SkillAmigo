@@ -267,67 +267,185 @@ const ContactDetails = ({ user }) => (
 );
 
 // Reviews & Testimonials Component - Mobile Responsive
-const ReviewsSection = ({ reviews }) => (
-  <section className="relative py-12 sm:py-16 lg:py-20 bg-jet-stream-900">
-    {/* Circuit-like pattern */}
-    <div className="absolute inset-0 overflow-hidden opacity-10">
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600">
-        <path d="M50,100 L150,100 L150,200 L250,200 L250,150 L350,150" 
-              stroke="rgba(255, 165, 0, 0.6)" strokeWidth="2" fill="none" />
-        <path d="M500,300 L600,300 L600,400 L700,400" 
-              stroke="rgba(113, 159, 154, 0.6)" strokeWidth="2" fill="none" />
-        <circle cx="150" cy="100" r="5" fill="rgba(255, 165, 0, 0.4)" />
-        <circle cx="250" cy="200" r="4" fill="rgba(113, 159, 154, 0.4)" />
-        <circle cx="600" cy="300" r="6" fill="rgba(255, 165, 0, 0.4)" />
-      </svg>
-    </div>
+// const ReviewsSection = ({ reviews }) => (
+//   <section className="relative py-12 sm:py-16 lg:py-20 bg-jet-stream-900">
+//     {/* Circuit-like pattern */}
+//     <div className="absolute inset-0 overflow-hidden opacity-10">
+//       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600">
+//         <path d="M50,100 L150,100 L150,200 L250,200 L250,150 L350,150" 
+//               stroke="rgba(255, 165, 0, 0.6)" strokeWidth="2" fill="none" />
+//         <path d="M500,300 L600,300 L600,400 L700,400" 
+//               stroke="rgba(113, 159, 154, 0.6)" strokeWidth="2" fill="none" />
+//         <circle cx="150" cy="100" r="5" fill="rgba(255, 165, 0, 0.4)" />
+//         <circle cx="250" cy="200" r="4" fill="rgba(113, 159, 154, 0.4)" />
+//         <circle cx="600" cy="300" r="6" fill="rgba(255, 165, 0, 0.4)" />
+//       </svg>
+//     </div>
     
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="text-center mb-8 sm:mb-12">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-white mb-4">Client Reviews</h2>
-        <p className="text-jet-stream-200 text-base sm:text-lg">What people are saying about my work</p>
+//     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+//       <div className="text-center mb-8 sm:mb-12">
+//         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-white mb-4">Client Reviews</h2>
+//         <p className="text-jet-stream-200 text-base sm:text-lg">What people are saying about my work</p>
+//       </div>
+      
+//       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+//         {reviews.map((review, index) => (
+//           <div key={index} className="relative group">
+//             <div className={`absolute inset-0 bg-gradient-to-br ${
+//               index % 3 === 0 ? 'from-orange-400 to-orange-600' :
+//               index % 3 === 1 ? 'from-jet-stream-400 to-jet-stream-600' :
+//               'from-yellow-400 to-yellow-600'
+//             } rounded-xl sm:rounded-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-300 opacity-20`}></div>
+            
+//             <div className="relative bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-jet-stream-200 shadow-xl">
+//               {/* Stars */}
+//               <div className="flex items-center mb-3 sm:mb-4">
+//                 {[...Array(5)].map((_, i) => (
+//                   <Star 
+//                     key={i} 
+//                     className={`w-4 h-4 sm:w-5 sm:h-5 ${
+//                       i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+//                     }`} 
+//                   />
+//                 ))}
+//               </div>
+              
+//               <p className="text-sm sm:text-base text-jet-stream-700 mb-3 sm:mb-4 leading-relaxed">"{review.comment}"</p>
+              
+//               <div className="flex items-center">
+//                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-jet-stream-400 to-jet-stream-600 rounded-full flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
+//                   {review.client_name.charAt(0)}
+//                 </div>
+//                 <div className="min-w-0 flex-1">
+//                   <p className="text-sm sm:text-base font-medium text-jet-stream-900 truncate">{review.client_name}</p>
+//                   <p className="text-xs sm:text-sm text-jet-stream-500 truncate">{review.project}</p>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   </section>
+// );
+const ReviewsSection = ({ reviews = [] }) => {
+  if (reviews.length === 0) {
+    return (
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-gray-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-white mb-4">Client Reviews</h2>
+            <p className="text-gray-300 text-base sm:text-lg">No reviews yet</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative py-12 sm:py-16 lg:py-20 bg-gray-900">
+      {/* Circuit-like pattern */}
+      <div className="absolute inset-0 overflow-hidden opacity-10">
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600">
+          <path d="M50,100 L150,100 L150,200 L250,200 L250,150 L350,150" 
+                stroke="rgba(255, 165, 0, 0.6)" strokeWidth="2" fill="none" />
+          <path d="M500,300 L600,300 L600,400 L700,400" 
+                stroke="rgba(113, 159, 154, 0.6)" strokeWidth="2" fill="none" />
+          <circle cx="150" cy="100" r="5" fill="rgba(255, 165, 0, 0.4)" />
+          <circle cx="250" cy="200" r="4" fill="rgba(113, 159, 154, 0.4)" />
+          <circle cx="600" cy="300" r="6" fill="rgba(255, 165, 0, 0.4)" />
+        </svg>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
-        {reviews.map((review, index) => (
-          <div key={index} className="relative group">
-            <div className={`absolute inset-0 bg-gradient-to-br ${
-              index % 3 === 0 ? 'from-orange-400 to-orange-600' :
-              index % 3 === 1 ? 'from-jet-stream-400 to-jet-stream-600' :
-              'from-yellow-400 to-yellow-600'
-            } rounded-xl sm:rounded-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-300 opacity-20`}></div>
-            
-            <div className="relative bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-jet-stream-200 shadow-xl">
-              {/* Stars */}
-              <div className="flex items-center mb-3 sm:mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                      i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-                    }`} 
-                  />
-                ))}
-              </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-white mb-4">Client Reviews</h2>
+          <p className="text-gray-300 text-base sm:text-lg">
+            What people are saying about their work ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+          {reviews.map((review, index) => (
+            <div key={review.review_id || index} className="relative group">
+              <div className={`absolute inset-0 bg-gradient-to-br ${
+                index % 3 === 0 ? 'from-orange-400 to-orange-600' :
+                index % 3 === 1 ? 'from-teal-400 to-teal-600' :
+                'from-yellow-400 to-yellow-600'
+              } rounded-xl sm:rounded-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-300 opacity-20`}></div>
               
-              <p className="text-sm sm:text-base text-jet-stream-700 mb-3 sm:mb-4 leading-relaxed">"{review.comment}"</p>
-              
-              <div className="flex items-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-jet-stream-400 to-jet-stream-600 rounded-full flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
-                  {review.client_name.charAt(0)}
+              <div className="relative bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200 shadow-xl">
+                {/* Stars */}
+                <div className="flex items-center mb-3 sm:mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                        i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                      }`} 
+                    />
+                  ))}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm sm:text-base font-medium text-jet-stream-900 truncate">{review.client_name}</p>
-                  <p className="text-xs sm:text-sm text-jet-stream-500 truncate">{review.project}</p>
+                
+                {/* Review text */}
+                <p className="text-sm sm:text-base text-gray-700 mb-3 sm:mb-4 leading-relaxed">
+                  "{review.review_text || review.comment}"
+                </p>
+                
+                {/* Review image if exists */}
+                {review.image && (
+                  <div className="mb-3 sm:mb-4 rounded-lg overflow-hidden">
+                    <img 
+                      src={review.image} 
+                      alt="Review" 
+                      className="w-full h-32 sm:h-40 object-cover"
+                    />
+                  </div>
+                )}
+                
+                {/* Reviewer info */}
+                <div className="flex items-center">
+                  {review.reviewer_picture ? (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                      <img 
+                        src={review.reviewer_picture} 
+                        alt={review.reviewer_name || 'Reviewer'} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
+                      {review.reviewer_name?.charAt(0) || '?'}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm sm:text-base font-medium text-gray-900 truncate">
+                      {review.reviewer_name || 'Anonymous'}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 truncate">
+                      {review.gig_title}
+                    </p>
+                  </div>
                 </div>
+                
+                {/* Date */}
+                {review.created_at && (
+                  <p className="text-xs text-gray-400 mt-2">
+                    {new Date(review.created_at).toLocaleDateString('en-US', { 
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric' 
+                    })}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // Hero Banner Component - Mobile Optimized
 const HeroBanner = ({ user }) => (
@@ -416,10 +534,7 @@ const HeroBanner = ({ user }) => (
                     </div>
                   )}
                   
-                  <div className="flex items-center bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 sm:px-4 py-2 rounded-full shadow-lg">
-                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 fill-current" />
-                    <span className="font-semibold text-xs sm:text-sm">0 Rating</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -480,122 +595,7 @@ const HeroBanner = ({ user }) => (
   </section>
 );
 
-// Skills & Expertise Showcase - Mobile Responsive
-// const SkillsShowcase = ({ user }) => {
-//   const skills = [
-//     { name: 'Photography', level: 95, icon: Camera, color: 'orange' },
-//     { name: 'Creative Direction', level: 90, icon: Palette, color: 'jet-stream' },
-//     { name: 'Client Relations', level: 88, icon: Users, color: 'orange' },
-//     { name: 'Post-Processing', level: 92, icon: Zap, color: 'jet-stream' }
-//   ];
 
-//   return (
-//     <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
-//       {/* Organic scattered dots */}
-//       <div className="absolute inset-0 overflow-hidden opacity-20">
-//         <div className="absolute top-10 left-4 sm:left-10 w-2 h-2 sm:w-3 sm:h-3 bg-orange-400 rounded-full"></div>
-//         <div className="absolute top-32 right-8 sm:right-20 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-jet-stream-400 rounded-full"></div>
-//         <div className="absolute bottom-40 left-1/4 w-3 h-3 sm:w-4 sm:h-4 bg-orange-300 rounded-full"></div>
-//         <div className="absolute bottom-20 right-1/3 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-jet-stream-300 rounded-full"></div>
-//         <div className="absolute top-1/2 left-1/2 w-2 h-2 sm:w-3 sm:h-3 bg-orange-500 rounded-full"></div>
-//       </div>
-      
-//       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-//           {/* Skills content */}
-//           <div className="space-y-6 sm:space-y-8">
-//             <div className="space-y-3 sm:space-y-4">
-//               <div className="flex items-center space-x-3 justify-center lg:justify-start">
-//                 <div className="w-8 sm:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full"></div>
-//                 <Coffee className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
-//               </div>
-//               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-jet-stream-900 text-center lg:text-left">
-//                 Skills & 
-//                 <span className="block text-orange-600">Expertise</span>
-//               </h2>
-//               <p className="text-lg sm:text-xl text-jet-stream-600 leading-relaxed text-center lg:text-left">
-//                 Years of dedication have shaped these core competencies that define my creative approach.
-//               </p>
-//             </div>
-            
-//             <div className="space-y-4 sm:space-y-6">
-//               {skills.map((skill, index) => (
-//                 <div key={index} className="group">
-//                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-//                     <div className="flex items-center space-x-2 sm:space-x-3">
-//                       <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br ${
-//                         skill.color === 'orange' 
-//                           ? 'from-orange-400 to-orange-600' 
-//                           : 'from-jet-stream-400 to-jet-stream-600'
-//                       } rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-//                         <skill.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-//                       </div>
-//                       <span className="font-semibold text-jet-stream-900 text-base sm:text-lg">{skill.name}</span>
-//                     </div>
-//                     <span className="text-jet-stream-600 font-medium text-sm sm:text-base">{skill.level}%</span>
-//                   </div>
-                  
-//                   <div className="h-2.5 sm:h-3 bg-jet-stream-100 rounded-full overflow-hidden">
-//                     <div 
-//                       className={`h-full bg-gradient-to-r ${
-//                         skill.color === 'orange' 
-//                           ? 'from-orange-400 to-orange-600' 
-//                           : 'from-jet-stream-400 to-jet-stream-600'
-//                       } rounded-full transition-all duration-1000 ease-out shadow-sm`}
-//                       style={{ width: `${skill.level}%` }}
-//                     ></div>
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-          
-//           {/* Contact card */}
-//           <div className="relative">
-//             <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-br from-orange-200 to-jet-stream-200 rounded-2xl sm:rounded-[3rem] transform rotate-2 opacity-30"></div>
-//             <div className="relative bg-white p-6 sm:p-8 rounded-2xl sm:rounded-[3rem] border-2 border-jet-stream-200 shadow-2xl">
-//               <div className="text-center mb-6 sm:mb-8">
-//                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-//                   <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-//                 </div>
-//                 <h3 className="text-xl sm:text-2xl font-bold text-jet-stream-900 mb-2">Let's Connect</h3>
-//                 <p className="text-jet-stream-600 text-sm sm:text-base">Ready to bring your vision to life?</p>
-//               </div>
-              
-//               <div className="space-y-3 sm:space-y-4">
-//                 <div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-orange-50 to-jet-stream-50 rounded-xl sm:rounded-2xl border border-orange-100 hover:shadow-md transition-shadow">
-//                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4 shadow-sm flex-shrink-0">
-//                     <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-//                   </div>
-//                   <div className="min-w-0 flex-1">
-//                     <p className="text-xs text-jet-stream-500 uppercase tracking-wider font-bold">Email</p>
-//                     <p className="text-jet-stream-800 font-medium text-sm sm:text-base truncate">{user.email}</p>
-//                   </div>
-//                 </div>
-                
-//                 {user.phone && (
-//                   <div className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-jet-stream-50 to-orange-50 rounded-xl sm:rounded-2xl border border-jet-stream-100 hover:shadow-md transition-shadow">
-//                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-jet-stream-500 to-jet-stream-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4 shadow-sm flex-shrink-0">
-//                       <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-//                     </div>
-//                     <div className="min-w-0 flex-1">
-//                       <p className="text-xs text-jet-stream-500 uppercase tracking-wider font-bold">Phone</p>
-//                       <p className="text-jet-stream-800 font-medium text-sm sm:text-base">{user.phone}</p>
-//                     </div>
-//                   </div>
-//                 )}
-//               </div>
-              
-//               <button className="w-full mt-4 sm:mt-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-sm sm:text-base">
-//                 Start a Conversation
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
 
 const UserProfileShowcase = ({ user }) => {
   // Sample user data - replace with actual user props
@@ -966,26 +966,26 @@ const StatsSection = ({ user }) => {
 
 // Main Profile Page Component
 export default function UserProfilePage() {
-  const reviews = [
-    {
-      rating: 5,
-      comment: "Sarah exceeded all our expectations! Her attention to detail and ability to capture candid moments made our wedding photos absolutely perfect. We couldn't be happier!",
-      client_name: "Emily Rodriguez",
-      project: "Wedding Photography"
-    },
-    {
-      rating: 5,
-      comment: "Professional, creative, and so easy to work with. The engagement photos turned out amazing and we use them everywhere!",
-      client_name: "Michael Chen",
-      project: "Engagement Session"
-    },
-    {
-      rating: 4,
-      comment: "Great experience working with Sarah for our corporate event. She was discreet and captured all the important moments beautifully.",
-      client_name: "David Thompson",
-      project: "Corporate Event"
-    }
-  ];
+  // const reviews = [
+  //   {
+  //     rating: 5,
+  //     comment: "Sarah exceeded all our expectations! Her attention to detail and ability to capture candid moments made our wedding photos absolutely perfect. We couldn't be happier!",
+  //     client_name: "Emily Rodriguez",
+  //     project: "Wedding Photography"
+  //   },
+  //   {
+  //     rating: 5,
+  //     comment: "Professional, creative, and so easy to work with. The engagement photos turned out amazing and we use them everywhere!",
+  //     client_name: "Michael Chen",
+  //     project: "Engagement Session"
+  //   },
+  //   {
+  //     rating: 4,
+  //     comment: "Great experience working with Sarah for our corporate event. She was discreet and captured all the important moments beautifully.",
+  //     client_name: "David Thompson",
+  //     project: "Corporate Event"
+  //   }
+  // ];
   
   const { id } = useParams(); // userId from URL
 
@@ -993,6 +993,7 @@ export default function UserProfilePage() {
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
   const [gigs, setGigs] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     if (!id) return;
@@ -1001,12 +1002,14 @@ export default function UserProfilePage() {
       try {
         const res = await fetch(`/api/profile/${id}`);
         const data = await res.json();
+        console.log("Profile data:", data.reviews);
 
         if (!res.ok) {
           setError(data.error || "Failed to fetch profile");
         } else {
           setUser(data.user || null);
           setGigs(data.gigs || []);
+          setReviews(data.reviews || []);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);

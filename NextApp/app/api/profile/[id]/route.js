@@ -113,7 +113,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
-  const { id } = params; // userId
+  const { id } = await params; // userId
 
   try {
     // ✅ Session check
@@ -169,6 +169,30 @@ export async function GET(req, { params }) {
 
     // Count active gigs (assuming all gigs are active, or add your own logic)
     const activeGigsCount = gigsRes.rows.length;
+    const gigIds = gigsRes.rows.map(g => `'${g.gig_id}'`).join(",");
+    let reviewsRes = { rows: [] };
+    if (gigsRes.rowCount > 0) {
+      reviewsRes = await pool.query(
+        `SELECT 
+          r.review_id,
+          r.user_id AS reviewer_id,
+          u.name AS reviewer_name,
+          u.profile_picture AS reviewer_picture,
+          r.gig_id,
+          g.title AS gig_title,
+          r.rating,
+          r.review_text,
+          r.image,
+          r.created_at
+        FROM reviews r
+        JOIN gigs g ON r.gig_id = g.gig_id
+        JOIN users u ON r.user_id = u.user_id
+        WHERE g.seller_id = $1
+        ORDER BY r.created_at DESC`,
+        [id]
+      );
+    }
+    console.log("ReviewsRes:", reviewsRes);
 
     // Fetch user bookings (as buyer or seller)
     const bookingsRes = await pool.query(
@@ -200,13 +224,17 @@ export async function GET(req, { params }) {
       ORDER BY b.created_at DESC`,
       [id]
     );
+    
 
     // Calculate total bookings
     const totalBookings = bookingsRes.rows.length;
 
     // Calculate user rating (average of gig ratings)
-    const avgRating = gigsRes.rows.length > 0 
-      ? (gigsRes.rows.reduce((sum, gig) => sum + (gig.rating || 0), 0) / gigsRes.rows.length).toFixed(1)
+    // const avgRating = gigsRes.rows.length > 0 
+    //   ? (gigsRes.rows.reduce((sum, gig) => sum + (gig.rating || 0), 0) / gigsRes.rows.length).toFixed(1)
+    //   : 0;
+    const avgRating = reviewsRes.rows.length > 0 
+      ? (reviewsRes.rows.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewsRes.rows.length).toFixed(1)
       : 0;
 
     // Calculate member since year
@@ -219,7 +247,8 @@ export async function GET(req, { params }) {
       // merits: usemerit_credits || 0,
       activeGigs: activeGigsCount,
       totalBookings,
-      rating: parseFloat(avgRating) || 0
+      rating: parseFloat(avgRating) || 0,
+      totalReviews: reviewsRes.rows.length
     };
 
     return NextResponse.json(
@@ -227,6 +256,7 @@ export async function GET(req, { params }) {
         user: enhancedUser,
         gigs: gigsRes.rows,
         bookings: bookingsRes.rows,
+        reviews: reviewsRes.rows,
       },
       { status: 200 }
     );

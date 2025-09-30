@@ -115,10 +115,31 @@ export async function GET(req, { params }) {
     if (gigRes.rowCount === 0) {
       return NextResponse.json({ error: "Gig not found" }, { status: 404 });
     }
+    const reviewsRes = await pool.query(
+      `SELECT 
+        r.review_id,
+        r.rating,
+        r.review_text,
+        r.image,
+        r.created_at,
+        u.user_id,
+        u.name AS reviewer_name,
+        u.profile_picture AS reviewer_picture
+      FROM reviews r
+      JOIN users u ON r.user_id = u.user_id
+      WHERE r.gig_id = $1
+      ORDER BY r.created_at DESC`,
+      [gigId]
+    );
+    const reviews = reviewsRes.rows;
 
     const gig = gigRes.rows[0];
 
-    return NextResponse.json({ gig }, { status: 200 });
+    return NextResponse.json({ 
+      gig,
+      reviews,
+      reviewsCount:reviews.length
+     }, { status: 200 });
   } catch (error) {
     console.error("Error fetching gig:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

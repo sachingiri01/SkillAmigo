@@ -705,16 +705,224 @@ interface Gig {
 
 
 // My Gigs Component - Gigs posted by user
+// const MyGigs = () => {
+//   const [loading, setLoading] = useState(true);
+//   const [myGigs, setMyGigs] = useState<Gig[]>([]);
+//   const [applicants, setApplicants] = useState({});
+//   const { data: session } = useSession();
+//    const router =  useRouter();
+
+//   const hanldegigr=(id)=>{
+//     if(!id) return
+//     router.push(`/gigs/${id}`);}
+
+//   const handleDelete = async (gigId) => {
+//     const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
+//     if (!confirmDelete) return;
+
+//     try {
+//       const res = await fetch(`/api/gigs/${gigId}`, { method: 'DELETE' });
+
+
+//       if (!res.ok) {
+//         let errorData;
+//         try {
+//           errorData = await res.json();
+//         } catch {
+//           errorData = { error: "Failed to delete gig" };
+//         }
+//         alert(errorData.error || 'Could not delete gig');
+//         return;
+
+//       }
+//       const data = await res.json();
+
+//       alert('Gig deleted successfully');
+//       setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId)); // Remove from list
+//     } catch (error) {
+//       console.error('Error deleting gig:', error);
+//       alert('Something went wrong');
+//     }
+//   };
+
+
+//   useEffect(() => {
+//     if (!session) return;
+
+//     const fetchGigs = async () => {
+//       try {
+//         const res = await fetch(`/api/users/gigs`);
+//         if (!res.ok) throw new Error("Failed to fetch gigs");
+//         const data = await res.json();
+//         console.log("what is my gig info", data);
+
+//         setMyGigs(data);
+//       } catch (error) {
+//         console.error("Error fetching gigs:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchGigs();
+//   }, [session]); // run when session becomes available
+
+
+//   const handleViewApplicants = async (gigId) => {
+//     try {
+//       const res = await fetch(`/api/gigs/${gigId}/applicants`);
+//       if (!res.ok) throw new Error('Failed to fetch applicants');
+//       const data = await res.json();
+//       setApplicants((prev) => ({ ...prev, [gigId]: data }));
+//     } catch (error) {
+//       console.error('Error fetching applicants:', error);
+//       alert('Failed to load applicants');
+//     }
+//   };
+
+
+//   const getStatusColor = (status) => {
+//     switch (status) {
+//       case 'active':
+//         return { bg: '#e1ecea', text: '#344545' };
+//       case 'completed':
+//         return { bg: '#dcfce7', text: '#166534' };
+//       case 'draft':
+//         return { bg: '#fef3c7', text: '#92400e' };
+//       default:
+//         return { bg: '#f1f5f9', text: '#475569' };
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="space-y-6">
+//         <SkeletonLoader className="h-8 w-48" />
+//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//           {[1, 2, 3].map((i) => (
+//             <SkeletonLoader key={i} type="card" />
+//           ))}
+//         </div>
+//       </div>
+//     );
+//   }
+ 
+  
+
+//   return (
+//     <div className="space-y-6">
+//       <div className="flex items-center justify-between">
+//         <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
+//           My Gigs
+//         </h2>
+//         <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
+//           {myGigs.length} Gigs Posted
+//         </span>
+//       </div>
+
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//         {myGigs.map((gig) => {
+//           const statusColors = getStatusColor(gig.status);
+//           return (
+//             <div key={gig.gig_id}
+//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
+//               {/* Background Pattern */}
+//               <div className="absolute inset-0 opacity-5">
+//                 <div className="absolute inset-0" style={{
+//                   backgroundImage: `radial-gradient(circle at 15px 15px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
+//                   backgroundSize: '30px 30px'
+//                 }} />
+//               </div>
+
+//               <div className="relative z-10">
+//                 <div className="flex items-start justify-between mb-4">
+//                   <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
+//                     {gig.title}
+//                   </h3>
+//                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 capitalize"
+//                     style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+//                     {gig.status}
+//                   </span>
+//                 </div>
+
+//                 <p className="text-sm mb-4" style={{ color: '#719f9a' }}>
+//                   {gig.description}
+//                 </p>
+
+//                 <div className="space-y-2 mb-4">
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Price:</span> {gig.min_price} - {gig.maxPrice} coins
+//                   </p>
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Applicants:</span> {gig.buyer_count || 0}
+//                   </p>
+//                   <p className="text-sm" style={{ color: '#405e5e' }}>
+//                     <span className="font-medium">Posted:</span> {gig.created_at ? new Date(gig.created_at).toLocaleDateString() : 'N/A'}
+
+//                   </p>
+//                 </div>
+
+//                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
+//                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}
+//                   onClick={()=>hanldegigr(gig.gig_id)}
+//                   >
+                    
+//                       View Details
+                    
+//                   </button>
+//                   <button
+//                     className="text-sm font-medium hover:underline"
+//                     style={{ color: '#db1738ff' }}
+//                     onClick={() => handleDelete(gig.gig_id)}
+
+//                   >
+//                     Delete
+//                   </button>
+//                   {(gig.buyer_count ?? 0) > 0 && (
+//                     <button
+//                       className="text-sm font-medium hover:underline"
+//                       style={{ color: '#53e656ff' }}
+//                       onClick={() => handleViewApplicants(gig.gig_id)}
+//                     >
+//                       View Applicants
+//                     </button>
+//                   )}
+//                 </div>
+//                 {applicants[gig.gig_id]?.length > 0 && (
+//                   <div className="flex overflow-x-auto space-x-4 py-3">
+//                     {applicants[gig.gig_id].map((user) => (
+//                       <div key={user.user_id} className="flex flex-col items-center min-w-[60px]">
+//                         <img
+//                           src={user.profile_picture || '/default-profile.png'}
+//                           alt={user.name}
+//                           className="w-10 h-10 rounded-full object-cover"
+//                         />
+//                         <span className="text-xs text-center mt-1">{user.name}</span>
+//                       </div>
+//                     ))}
+//                   </div>
+//                 )}
+//               </div>
+
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
 const MyGigs = () => {
   const [loading, setLoading] = useState(true);
   const [myGigs, setMyGigs] = useState<Gig[]>([]);
   const [applicants, setApplicants] = useState({});
+  const [showApplicants, setShowApplicants] = useState({});
   const { data: session } = useSession();
-   const router =  useRouter();
+  const router = useRouter();
 
-  const hanldegigr=(id)=>{
-    if(!id) return
-    router.push(`/gigs/${id}`);}
+  const hanldegigr = (id) => {
+    if (!id) return;
+    router.push(`/gigs/${id}`);
+  };
 
   const handleDelete = async (gigId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
@@ -722,7 +930,6 @@ const MyGigs = () => {
 
     try {
       const res = await fetch(`/api/gigs/${gigId}`, { method: 'DELETE' });
-
 
       if (!res.ok) {
         let errorData;
@@ -733,18 +940,16 @@ const MyGigs = () => {
         }
         alert(errorData.error || 'Could not delete gig');
         return;
-
       }
+      
       const data = await res.json();
-
       alert('Gig deleted successfully');
-      setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId)); // Remove from list
+      setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId));
     } catch (error) {
       console.error('Error deleting gig:', error);
       alert('Something went wrong');
     }
   };
-
 
   useEffect(() => {
     if (!session) return;
@@ -755,7 +960,6 @@ const MyGigs = () => {
         if (!res.ok) throw new Error("Failed to fetch gigs");
         const data = await res.json();
         console.log("what is my gig info", data);
-
         setMyGigs(data);
       } catch (error) {
         console.error("Error fetching gigs:", error);
@@ -765,21 +969,32 @@ const MyGigs = () => {
     };
 
     fetchGigs();
-  }, [session]); // run when session becomes available
-
+  }, [session]);
 
   const handleViewApplicants = async (gigId) => {
-    try {
-      const res = await fetch(`/api/gigs/${gigId}/applicants`);
-      if (!res.ok) throw new Error('Failed to fetch applicants');
-      const data = await res.json();
-      setApplicants((prev) => ({ ...prev, [gigId]: data }));
-    } catch (error) {
-      console.error('Error fetching applicants:', error);
-      alert('Failed to load applicants');
+    // Toggle visibility
+    if (showApplicants[gigId]) {
+      setShowApplicants((prev) => ({ ...prev, [gigId]: false }));
+      return;
+    }
+
+    // If not already loaded, fetch applicants
+    if (!applicants[gigId]) {
+      try {
+        const res = await fetch(`/api/gigs/${gigId}/applicants`);
+        if (!res.ok) throw new Error('Failed to fetch applicants');
+        const data = await res.json();
+        setApplicants((prev) => ({ ...prev, [gigId]: data }));
+        setShowApplicants((prev) => ({ ...prev, [gigId]: true }));
+      } catch (error) {
+        console.error('Error fetching applicants:', error);
+        alert('Failed to load applicants');
+      }
+    } else {
+      // Already loaded, just show
+      setShowApplicants((prev) => ({ ...prev, [gigId]: true }));
     }
   };
-
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -806,8 +1021,6 @@ const MyGigs = () => {
       </div>
     );
   }
- 
-  
 
   return (
     <div className="space-y-6">
@@ -823,6 +1036,9 @@ const MyGigs = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {myGigs.map((gig) => {
           const statusColors = getStatusColor(gig.status);
+          const hasApplicants = (gig.buyer_count ?? 0) > 0;
+          const isShowingApplicants = showApplicants[gig.gig_id];
+          
           return (
             <div key={gig.gig_id}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
@@ -858,52 +1074,72 @@ const MyGigs = () => {
                   </p>
                   <p className="text-sm" style={{ color: '#405e5e' }}>
                     <span className="font-medium">Posted:</span> {gig.created_at ? new Date(gig.created_at).toLocaleDateString() : 'N/A'}
-
                   </p>
                 </div>
 
                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}
-                  onClick={()=>hanldegigr(gig.gig_id)}
-                  >
-                    
-                      View Details
-                    
+                    onClick={() => hanldegigr(gig.gig_id)}>
+                    View Details
                   </button>
                   <button
                     className="text-sm font-medium hover:underline"
                     style={{ color: '#db1738ff' }}
-                    onClick={() => handleDelete(gig.gig_id)}
-
-                  >
+                    onClick={() => handleDelete(gig.gig_id)}>
                     Delete
                   </button>
-                  {(gig.buyer_count ?? 0) > 0 && (
+                  {hasApplicants && (
                     <button
                       className="text-sm font-medium hover:underline"
-                      style={{ color: '#53e656ff' }}
-                      onClick={() => handleViewApplicants(gig.gig_id)}
-                    >
-                      View Applicants
+                      style={{ color: '#558581' }}
+                      onClick={() => handleViewApplicants(gig.gig_id)}>
+                      {isShowingApplicants ? 'Hide Applicants' : 'View Applicants'}
                     </button>
                   )}
                 </div>
-                {applicants[gig.gig_id]?.length > 0 && (
-                  <div className="flex overflow-x-auto space-x-4 py-3">
-                    {applicants[gig.gig_id].map((user) => (
-                      <div key={user.user_id} className="flex flex-col items-center min-w-[60px]">
-                        <img
-                          src={user.profile_picture || '/default-profile.png'}
-                          alt={user.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <span className="text-xs text-center mt-1">{user.name}</span>
-                      </div>
-                    ))}
+
+                {/* Applicants Section */}
+                {isShowingApplicants && applicants[gig.gig_id]?.length > 0 && (
+                  <div className="mt-4 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
+                    <h4 className="text-sm font-semibold mb-3" style={{ color: '#344545' }}>
+                      Applicants ({applicants[gig.gig_id].length})
+                    </h4>
+                    <div className="flex flex-wrap gap-4">
+                      {applicants[gig.gig_id].map((user) => (
+                        <div 
+                          key={user.user_id} 
+                          className="flex flex-col items-center min-w-[70px] p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          onClick={() => router.push(`/profile/${user.user_id}`)}>
+                          <img
+                            src={user.profile_picture || '/default-profile.png'}
+                            alt={user.name}
+                            className="w-12 h-12 rounded-full object-cover border-2"
+                            style={{ borderColor: '#558581' }}
+                          />
+                          <span className="text-xs text-center mt-2 font-medium" style={{ color: '#344545' }}>
+                            {user.name}
+                          </span>
+                          {user.booking_status && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 capitalize"
+                              style={{ 
+                                backgroundColor: user.booking_status === 'confirmed' ? '#dcfce7' : '#fef3c7',
+                                color: user.booking_status === 'confirmed' ? '#166534' : '#92400e'
+                              }}>
+                              {user.booking_status}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {isShowingApplicants && applicants[gig.gig_id]?.length === 0 && (
+                  <div className="mt-4 pt-4 border-t text-center" style={{ borderColor: '#e1ecea' }}>
+                    <p className="text-sm" style={{ color: '#719f9a' }}>No applicants yet</p>
                   </div>
                 )}
               </div>
-
             </div>
           );
         })}
@@ -911,6 +1147,8 @@ const MyGigs = () => {
     </div>
   );
 };
+
+
 
 
 
@@ -931,6 +1169,7 @@ interface Booking {
 
 const MyBookings = ({ loading }: { loading: boolean }) => {
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
+   
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -960,7 +1199,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
     fetchBookings();
   }, []);
-
+  
   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
@@ -1053,13 +1292,14 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                   className="flex space-x-3 pt-4 border-t"
                   style={{ borderColor: "#e1ecea" }}
                 >
-                  <button
+                  {/* <button
                     className="text-sm font-medium hover:underline"
                     style={{ color: "#558581" }}
+                    onClick={()=>hanldegigr(gig.gig_id)}
                     // onClick={() => router.push(`/gig/${gig.gig_id}`)}
                   >
                     View Details
-                  </button>
+                  </button> */}
 
                   {/* Pending: Confirm & Cancel */}
                   {booking.status === "pending" && (

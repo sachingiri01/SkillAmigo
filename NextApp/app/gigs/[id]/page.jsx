@@ -968,13 +968,67 @@ const SellerInfo = ({ seller }) => (
   </section>
 );
 
-const Rating = ({ rating }) => {
+// const Rating = ({ rating }) => {
+//   const stars = Math.floor(rating || 0);
+//   const hasHalfStar = (rating || 0) % 1 >= 0.5;
+  
+//   return (
+//     <section className="relative py-12 sm:py-16 bg-gradient-to-r from-jet-stream-100 via-jet-stream-50 to-jet-stream-200">
+//       {/* Radial Pattern Background - Simplified for mobile */}
+//       <div className="absolute inset-0 overflow-hidden">
+//         <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 400">
+//           <defs>
+//             <radialGradient id="ratingGradient" cx="50%" cy="50%">
+//               <stop offset="0%" stopColor="rgba(85, 133, 129, 0.8)" />
+//               <stop offset="50%" stopColor="rgba(113, 159, 154, 0.4)" />
+//               <stop offset="100%" stopColor="rgba(187, 211, 208, 0.1)" />
+//             </radialGradient>
+//           </defs>
+//           <circle cx="200" cy="200" r="150" fill="url(#ratingGradient)" />
+//           <circle cx="200" cy="200" r="100" fill="none" stroke="rgba(64, 94, 94, 0.2)" strokeWidth="1" />
+//           <circle cx="200" cy="200" r="50" fill="none" stroke="rgba(64, 94, 94, 0.2)" strokeWidth="1" />
+//         </svg>
+//       </div>
+      
+//       <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center relative z-10">
+//         <div className="relative inline-block">
+//           <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-200 to-jet-stream-400 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-30"></div>
+//           <div className="relative bg-white/80 backdrop-blur-sm p-8 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl border-2 border-jet-stream-300 shadow-xl">
+//             <h2 className="text-xl sm:text-2xl font-serif text-jet-stream-900 mb-4 sm:mb-6">Customer Rating</h2>
+//             <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-jet-stream-600 mb-3 sm:mb-4">{rating?.toFixed(1) || 'N/A'}</div>
+//             <div className="flex justify-center items-center space-x-1 mb-3 sm:mb-4">
+//               {[...Array(5)].map((_, i) => (
+//                 <Star
+//                   key={i}
+//                   className={`w-6 sm:w-7 lg:w-8 h-6 sm:h-7 lg:h-8 ${
+//                     i < stars
+//                       ? 'text-yellow-400 fill-yellow-400'
+//                       : i === stars && hasHalfStar
+//                       ? 'text-yellow-400 fill-yellow-400 opacity-50'
+//                       : 'text-jet-stream-300'
+//                   }`}
+//                 />
+//               ))}
+//             </div>
+//             <p className="text-jet-stream-700 text-base sm:text-lg">
+//               {rating ? 'Highly rated by customers' : 'No ratings yet'}
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+
+
+const Rating = ({ rating, reviews = [], reviewCount = 0 }) => {
   const stars = Math.floor(rating || 0);
   const hasHalfStar = (rating || 0) % 1 >= 0.5;
   
   return (
     <section className="relative py-12 sm:py-16 bg-gradient-to-r from-jet-stream-100 via-jet-stream-50 to-jet-stream-200">
-      {/* Radial Pattern Background - Simplified for mobile */}
+      {/* Radial Pattern Background */}
       <div className="absolute inset-0 overflow-hidden">
         <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 400">
           <defs>
@@ -990,36 +1044,104 @@ const Rating = ({ rating }) => {
         </svg>
       </div>
       
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center relative z-10">
-        <div className="relative inline-block">
-          <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-200 to-jet-stream-400 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-30"></div>
-          <div className="relative bg-white/80 backdrop-blur-sm p-8 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl border-2 border-jet-stream-300 shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-serif text-jet-stream-900 mb-4 sm:mb-6">Customer Rating</h2>
-            <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-jet-stream-600 mb-3 sm:mb-4">{rating?.toFixed(1) || 'N/A'}</div>
-            <div className="flex justify-center items-center space-x-1 mb-3 sm:mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-6 sm:w-7 lg:w-8 h-6 sm:h-7 lg:h-8 ${
-                    i < stars
-                      ? 'text-yellow-400 fill-yellow-400'
-                      : i === stars && hasHalfStar
-                      ? 'text-yellow-400 fill-yellow-400 opacity-50'
-                      : 'text-jet-stream-300'
-                  }`}
-                />
-              ))}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Rating Summary */}
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-gradient-to-br from-jet-stream-200 to-jet-stream-400 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-30"></div>
+            <div className="relative bg-white/80 backdrop-blur-sm p-8 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl border-2 border-jet-stream-300 shadow-xl">
+              <h2 className="text-xl sm:text-2xl font-serif text-jet-stream-900 mb-4 sm:mb-6">Customer Rating</h2>
+              <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-jet-stream-600 mb-3 sm:mb-4">
+                {rating?.toFixed(1) || 'N/A'}
+              </div>
+              <div className="flex justify-center items-center space-x-1 mb-3 sm:mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-6 sm:w-7 lg:w-8 h-6 sm:h-7 lg:h-8 ${
+                      i < stars
+                        ? 'text-yellow-400 fill-yellow-400'
+                        : i === stars && hasHalfStar
+                        ? 'text-yellow-400 fill-yellow-400 opacity-50'
+                        : 'text-jet-stream-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-jet-stream-700 text-base sm:text-lg">
+                {rating ? `Based on ${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}` : 'No ratings yet'}
+              </p>
             </div>
-            <p className="text-jet-stream-700 text-base sm:text-lg">
-              {rating ? 'Highly rated by customers' : 'No ratings yet'}
-            </p>
           </div>
         </div>
+
+        {/* Reviews List */}
+        {reviews.length > 0 && (
+          <div className="space-y-4 sm:space-y-6">
+            <h3 className="text-xl sm:text-2xl font-serif text-jet-stream-900 text-center mb-6">Customer Reviews</h3>
+            {reviews.map((review) => (
+              <div 
+                key={review.review_id} 
+                className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-jet-stream-200 shadow-md"
+              >
+                <div className="flex items-start gap-3 sm:gap-4">
+                  {/* Reviewer Avatar */}
+                  <img 
+                    src={review.reviewer_picture || '/default-avatar.png'} 
+                    alt={review.reviewer_name}
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                  />
+                  
+                  <div className="flex-1">
+                    {/* Reviewer Name and Rating */}
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-jet-stream-900">{review.reviewer_name}</h4>
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < review.rating
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-jet-stream-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Review Text */}
+                    {review.review_text && (
+                      <p className="text-jet-stream-700 mb-2">{review.review_text}</p>
+                    )}
+                    
+                    {/* Review Image */}
+                    {review.image && (
+                      <img 
+                        src={review.image} 
+                        alt="Review" 
+                        className="mt-3 rounded-lg max-w-full sm:max-w-xs h-auto"
+                      />
+                    )}
+                    
+                    {/* Review Date */}
+                    <p className="text-xs sm:text-sm text-jet-stream-500 mt-2">
+                      {new Date(review.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 };
-
 const CTA = () => (
   <section className="relative py-16 sm:py-20 bg-jet-stream-900 overflow-hidden">
     {/* Abstract Pattern Background with Orange Accents */}
@@ -1087,12 +1209,116 @@ const CTA = () => (
 );
 
 // Main Page Component
+// export default function GigDetailPage() {
+//   const params = useParams();
+//   const [loading, setLoading] = useState(true);
+//   const { id } = params; // gigId from URL
+//   const [gigData, setGigData] = useState(null);
+//   const [seller, setSeller] = useState({});
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     if (!id) return;
+    
+//     const fetchGig = async () => {
+//       try {
+//         const res = await fetch(`/api/gigs/${id}`);
+//         const data = await res.json();
+
+//         if (!res.ok) {
+//           setError(data.error || 'Failed to fetch gig');
+//         } else {
+//           setGigData(data.gig || null);
+//           console.log(data);
+          
+//           // Safely set seller info if available
+//           const {
+//             seller_id = '',
+//             seller_name = '',
+//             seller_email = '',
+//             seller_picture = '',
+//             seller_bio = '',
+//             seller_merit = 0,
+//             seller_verified = false,
+//             s_created_at = null
+//           } = data.gig || {};
+
+//           setSeller({
+//             user_id: seller_id,
+//             name: seller_name,
+//             email: seller_email,
+//             profile_picture: seller_picture,
+//             bio: seller_bio,
+//             merit_credits: seller_merit,
+//             is_verified: seller_verified,
+//             s_created_at
+//           });
+//         }
+//       } catch (err) {
+//         setError('Internal Server Error');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchGig();
+//   }, [id]);
+
+//   if (loading) {
+//     return <LoadingScreen />;
+//   }
+
+//   if (error) {
+//     return (
+//       <main className="min-h-screen bg-gradient-to-br from-jet-stream-100 to-jet-stream-200 flex items-center justify-center px-4">
+//         <div className="text-center">
+//           <div className="w-20 h-20 bg-gradient-to-br from-jet-stream-400 to-jet-stream-600 rounded-full flex items-center justify-center mx-auto mb-4">
+//             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+//             </svg>
+//           </div>
+//           <h2 className="text-2xl font-serif text-jet-stream-900 mb-2">Oops! Something went wrong</h2>
+//           <p className="text-jet-stream-600 mb-4">{error}</p>
+//           <button 
+//             onClick={() => window.location.reload()} 
+//             className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium hover:scale-105 transition-transform"
+//           >
+//             Try Again
+//           </button>
+//         </div>
+//       </main>
+//     );
+//   }
+
+//   return (
+//     <main className="min-h-screen">
+//       <FullwidthIconNavbar />
+//       <Hero title={gigData?.title} picture={gigData?.picture} />
+//       <GigInfo 
+//         title={gigData?.title} 
+//         description={gigData?.description} 
+//         category={gigData?.category} 
+//       />
+//       <Pricing 
+//         minPrice={gigData?.min_price} 
+//         avgPrice={gigData?.avg_price} 
+//         availability={gigData?.availability} 
+//       />
+//       <SellerInfo seller={seller} />
+//       <Rating rating={gigData?.rating} />
+//       <CTA />
+//       <NewsletterFooter />
+//     </main>
+//   );
+// }
 export default function GigDetailPage() {
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const { id } = params; // gigId from URL
   const [gigData, setGigData] = useState(null);
   const [seller, setSeller] = useState({});
+  const [reviews, setReviews] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -1102,12 +1328,15 @@ export default function GigDetailPage() {
       try {
         const res = await fetch(`/api/gigs/${id}`);
         const data = await res.json();
-
+        
         if (!res.ok) {
           setError(data.error || 'Failed to fetch gig');
         } else {
           setGigData(data.gig || null);
-          console.log(data);
+          
+          // Set reviews data
+          setReviews(data.reviews || []);
+          setReviewCount(data.reviewCount || 0);
           
           // Safely set seller info if available
           const {
@@ -1120,7 +1349,7 @@ export default function GigDetailPage() {
             seller_verified = false,
             s_created_at = null
           } = data.gig || {};
-
+          
           setSeller({
             user_id: seller_id,
             name: seller_name,
@@ -1133,12 +1362,13 @@ export default function GigDetailPage() {
           });
         }
       } catch (err) {
+        console.error('Error fetching gig:', err);
         setError('Internal Server Error');
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchGig();
   }, [id]);
 
@@ -1168,22 +1398,37 @@ export default function GigDetailPage() {
     );
   }
 
+  if (!gigData) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-jet-stream-100 to-jet-stream-200 flex items-center justify-center px-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-serif text-jet-stream-900 mb-2">Gig Not Found</h2>
+          <p className="text-jet-stream-600">The gig you're looking for doesn't exist.</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen">
       <FullwidthIconNavbar />
-      <Hero title={gigData?.title} picture={gigData?.picture} />
+      <Hero title={gigData.title} picture={gigData.picture} />
       <GigInfo 
-        title={gigData?.title} 
-        description={gigData?.description} 
-        category={gigData?.category} 
+        title={gigData.title} 
+        description={gigData.description} 
+        category={gigData.category} 
       />
       <Pricing 
-        minPrice={gigData?.min_price} 
-        avgPrice={gigData?.avg_price} 
-        availability={gigData?.availability} 
+        minPrice={gigData.min_price} 
+        avgPrice={gigData.avg_price} 
+        availability={gigData.availability} 
       />
       <SellerInfo seller={seller} />
-      <Rating rating={gigData?.rating} />
+      <Rating 
+        rating={gigData.rating} 
+        reviews={reviews}
+        reviewCount={reviewCount}
+      />
       <CTA />
       <NewsletterFooter />
     </main>

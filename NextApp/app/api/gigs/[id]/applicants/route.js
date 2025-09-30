@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
-  const { id: gigId } = params;
+  const { id: gigId } = await params;
 
   try {
     const session = await getServerSession(authOptions);
