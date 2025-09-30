@@ -9,6 +9,7 @@ import Link from "next/link";
 
 
 import {
+  Award,
   Home,
   Plus,
   Calendar,
@@ -271,38 +272,49 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
   );
 };
 
+
+type UserOverview = {
+  
+  user: {
+    meritcredits: number;
+    name?: string;
+    balance?: number;
+  };
+  stat: {
+    spent: number;
+    gained: number;
+    rank: number;
+  };
+};
+
 // Overview Component with jet-stream colors
 const Overview = ({ loading }) => {
-  const stats = [
-    {
-      title: 'Total Spent Coins',
-      value: '1,250',
-      icon: DollarSign,
-      color: 'from-red-500 to-red-600',
-      change: '-5.2%'
-    },
-    {
-      title: 'Total Gained Coins',
-      value: '2,840',
-      icon: TrendingUp,
-      color: 'from-green-500 to-green-600',
-      change: '+12.3%'
-    },
-    {
-      title: 'Leaderboard Rank',
-      value: '#47',
-      icon: Trophy,
-      color: 'from-orange-500 to-orange-600',
-      change: '↑3'
-    },
-  ];
+  // const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState<UserOverview | null>(null);
+  // const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOverview = async () => {
+      try {
+        const res = await fetch("/api/user_overview");
+        if (!res.ok) throw new Error("Failed to fetch overview");
+        const data = await res.json();
+        setOverview(data);
+      } catch (err) {
+        console.error(err);
+        
+      } 
+    };
+
+    fetchOverview();
+  }, []);
 
   if (loading) {
     return (
       <div className="space-y-6">
         <SkeletonLoader className="h-8 w-48" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <SkeletonLoader key={i} type="card" />
           ))}
         </div>
@@ -311,6 +323,41 @@ const Overview = ({ loading }) => {
     );
   }
 
+  
+  const {  user,stat } = overview|| {  user: {},stat: {} };
+
+  const stats = [
+    {
+      title: "Total Spent Coins",
+      value: stat?.spent != null ? stat.spent.toLocaleString() : "0",
+      icon: DollarSign,
+      color: "from-red-500 to-red-600",
+      change: "-5.2%",
+    },
+    {
+      title: "Total Gained Coins",
+      value: stat?.gained != null ? stat.gained.toLocaleString() : "0",
+      icon: TrendingUp,
+      color: "from-green-500 to-green-600",
+      change: "+12.3%",
+    },
+    {
+      title: "Leaderboard Rank",
+      value: stat?.rank != null ? `#${stat.rank}` : "#—",
+      icon: Trophy,
+      color: "from-orange-500 to-orange-600",
+      change: "↑3",
+    },
+    {
+      title: "Merit Credits",
+      value: user?.meritcredits ?? 0,
+      icon: Award,
+      color: "from-blue-500 to-blue-600",
+      change: "+0",
+    },
+  ];
+
+  
   return (
     <div className="space-y-6">
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
@@ -336,9 +383,9 @@ const Overview = ({ loading }) => {
                   <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color}`}>
                     <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <span className={`text-sm font-semibold ${stat.change.startsWith('+') || stat.change.startsWith('↑') ? 'text-green-600' : 'text-red-600'}`}>
+                  {/* <span className={`text-sm font-semibold ${stat.change.startsWith('+') || stat.change.startsWith('↑') ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change}
-                  </span>
+                  </span> */}
                 </div>
                 <h3 className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>{stat.title}</h3>
                 <p className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>{stat.value}</p>
@@ -2621,7 +2668,7 @@ const UserDashboard = () => {
   });
   const { data: session ,status} = useSession();
   const router=useRouter();
-  const [coinBalance, setCoinBalance] = useState(session?.user?.balance);
+  const [coinBalance, setCoinBalance] = useState<number>(session?.user?.balance ??0 );
 
   useEffect(() => {
     // Simulate initial data loading
