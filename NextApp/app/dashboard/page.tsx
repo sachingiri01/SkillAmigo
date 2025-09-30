@@ -3550,7 +3550,7 @@ const UserDashboard = () => {
   });
   const { data: session ,status} = useSession();
   const router=useRouter();
-  const [coinBalance, setCoinBalance] = useState(session?.user?.balance);
+  const [coinBalance, setCoinBalance] = useState(0);
 
   useEffect(() => {
   if (session?.user?.balance !== undefined) {
