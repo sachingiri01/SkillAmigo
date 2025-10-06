@@ -70,6 +70,78 @@ CREATE TABLE bookings (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- New table for completion details (billing/proof of work)
+DROP TABLE IF EXISTS completion_details CASCADE;
+CREATE TABLE completion_details (
+    completion_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    booking_id UUID NOT NULL REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    seller_id UUID NOT NULL REFERENCES users(user_id),
+    work_description TEXT NOT NULL,
+    work_images TEXT[], -- Array of image URLs
+    completion_notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT unique_completion_per_booking UNIQUE (booking_id)
+);
+-- =========================
+--  Reviews Table
+-- =========================
+CREATE TABLE IF NOT EXISTS reviews (
+    review_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    gig_id UUID NOT NULL REFERENCES gigs(gig_id) ON DELETE CASCADE,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    review_text TEXT,
+    image TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reviews_gig ON reviews(gig_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
+
+DROP TRIGGER IF EXISTS set_timestamp_reviews ON reviews;
+CREATE TRIGGER set_timestamp_reviews
+BEFORE UPDATE ON reviews
+FOR EACH ROW
+EXECUTE PROCEDURE update_timestamp();
+
+-- Rating & Merit Update Function
+CREATE OR REPLACE FUNCTION update_gig_rating_and_merit()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_seller_id UUID;
+    v_gig_price NUMERIC;
+    v_merit_change NUMERIC;
+BEGIN
+    SELECT g.seller_id, COALESCE(g.avg_price, g.min_price, 0)
+    INTO v_seller_id, v_gig_price
+    FROM gigs g
+    WHERE g.gig_id = NEW.gig_id;
+
+    UPDATE gigs
+    SET rating = (
+        SELECT ROUND(AVG(rating)::NUMERIC, 2)
+        FROM reviews
+        WHERE gig_id = NEW.gig_id
+    )
+    WHERE gig_id = NEW.gig_id;
+
+    v_merit_change := (NEW.rating - 3) * sqrt(v_gig_price);
+
+    UPDATE users
+    SET merit_credits = merit_credits + v_merit_change
+    WHERE user_id = v_seller_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_update_gig_rating ON reviews;
+CREATE TRIGGER trigger_update_gig_rating
+AFTER INSERT ON reviews
+FOR EACH ROW
+EXECUTE FUNCTION update_gig_rating_and_merit();
+
 
 DROP TABLE IF EXISTS chat CASCADE;
 CREATE TABLE chat (
@@ -175,6 +247,8 @@ exports.down = (pgm) => {
     DROP TABLE IF EXISTS bookings CASCADE;
     DROP TABLE IF EXISTS gigs CASCADE;
     DROP TABLE IF EXISTS users CASCADE;
+    DROP TABLE IF EXISTS completion_details CASCADE;
+    DROP TABLE IF EXISTS reviews CASCADE;
 
     DROP TYPE IF EXISTS dispute_status CASCADE;
     DROP TYPE IF EXISTS collab_status CASCADE;

@@ -751,213 +751,7 @@ interface Gig {
 }
 
 
-// My Gigs Component - Gigs posted by user
-// const MyGigs = () => {
-//   const [loading, setLoading] = useState(true);
-//   const [myGigs, setMyGigs] = useState<Gig[]>([]);
-//   const [applicants, setApplicants] = useState({});
-//   const { data: session } = useSession();
-//    const router =  useRouter();
 
-//   const hanldegigr=(id)=>{
-//     if(!id) return
-//     router.push(`/gigs/${id}`);}
-
-//   const handleDelete = async (gigId) => {
-//     const confirmDelete = window.confirm("Are you sure you want to delete this gig?");
-//     if (!confirmDelete) return;
-
-//     try {
-//       const res = await fetch(`/api/gigs/${gigId}`, { method: 'DELETE' });
-
-
-//       if (!res.ok) {
-//         let errorData;
-//         try {
-//           errorData = await res.json();
-//         } catch {
-//           errorData = { error: "Failed to delete gig" };
-//         }
-//         alert(errorData.error || 'Could not delete gig');
-//         return;
-
-//       }
-//       const data = await res.json();
-
-//       alert('Gig deleted successfully');
-//       setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId)); // Remove from list
-//     } catch (error) {
-//       console.error('Error deleting gig:', error);
-//       alert('Something went wrong');
-//     }
-//   };
-
-
-//   useEffect(() => {
-//     if (!session) return;
-
-//     const fetchGigs = async () => {
-//       try {
-//         const res = await fetch(`/api/users/gigs`);
-//         if (!res.ok) throw new Error("Failed to fetch gigs");
-//         const data = await res.json();
-//         console.log("what is my gig info", data);
-
-//         setMyGigs(data);
-//       } catch (error) {
-//         console.error("Error fetching gigs:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchGigs();
-//   }, [session]); // run when session becomes available
-
-
-//   const handleViewApplicants = async (gigId) => {
-//     try {
-//       const res = await fetch(`/api/gigs/${gigId}/applicants`);
-//       if (!res.ok) throw new Error('Failed to fetch applicants');
-//       const data = await res.json();
-//       setApplicants((prev) => ({ ...prev, [gigId]: data }));
-//     } catch (error) {
-//       console.error('Error fetching applicants:', error);
-//       alert('Failed to load applicants');
-//     }
-//   };
-
-
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case 'active':
-//         return { bg: '#e1ecea', text: '#344545' };
-//       case 'completed':
-//         return { bg: '#dcfce7', text: '#166534' };
-//       case 'draft':
-//         return { bg: '#fef3c7', text: '#92400e' };
-//       default:
-//         return { bg: '#f1f5f9', text: '#475569' };
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="space-y-6">
-//         <SkeletonLoader className="h-8 w-48" />
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-//           {[1, 2, 3].map((i) => (
-//             <SkeletonLoader key={i} type="card" />
-//           ))}
-//         </div>
-//       </div>
-//     );
-//   }
- 
-  
-
-//   return (
-//     <div className="space-y-6">
-//       <div className="flex items-center justify-between">
-//         <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
-//           My Gigs
-//         </h2>
-//         <span className="text-sm px-3 py-1 rounded-full" style={{ backgroundColor: '#e1ecea', color: '#344545' }}>
-//           {myGigs.length} Gigs Posted
-//         </span>
-//       </div>
-
-//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-//         {myGigs.map((gig) => {
-//           const statusColors = getStatusColor(gig.status);
-//           return (
-//             <div key={gig.gig_id}
-//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-//               {/* Background Pattern */}
-//               <div className="absolute inset-0 opacity-5">
-//                 <div className="absolute inset-0" style={{
-//                   backgroundImage: `radial-gradient(circle at 15px 15px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
-//                   backgroundSize: '30px 30px'
-//                 }} />
-//               </div>
-
-//               <div className="relative z-10">
-//                 <div className="flex items-start justify-between mb-4">
-//                   <h3 className="text-lg font-semibold flex-1 mr-2" style={{ color: '#344545' }}>
-//                     {gig.title}
-//                   </h3>
-//                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 capitalize"
-//                     style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-//                     {gig.status}
-//                   </span>
-//                 </div>
-
-//                 <p className="text-sm mb-4" style={{ color: '#719f9a' }}>
-//                   {gig.description}
-//                 </p>
-
-//                 <div className="space-y-2 mb-4">
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Price:</span> {gig.min_price} - {gig.maxPrice} coins
-//                   </p>
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Applicants:</span> {gig.buyer_count || 0}
-//                   </p>
-//                   <p className="text-sm" style={{ color: '#405e5e' }}>
-//                     <span className="font-medium">Posted:</span> {gig.created_at ? new Date(gig.created_at).toLocaleDateString() : 'N/A'}
-
-//                   </p>
-//                 </div>
-
-//                 <div className="flex space-x-3 pt-4 border-t" style={{ borderColor: '#e1ecea' }}>
-//                   <button className="text-sm font-medium hover:underline" style={{ color: '#558581' }}
-//                   onClick={()=>hanldegigr(gig.gig_id)}
-//                   >
-                    
-//                       View Details
-                    
-//                   </button>
-//                   <button
-//                     className="text-sm font-medium hover:underline"
-//                     style={{ color: '#db1738ff' }}
-//                     onClick={() => handleDelete(gig.gig_id)}
-
-//                   >
-//                     Delete
-//                   </button>
-//                   {(gig.buyer_count ?? 0) > 0 && (
-//                     <button
-//                       className="text-sm font-medium hover:underline"
-//                       style={{ color: '#53e656ff' }}
-//                       onClick={() => handleViewApplicants(gig.gig_id)}
-//                     >
-//                       View Applicants
-//                     </button>
-//                   )}
-//                 </div>
-//                 {applicants[gig.gig_id]?.length > 0 && (
-//                   <div className="flex overflow-x-auto space-x-4 py-3">
-//                     {applicants[gig.gig_id].map((user) => (
-//                       <div key={user.user_id} className="flex flex-col items-center min-w-[60px]">
-//                         <img
-//                           src={user.profile_picture || '/default-profile.png'}
-//                           alt={user.name}
-//                           className="w-10 h-10 rounded-full object-cover"
-//                         />
-//                         <span className="text-xs text-center mt-1">{user.name}</span>
-//                       </div>
-//                     ))}
-//                   </div>
-//                 )}
-//               </div>
-
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// };
 const MyGigs = () => {
   const [loading, setLoading] = useState(true);
   const [myGigs, setMyGigs] = useState<Gig[]>([]);
@@ -1199,24 +993,258 @@ const MyGigs = () => {
 
 
 
+// interface Booking {
+//   booking_id: string;
+//   title: string;
+//   client?: string;
+//   buyer_id?: string;
+//   coins_paid: number;
+//   category?: string;
+//   startDate?: string;
+//   booking_date?: string;
+//   status: string;
+
+// }
+
+
+
+// const MyBookings = ({ loading }: { loading: boolean }) => {
+//   const [myBookings, setMyBookings] = useState<Booking[]>([]);
+   
+
+//   const getStatusColor = (status: string) => {
+//     switch (status) {
+//       case "pending":
+//         return { bg: "#fef3c7", text: "#92400e" };
+//       case "confirmed":
+//         return { bg: "#dbeafe", text: "#1d4ed8" };
+//       case "completed":
+//         return { bg: "#dcfce7", text: "#166534" };
+//       case "cancelled":
+//         return { bg: "#fee2e2", text: "#991b1b" };
+//       default:
+//         return { bg: "#f1f5f9", text: "#475569" };
+//     }
+//   };
+//   useEffect(() => {
+//     const fetchBookings = async () => {
+//       try {
+//         const res = await fetch("/api/my-gig-bookings");
+//         if (!res.ok) throw new Error("Failed to fetch bookings");
+//         const data = await res.json();
+//         setMyBookings(data);
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     };
+
+//     fetchBookings();
+//   }, []);
+  
+//   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
+//     try {
+//       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//       });
+
+//       if (!res.ok) throw new Error("Failed to update status");
+//       const updated = await res.json();
+
+//       setMyBookings((prev) =>
+//         prev.map((b) =>
+//           b.booking_id === bookingId ? { ...b, status: updated.status } : b
+//         )
+//       );
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
+
+//   const handleViewReview = (bookingId: string) => {
+//     alert(`Viewing review for booking ${bookingId}`);
+//   };
+
+//   if (loading) return <div>Loading...</div>;
+
+//   return (
+//     <div className="space-y-6">
+//       <div className="flex items-center justify-between">
+//         <h2 className="text-2xl font-bold" style={{ color: "#344545" }}>
+//           My Bookings
+//         </h2>
+//         <span
+//           className="text-sm px-3 py-1 rounded-full"
+//           style={{ backgroundColor: "#e1ecea", color: "#344545" }}
+//         >
+//           {myBookings.length} Active Projects
+//         </span>
+//       </div>
+
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//         {myBookings.map((booking) => {
+//           const statusColors = getStatusColor(booking.status);
+
+//           return (
+//             <div
+//               key={booking.booking_id}
+//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6"
+//             >
+//               <div className="relative z-10">
+//                 <div className="flex items-start justify-between mb-4">
+//                   <h3
+//                     className="text-lg font-semibold flex-1 mr-2"
+//                     style={{ color: "#344545" }}
+//                   >
+//                     {booking.title ?? "No Title"}
+//                   </h3>
+//                   <span
+//                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
+//                     style={{
+//                       backgroundColor: statusColors.bg,
+//                       color: statusColors.text,
+//                     }}
+//                   >
+//                     {(booking.status?.replace("-", " ") ?? "")
+//                       .replace(/\b\w/g, (l) => l.toUpperCase())}
+
+//                   </span>
+//                 </div>
+
+//                 <div className="space-y-2 mb-4">
+//                   <p className="text-sm" style={{ color: "#405e5e" }}>
+//                     <span className="font-medium">Client:</span>{" "}
+//                     {booking.client ?? booking.buyer_id}
+//                   </p>
+//                   <p className="text-sm" style={{ color: "#405e5e" }}>
+//                     <span className="font-medium">Payment:</span>{" "}
+//                     {booking.coins_paid} coins
+//                   </p>
+//                   <p className="text-sm" style={{ color: "#405e5e" }}>
+//                     <span className="font-medium">Category:</span>{" "}
+//                     {booking.category ?? "N/A"}
+//                   </p>
+//                   <p className="text-sm" style={{ color: "#405e5e" }}>
+//                     <span className="font-medium">Posted:</span> {booking.booking_date ? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
+//                   </p>
+//                 </div>
+
+//                 <div
+//                   className="flex space-x-3 pt-4 border-t"
+//                   style={{ borderColor: "#e1ecea" }}
+//                 >
+//                   {/* <button
+//                     className="text-sm font-medium hover:underline"
+//                     style={{ color: "#558581" }}
+//                     onClick={()=>hanldegigr(gig.gig_id)}
+//                     // onClick={() => router.push(`/gig/${gig.gig_id}`)}
+//                   >
+//                     View Details
+//                   </button> */}
+
+//                   {/* Pending: Confirm & Cancel */}
+//                   {booking.status === "pending" && (
+//                     <>
+//                       <button
+//                         className="text-sm font-medium hover:underline"
+//                         style={{ color: "#16a34a" }}
+//                         onClick={() =>
+//                           handleUpdateStatus(booking.booking_id, "confirm")
+//                         }
+//                       >
+//                         Confirm
+//                       </button>
+//                       <button
+//                         className="text-sm font-medium hover:underline"
+//                         style={{ color: "#dc2626" }}
+//                         onClick={() =>
+//                           handleUpdateStatus(booking.booking_id, "cancel")
+//                         }
+//                       >
+//                         Cancel
+//                       </button>
+//                     </>
+//                   )}
+
+//                   {/* Confirmed: Only Cancel */}
+//                   {booking.status === "confirmed" && (
+//                     <button
+//                       className="text-sm font-medium hover:underline"
+//                       style={{ color: "#dc2626" }}
+//                       onClick={() =>
+//                         handleUpdateStatus(booking.booking_id, "cancel")
+//                       }
+//                     >
+//                       Cancel
+//                     </button>
+//                   )}
+
+//                   {/* Completed: View Review */}
+//                   {booking.status === "completed" && (
+//                     <button
+//                       className="text-sm font-medium hover:underline"
+//                       style={{ color: "#16a34a" }}
+//                       onClick={() => handleViewReview(booking.booking_id)}
+//                     >
+//                       View Review
+//                     </button>
+//                   )}
+//                 </div>
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
+
+
 interface Booking {
   booking_id: string;
-  title: string;
+  buyer_id: string;
+  gig_id: string;
+  title?: string;
   client?: string;
-  buyer_id?: string;
   coins_paid: number;
   category?: string;
-  startDate?: string;
   booking_date?: string;
-  status: string;
-
+  scheduled_date?: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'disputed';
+  has_completion_details?: boolean;
+  has_review?: boolean;
 }
 
+interface CompletionData {
+  work_description: string;
+  work_images: string[];
+  completion_notes: string;
+}
 
+interface DisputeData {
+  reason: string;
+  evidence: string[];
+}
 
 const MyBookings = ({ loading }: { loading: boolean }) => {
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
-   
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [completionData, setCompletionData] = useState<CompletionData>({
+    work_description: '',
+    work_images: [],
+    completion_notes: ''
+  });
+  const [disputeData, setDisputeData] = useState<DisputeData>({
+    reason: '',
+    evidence: []
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -1228,10 +1256,13 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
         return { bg: "#dcfce7", text: "#166534" };
       case "cancelled":
         return { bg: "#fee2e2", text: "#991b1b" };
+      case "disputed":
+        return { bg: "#fef2f2", text: "#991b1b" };
       default:
         return { bg: "#f1f5f9", text: "#475569" };
     }
   };
+
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -1264,11 +1295,157 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
       );
     } catch (err) {
       console.error(err);
+      alert('Failed to update booking status');
     }
   };
 
-  const handleViewReview = (bookingId: string) => {
-    alert(`Viewing review for booking ${bookingId}`);
+  const handleMarkComplete = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setShowCompletionModal(true);
+    setCompletionData({
+      work_description: '',
+      work_images: [],
+      completion_notes: ''
+    });
+    setImagePreviews([]);
+  };
+
+  const handleCompletionImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImagePreviews(prev => [...prev, base64]);
+        setCompletionData(prev => ({
+          ...prev,
+          work_images: [...prev.work_images, base64]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeCompletionImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setCompletionData(prev => ({
+      ...prev,
+      work_images: prev.work_images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmitCompletion = async () => {
+    if (!selectedBooking) return;
+    
+    if (!completionData.work_description.trim()) {
+      alert('Please provide work description');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const completionRes = await fetch('/api/completion-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking_id: selectedBooking.booking_id,
+          work_description: completionData.work_description,
+          work_images: completionData.work_images,
+          completion_notes: completionData.completion_notes
+        })
+      });
+
+      if (!completionRes.ok) throw new Error('Failed to submit completion details');
+
+      await handleUpdateStatus(selectedBooking.booking_id, 'complete');
+      
+      setShowCompletionModal(false);
+      setSelectedBooking(null);
+      alert('Work completed successfully! Payment has been processed.');
+    } catch (error) {
+      console.error('Failed to submit completion:', error);
+      alert('Failed to submit completion details');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleOpenDispute = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setShowDisputeModal(true);
+    setDisputeData({
+      reason: '',
+      evidence: []
+    });
+    setImagePreviews([]);
+  };
+
+  const handleDisputeImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImagePreviews(prev => [...prev, base64]);
+        setDisputeData(prev => ({
+          ...prev,
+          evidence: [...prev.evidence, base64]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeDisputeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setDisputeData(prev => ({
+      ...prev,
+      evidence: prev.evidence.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmitDispute = async () => {
+    if (!selectedBooking) return;
+    
+    if (!disputeData.reason.trim()) {
+      alert('Please provide a reason for the dispute');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/disputes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking_id: selectedBooking.booking_id,
+          against_user: selectedBooking.buyer_id,
+          reason: disputeData.reason,
+          evidence: disputeData.evidence
+        })
+      });
+
+      if (!res.ok) throw new Error('Failed to submit dispute');
+
+      setMyBookings((prev) =>
+        prev.map((b) =>
+          b.booking_id === selectedBooking.booking_id ? { ...b, status: 'disputed' } : b
+        )
+      );
+
+      setShowDisputeModal(false);
+      setSelectedBooking(null);
+      alert('Dispute filed successfully! Our team will review it soon.');
+    } catch (error) {
+      console.error('Failed to submit dispute:', error);
+      alert('Failed to submit dispute');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -1283,7 +1460,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
           className="text-sm px-3 py-1 rounded-full"
           style={{ backgroundColor: "#e1ecea", color: "#344545" }}
         >
-          {myBookings.length} Active Projects
+          {myBookings.length} Projects
         </span>
       </div>
 
@@ -1313,7 +1490,6 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                   >
                     {(booking.status?.replace("-", " ") ?? "")
                       .replace(/\b\w/g, (l) => l.toUpperCase())}
-
                   </span>
                 </div>
 
@@ -1331,68 +1507,64 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                     {booking.category ?? "N/A"}
                   </p>
                   <p className="text-sm" style={{ color: "#405e5e" }}>
-                    <span className="font-medium">Posted:</span> {booking.booking_date ? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
+                    <span className="font-medium">Booked:</span>{" "}
+                    {booking.booking_date ? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
+                  </p>
+                  <p className="text-sm" style={{ color: "#405e5e" }}>
+                    <span className="font-medium">Scheduled:</span>{" "}
+                    {booking.scheduled_date ? new Date(booking.scheduled_date).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
 
                 <div
-                  className="flex space-x-3 pt-4 border-t"
+                  className="flex flex-wrap gap-3 pt-4 border-t"
                   style={{ borderColor: "#e1ecea" }}
                 >
-                  {/* <button
-                    className="text-sm font-medium hover:underline"
-                    style={{ color: "#558581" }}
-                    onClick={()=>hanldegigr(gig.gig_id)}
-                    // onClick={() => router.push(`/gig/${gig.gig_id}`)}
-                  >
-                    View Details
-                  </button> */}
-
-                  {/* Pending: Confirm & Cancel */}
                   {booking.status === "pending" && (
                     <>
                       <button
                         className="text-sm font-medium hover:underline"
                         style={{ color: "#16a34a" }}
-                        onClick={() =>
-                          handleUpdateStatus(booking.booking_id, "confirm")
-                        }
+                        onClick={() => handleUpdateStatus(booking.booking_id, "confirm")}
                       >
                         Confirm
                       </button>
                       <button
                         className="text-sm font-medium hover:underline"
                         style={{ color: "#dc2626" }}
-                        onClick={() =>
-                          handleUpdateStatus(booking.booking_id, "cancel")
-                        }
+                        onClick={() => handleUpdateStatus(booking.booking_id, "cancel")}
                       >
                         Cancel
                       </button>
                     </>
                   )}
 
-                  {/* Confirmed: Only Cancel */}
                   {booking.status === "confirmed" && (
-                    <button
-                      className="text-sm font-medium hover:underline"
-                      style={{ color: "#dc2626" }}
-                      onClick={() =>
-                        handleUpdateStatus(booking.booking_id, "cancel")
-                      }
-                    >
-                      Cancel
-                    </button>
+                    <>
+                      <button
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: "#16a34a" }}
+                        onClick={() => handleMarkComplete(booking)}
+                      >
+                        Mark Complete
+                      </button>
+                      {/* <button
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: "#dc2626" }}
+                        onClick={() => handleOpenDispute(booking)}
+                      >
+                        Dispute
+                      </button> */}
+                    </>
                   )}
 
-                  {/* Completed: View Review */}
                   {booking.status === "completed" && (
                     <button
                       className="text-sm font-medium hover:underline"
-                      style={{ color: "#16a34a" }}
-                      onClick={() => handleViewReview(booking.booking_id)}
+                      style={{ color: "#dc2626" }}
+                      onClick={() => handleOpenDispute(booking)}
                     >
-                      View Review
+                      Dispute
                     </button>
                   )}
                 </div>
@@ -1401,6 +1573,171 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
           );
         })}
       </div>
+
+      {/* Completion Modal */}
+      {showCompletionModal && selectedBooking && (
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border border-gray-300 ">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
+              Complete Work - {selectedBooking.title}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Work Description *
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-3 text-black"
+                  rows={4}
+                  placeholder="Describe the work completed..."
+                  value={completionData.work_description}
+                  onChange={(e) => setCompletionData(prev => ({ ...prev, work_description: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Upload Work Images
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleCompletionImageUpload}
+                  className="w-full border rounded-lg p-2"
+                />
+                {imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 mt-3 ">
+                    {imagePreviews.map((img, idx) => (
+                      <div key={idx} className="relative">
+                        <img src={img} alt={`Work ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
+                        <button
+                          type="button"
+                          onClick={() => removeCompletionImage(idx)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Additional Notes
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-3 text-gray-700"
+                  rows={3}
+                  placeholder="Any additional information..."
+                  value={completionData.completion_notes}
+                  onChange={(e) => setCompletionData(prev => ({ ...prev, completion_notes: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSubmitCompletion}
+                disabled={submitting}
+                className="flex-1 px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50"
+                style={{ backgroundColor: "#558581" }}
+              >
+                {submitting ? 'Submitting...' : 'Submit & Complete'}
+              </button>
+              <button
+                onClick={() => setShowCompletionModal(false)}
+                className="px-4 py-2 rounded-lg border"
+                style={{ borderColor: "#e1ecea", color: "#344545" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dispute Modal */}
+      {showDisputeModal && selectedBooking && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
+              File a Dispute - {selectedBooking.title}
+            </h3>
+
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
+              <p className="text-sm text-yellow-700">
+                <strong>Important:</strong> Filing a dispute will notify our admin team and change the booking status.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#344545" }}>
+                  Reason for Dispute *
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-3"
+                  rows={5}
+                  placeholder="Please describe the issue in detail..."
+                  value={disputeData.reason}
+                  onChange={(e) => setDisputeData(prev => ({ ...prev, reason: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#344545" }}>
+                  Evidence (Optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleDisputeImageUpload}
+                  className="w-full border rounded-lg p-2"
+                />
+                {imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {imagePreviews.map((img, idx) => (
+                      <div key={idx} className="relative">
+                        <img src={img} alt={`Evidence ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
+                        <button
+                          type="button"
+                          onClick={() => removeDisputeImage(idx)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSubmitDispute}
+                disabled={submitting}
+                className="flex-1 px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50"
+                style={{ backgroundColor: "#dc2626" }}
+              >
+                {submitting ? 'Submitting...' : 'Submit Dispute'}
+              </button>
+              <button
+                onClick={() => setShowDisputeModal(false)}
+                className="px-4 py-2 rounded-lg border"
+                style={{ borderColor: "#e1ecea", color: "#344545" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1411,15 +1748,357 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
 
 
+
+
+// interface BookedGig {
+//   booking_id: string;
+//   gig_id: string;
+//   seller_id: string;
+//   seller_name?: string; // Seller's name
+//   seller_location?: string; // Seller's location
+//   title: string;
+//   scheduled_date: string;
+//   booking_date?: string; // Date when booked
+//   status: "pending" | "confirmed" | "completed" | "cancelled" | "disputed";
+//   rating?: number;
+//   picture?: string;
+//   category?: string;
+//   min_price?: number;
+//   avg_price?: number;
+//   coins_paid?: number;
+//   cost?: number;  // Use this for cost if your backend returns it
+// }
+// interface ReviewData {
+//   rating: number;
+//   review_text: string;
+//   image?: string;
+// }
+
+
+// const BookedGigs = () => {
+//   const [bookedGigs, setBookedGigs] = useState<BookedGig[]>([]);
+//   const [loading, setLoading] = useState<boolean>(true);
+//   const [reviewData, setReviewData] = useState<Record<string, any>>({});
+//   const [submittingReview, setSubmittingReview] = useState(false);
+//    const [showReviewModal, setShowReviewModal] = useState(false);
+//   const [selectedGig, setSelectedGig] = useState<BookedGig | null>(null);
+//   const [currentReview, setCurrentReview] = useState<ReviewData>({
+//     rating: 5,
+//     review_text: '',
+//     image: ''
+//   });
+
+//   const getStatusColor = (status: BookedGig["status"]) => {
+//     switch (status) {
+//       case "confirmed":
+//         return { bg: "#dbeafe", text: "#1d4ed8" };
+//       case "completed":
+//         return { bg: "#dcfce7", text: "#166534" };
+//       case "cancelled":
+//         return { bg: "#fef2f2", text: "#dc2626" };
+//       default:
+//         return { bg: "#f1f5f9", text: "#475569" };
+//     }
+//   };
+
+
+
+//   useEffect(() => {
+//     const fetchBookings = async () => {
+//       try {
+//         const res = await fetch("/api/user-booked-gigs");
+//         if (!res.ok) throw new Error("Failed to fetch bookings");
+//         const data = await res.json();
+//         setBookedGigs(data);
+//       } catch (error) {
+//         console.error("Failed to fetch booked gigs:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchBookings();
+//   }, []);
+
+
+
+//   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
+//     try {
+//       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       console.log("res", res)
+//       if (!res.ok) throw new Error("Failed to update status");
+//       const updated = await res.json();
+
+//       setBookedGigs((prev) =>
+//         prev.map((b) =>
+//           b.booking_id === bookingId ? { ...b, status: updated.status } : b
+//         )
+//       );
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
+//   const handleMarkComplete = (gig: BookedGig) => {
+//     setSelectedGig(gig);
+//     setShowReviewModal(true);
+//     setCurrentReview({
+//       rating: 5,
+//       review_text: '',
+//       image: ''
+//     });
+//   };
+//   const handleSubmitReview = async () => {
+//     if (!selectedGig) return;
+    
+//     setSubmittingReview(true);
+//     try {
+//       // Submit review first
+//       const reviewRes = await fetch('/api/reviews', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({
+//           gig_id: selectedGig.gig_id,
+//           rating: currentReview.rating,
+//           review_text: currentReview.review_text,
+//           image: currentReview.image
+//         })
+//       });
+
+//       if (!reviewRes.ok) throw new Error('Failed to submit review');
+
+//       // Then mark as complete
+//       await handleUpdateStatus(selectedGig.booking_id, 'complete');
+      
+//       // Close modal
+//       setShowReviewModal(false);
+//       setSelectedGig(null);
+//     } catch (error) {
+//       console.error('Failed to submit review:', error);
+//     } finally {
+//       setSubmittingReview(false);
+//     }
+//   };
+
+//   const closeReviewModal = () => {
+//     setShowReviewModal(false);
+//     setSelectedGig(null);
+//     setCurrentReview({
+//       rating: 5,
+//       review_text: '',
+//       image: ''
+//     });
+//   };
+
+
+
+//   // 🌀 Loading state
+//   if (loading) {
+//     return (
+//       <div className="space-y-6">
+//         <div className="h-8 w-48 bg-gray-200 rounded"></div>
+//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+//           {[1, 2, 3, 4].map((i) => (
+//             <div key={i} className="h-40 bg-gray-200 rounded"></div>
+//           ))}
+//         </div>
+//       </div>
+//     );
+//   }
+
+
+
+//   return (
+//     <div className="space-y-8">
+//       <h2 className="text-2xl font-semibold text-gray-800">Your Booked Gigs</h2>
+
+//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//         {bookedGigs.map((gig) => {
+//           const { bg, text } = getStatusColor(gig.status);
+
+//           return (
+//             <article
+//               key={gig.booking_id}
+//               className="border rounded-lg p-5 shadow-sm bg-white space-y-4"
+//             >
+//               {/* Title */}
+//               <h3 className="text-xl font-semibold text-gray-900">{gig.title}</h3>
+
+//               {/* Image */}
+//               {/* {gig.picture && (
+//               <img
+//                 src={gig.picture}
+//                 alt={`${gig.title} image`}
+//                 className="w-full h-44 object-cover rounded"
+//                 loading="lazy"
+//               />
+//             )} */}
+
+//               {/* Seller Info */}
+//               <div className="text-gray-700 text-sm space-y-0.5">
+//                 <p>
+//                   <strong>Seller:</strong> {gig.seller_name}
+//                 </p>
+//                 <p>
+//                   <strong>Location:</strong> {gig.seller_location}
+//                 </p>
+//                 <p>
+//                   <strong>Scheduled For:</strong>{" "}
+//                   {gig.scheduled_date ? new Date(gig.scheduled_date).toLocaleDateString() : "N/A"}
+//                 </p>
+
+//                 <p>
+//                   <strong>Booking Date:</strong>{" "}
+//                   {gig.booking_date ? new Date(gig.booking_date).toLocaleDateString() : "N/A"}
+//                 </p>
+//                 <p>
+//                   <strong>Category:</strong> {gig.category}
+//                 </p>
+//               </div>
+
+//               {/* Pricing Info */}
+//               <div className="text-gray-700 text-sm space-y-0.5">
+//                 <p>
+//                   <strong>Price Range:</strong> {gig.min_price} – {gig.avg_price} coins
+//                 </p>
+//                 <p>
+//                   <strong>Coins Paid:</strong> {gig.coins_paid}
+//                 </p>
+//               </div>
+
+//               {/* Status & Actions */}
+//               <div className="flex items-center justify-between">
+//                 <span
+//                   className="px-3 py-1 text-xs font-semibold rounded-full"
+//                   style={{ backgroundColor: bg, color: text }}
+//                 >
+//                   {gig.status ? gig.status.toUpperCase() : "UNKNOWN"}
+//                 </span>
+
+//                 {gig.status === "confirmed" && (
+//                   <div className="flex gap-4">
+//                     <button
+//                       onClick={() => handleMarkComplete(gig)}
+//                       className="text-green-600 text-sm hover:underline"
+//                     >
+//                       Mark Complete
+//                     </button>
+//                     <button
+//                       onClick={() => handleUpdateStatus(gig.booking_id, 'cancel')}
+//                       className="text-red-600 text-sm hover:underline"
+//                     >
+//                       Cancel
+//                     </button>
+//                   </div>
+//                 )}
+//               </div>
+
+
+//             </article>
+//           );
+//         })}
+//       </div>
+//       {/* Review Modal */}
+//       {showReviewModal && selectedGig && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+//             <h3 className="text-xl font-semibold text-gray-900 mb-4">
+//               Review: {selectedGig.title}
+//             </h3>
+            
+//             {/* Rating */}
+//             <div className="mb-4">
+//               <label className="block text-sm font-medium text-gray-700 mb-2">
+//                 Rating
+//               </label>
+//               <div className="flex space-x-1">
+//                 {[1, 2, 3, 4, 5].map((star) => (
+//                   <button
+//                     key={star}
+//                     type="button"
+//                     onClick={() => setCurrentReview(prev => ({ ...prev, rating: star }))}
+//                     className={`text-2xl ${
+//                       star <= currentReview.rating 
+//                         ? 'text-yellow-400' 
+//                         : 'text-gray-300'
+//                     } hover:text-yellow-400 transition-colors`}
+//                   >
+//                     ★
+//                   </button>
+//                 ))}
+//               </div>
+//             </div>
+
+//             {/* Review Text */}
+//             <div className="mb-4">
+//               <label className="block text-sm font-medium text-gray-700 mb-2">
+//                 Review
+//               </label>
+//               <textarea
+//                 value={currentReview.review_text}
+//                 onChange={(e) => setCurrentReview(prev => ({ ...prev, review_text: e.target.value }))}
+//                 placeholder="Share your experience..."
+//                 rows={4}
+//                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
+
+//               />
+//             </div>
+
+//             {/* Image URL (Optional) */}
+//             <div className="mb-6">
+//               <label className="block text-sm font-medium text-gray-700 mb-2">
+//                 Image URL (Optional)
+//               </label>
+//               <input
+//                 type="url"
+//                 value={currentReview.image}
+//                 onChange={(e) => setCurrentReview(prev => ({ ...prev, image: e.target.value }))}
+//                 placeholder="https://example.com/image.jpg"
+//                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparenttext-black"
+//               />
+//             </div>
+
+//             {/* Buttons */}
+//             <div className="flex justify-end space-x-3">
+//               <button
+//                 type="button"
+//                 onClick={closeReviewModal}
+//                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+//                 disabled={submittingReview}
+//               >
+//                 Cancel
+//               </button>
+//               <button
+//                 type="button"
+//                 onClick={handleSubmitReview}
+//                 disabled={submittingReview || !currentReview.review_text.trim()}
+//                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+//               >
+//                 {submittingReview ? 'Submitting...' : 'Submit Review & Complete'}
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+
+// };
+
+
+
+
 interface BookedGig {
   booking_id: string;
   gig_id: string;
   seller_id: string;
-  seller_name?: string; // Seller's name
-  seller_location?: string; // Seller's location
+  seller_name?: string;
+  seller_location?: string;
   title: string;
   scheduled_date: string;
-  booking_date?: string; // Date when booked
+  booking_date?: string;
   status: "pending" | "confirmed" | "completed" | "cancelled" | "disputed";
   rating?: number;
   picture?: string;
@@ -1427,42 +2106,65 @@ interface BookedGig {
   min_price?: number;
   avg_price?: number;
   coins_paid?: number;
-  cost?: number;  // Use this for cost if your backend returns it
+  has_completion_details?: boolean;
+  has_review?: boolean;
 }
+
 interface ReviewData {
   rating: number;
   review_text: string;
   image?: string;
 }
 
+interface CompletionDetails {
+  work_description: string;
+  work_images: string[];
+  completion_notes: string;
+  created_at: string;
+}
+
+interface DisputeData {
+  reason: string;
+  evidence: string[];
+}
 
 const BookedGigs = () => {
   const [bookedGigs, setBookedGigs] = useState<BookedGig[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [reviewData, setReviewData] = useState<Record<string, any>>({});
-  const [submittingReview, setSubmittingReview] = useState(false);
-   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
   const [selectedGig, setSelectedGig] = useState<BookedGig | null>(null);
+  const [completionDetails, setCompletionDetails] = useState<CompletionDetails | null>(null);
   const [currentReview, setCurrentReview] = useState<ReviewData>({
     rating: 5,
     review_text: '',
     image: ''
   });
+  const [disputeData, setDisputeData] = useState<DisputeData>({
+    reason: '',
+    evidence: []
+  });
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [submittingDispute, setSubmittingDispute] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const getStatusColor = (status: BookedGig["status"]) => {
     switch (status) {
+      case "pending":
+        return { bg: "#fef3c7", text: "#92400e" };
       case "confirmed":
         return { bg: "#dbeafe", text: "#1d4ed8" };
       case "completed":
         return { bg: "#dcfce7", text: "#166534" };
       case "cancelled":
         return { bg: "#fef2f2", text: "#dc2626" };
+      case "disputed":
+        return { bg: "#fef2f2", text: "#991b1b" };
       default:
         return { bg: "#f1f5f9", text: "#475569" };
     }
   };
-
-
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -1481,15 +2183,13 @@ const BookedGigs = () => {
     fetchBookings();
   }, []);
 
-
-
   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
-      console.log("res", res)
+      
       if (!res.ok) throw new Error("Failed to update status");
       const updated = await res.json();
 
@@ -1500,9 +2200,25 @@ const BookedGigs = () => {
       );
     } catch (err) {
       console.error(err);
+      alert('Failed to update booking status');
     }
   };
-  const handleMarkComplete = (gig: BookedGig) => {
+
+  const handleViewCompletion = async (gig: BookedGig) => {
+    try {
+      const res = await fetch(`/api/completion-details/${gig.booking_id}`);
+      if (!res.ok) throw new Error("Failed to fetch completion details");
+      const data = await res.json();
+      setCompletionDetails(data);
+      setSelectedGig(gig);
+      setShowCompletionModal(true);
+    } catch (error) {
+      console.error('Failed to fetch completion details:', error);
+      alert('Failed to load completion details');
+    }
+  };
+
+  const handleWriteReview = (gig: BookedGig) => {
     setSelectedGig(gig);
     setShowReviewModal(true);
     setCurrentReview({
@@ -1511,17 +2227,34 @@ const BookedGigs = () => {
       image: ''
     });
   };
+
+  const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentReview(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmitReview = async () => {
     if (!selectedGig) return;
     
+    if (!currentReview.review_text.trim()) {
+      alert('Please write a review');
+      return;
+    }
+
     setSubmittingReview(true);
     try {
-      // Submit review first
       const reviewRes = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           gig_id: selectedGig.gig_id,
+          booking_id: selectedGig.booking_id,
           rating: currentReview.rating,
           review_text: currentReview.review_text,
           image: currentReview.image
@@ -1530,32 +2263,99 @@ const BookedGigs = () => {
 
       if (!reviewRes.ok) throw new Error('Failed to submit review');
 
-      // Then mark as complete
-      await handleUpdateStatus(selectedGig.booking_id, 'complete');
+      setBookedGigs((prev) =>
+        prev.map((g) =>
+          g.booking_id === selectedGig.booking_id ? { ...g, has_review: true } : g
+        )
+      );
       
-      // Close modal
       setShowReviewModal(false);
       setSelectedGig(null);
+      alert('Review submitted successfully!');
     } catch (error) {
       console.error('Failed to submit review:', error);
+      alert('Failed to submit review');
     } finally {
       setSubmittingReview(false);
     }
   };
 
-  const closeReviewModal = () => {
-    setShowReviewModal(false);
-    setSelectedGig(null);
-    setCurrentReview({
-      rating: 5,
-      review_text: '',
-      image: ''
+  const handleOpenDispute = (gig: BookedGig) => {
+    setSelectedGig(gig);
+    setShowDisputeModal(true);
+    setDisputeData({
+      reason: '',
+      evidence: []
+    });
+    setImagePreviews([]);
+  };
+
+  const handleDisputeImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImagePreviews(prev => [...prev, base64]);
+        setDisputeData(prev => ({
+          ...prev,
+          evidence: [...prev.evidence, base64]
+        }));
+      };
+      reader.readAsDataURL(file);
     });
   };
 
+  const removeDisputeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setDisputeData(prev => ({
+      ...prev,
+      evidence: prev.evidence.filter((_, i) => i !== index)
+    }));
+  };
 
+  const handleSubmitDispute = async () => {
+    if (!selectedGig) return;
+    
+    if (!disputeData.reason.trim()) {
+      alert('Please provide a reason for the dispute');
+      return;
+    }
 
-  // 🌀 Loading state
+    setSubmittingDispute(true);
+    try {
+      const res = await fetch('/api/disputes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking_id: selectedGig.booking_id,
+          against_user: selectedGig.seller_id,
+          reason: disputeData.reason,
+          evidence: disputeData.evidence
+        })
+      });
+
+      if (!res.ok) throw new Error('Failed to submit dispute');
+
+      setBookedGigs((prev) =>
+        prev.map((g) =>
+          g.booking_id === selectedGig.booking_id ? { ...g, status: 'disputed' } : g
+        )
+      );
+
+      setShowDisputeModal(false);
+      setSelectedGig(null);
+      alert('Dispute filed successfully! Our team will review it soon.');
+    } catch (error) {
+      console.error('Failed to submit dispute:', error);
+      alert('Failed to submit dispute');
+    } finally {
+      setSubmittingDispute(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -1568,8 +2368,6 @@ const BookedGigs = () => {
       </div>
     );
   }
-
-
 
   return (
     <div className="space-y-8">
@@ -1584,20 +2382,8 @@ const BookedGigs = () => {
               key={gig.booking_id}
               className="border rounded-lg p-5 shadow-sm bg-white space-y-4"
             >
-              {/* Title */}
               <h3 className="text-xl font-semibold text-gray-900">{gig.title}</h3>
 
-              {/* Image */}
-              {/* {gig.picture && (
-              <img
-                src={gig.picture}
-                alt={`${gig.title} image`}
-                className="w-full h-44 object-cover rounded"
-                loading="lazy"
-              />
-            )} */}
-
-              {/* Seller Info */}
               <div className="text-gray-700 text-sm space-y-0.5">
                 <p>
                   <strong>Seller:</strong> {gig.seller_name}
@@ -1605,11 +2391,10 @@ const BookedGigs = () => {
                 <p>
                   <strong>Location:</strong> {gig.seller_location}
                 </p>
-                <p>
+                {/* <p>
                   <strong>Scheduled For:</strong>{" "}
                   {gig.scheduled_date ? new Date(gig.scheduled_date).toLocaleDateString() : "N/A"}
-                </p>
-
+                </p> */}
                 <p>
                   <strong>Booking Date:</strong>{" "}
                   {gig.booking_date ? new Date(gig.booking_date).toLocaleDateString() : "N/A"}
@@ -1619,18 +2404,16 @@ const BookedGigs = () => {
                 </p>
               </div>
 
-              {/* Pricing Info */}
               <div className="text-gray-700 text-sm space-y-0.5">
                 <p>
-                  <strong>Price Range:</strong> {gig.min_price} – {gig.avg_price} coins
+                  <strong>Price :</strong>  {gig.avg_price} coins
                 </p>
                 <p>
                   <strong>Coins Paid:</strong> {gig.coins_paid}
                 </p>
               </div>
 
-              {/* Status & Actions */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-3">
                 <span
                   className="px-3 py-1 text-xs font-semibold rounded-full"
                   style={{ backgroundColor: bg, color: text }}
@@ -1638,106 +2421,269 @@ const BookedGigs = () => {
                   {gig.status ? gig.status.toUpperCase() : "UNKNOWN"}
                 </span>
 
-                {gig.status === "confirmed" && (
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleMarkComplete(gig)}
-                      className="text-green-600 text-sm hover:underline"
-                    >
-                      Mark Complete
-                    </button>
+                <div className="flex gap-4 flex-wrap">
+                  {gig.status === "pending" && (
+                    <span className="text-sm text-gray-500 italic">
+                      Waiting for seller confirmation
+                    </span>
+                  )}
+
+                  {gig.status === "confirmed" && (
                     <button
                       onClick={() => handleUpdateStatus(gig.booking_id, 'cancel')}
                       className="text-red-600 text-sm hover:underline"
                     >
                       Cancel
                     </button>
-                  </div>
-                )}
+                  )}
+
+                  {gig.status === "completed" && (
+                    <>
+                      <button
+                        onClick={() => handleViewCompletion(gig)}
+                        className="text-blue-600 text-sm hover:underline"
+                      >
+                        View Work Details
+                      </button>
+                      
+                      {!gig.has_review && (
+                        <button
+                          onClick={() => handleWriteReview(gig)}
+                          className="text-green-600 text-sm hover:underline"
+                        >
+                          Write Review
+                        </button>
+                      )}
+                      
+                      <button
+                        onClick={() => handleOpenDispute(gig)}
+                        className="text-red-600 text-sm hover:underline"
+                      >
+                        Dispute
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-
-
             </article>
           );
         })}
       </div>
-      {/* Review Modal */}
-      {showReviewModal && selectedGig && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              Review: {selectedGig.title}
+
+      {/* Completion Details Modal */}
+      {showCompletionModal && selectedGig && completionDetails && (
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-gray-300">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
+              Work Completion Details - {selectedGig.title}
             </h3>
             
-            {/* Rating */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rating
-              </label>
-              <div className="flex space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setCurrentReview(prev => ({ ...prev, rating: star }))}
-                    className={`text-2xl ${
-                      star <= currentReview.rating 
-                        ? 'text-yellow-400' 
-                        : 'text-gray-300'
-                    } hover:text-yellow-400 transition-colors`}
-                  >
-                    ★
-                  </button>
-                ))}
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2" style={{ color: "#344545" }}>
+                  Work Description
+                </h4>
+                <p className="text-gray-700 bg-gray-50 p-3 rounded">
+                  {completionDetails.work_description}
+                </p>
+              </div>
+
+              {completionDetails.work_images && completionDetails.work_images.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2" style={{ color: "#344545" }}>
+                    Work Images
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {completionDetails.work_images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`Work ${idx + 1}`}
+                        className="w-full h-48 object-cover rounded border"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {completionDetails.completion_notes && (
+                <div>
+                  <h4 className="font-semibold mb-2" style={{ color: "#344545" }}>
+                    Additional Notes
+                  </h4>
+                  <p className="text-gray-700 bg-gray-50 p-3 rounded">
+                    {completionDetails.completion_notes}
+                  </p>
+                </div>
+              )}
+
+              <div className="text-sm text-gray-500">
+                Completed on: {new Date(completionDetails.created_at).toLocaleString()}
               </div>
             </div>
 
-            {/* Review Text */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Review
-              </label>
-              <textarea
-                value={currentReview.review_text}
-                onChange={(e) => setCurrentReview(prev => ({ ...prev, review_text: e.target.value }))}
-                placeholder="Share your experience..."
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
-
-              />
-            </div>
-
-            {/* Image URL (Optional) */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image URL (Optional)
-              </label>
-              <input
-                type="url"
-                value={currentReview.image}
-                onChange={(e) => setCurrentReview(prev => ({ ...prev, image: e.target.value }))}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparenttext-black"
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="flex justify-end space-x-3">
+            <div className="flex gap-3 mt-6">
               <button
-                type="button"
-                onClick={closeReviewModal}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onClick={() => setShowCompletionModal(false)}
+                className="flex-1 px-4 py-2 rounded-lg border"
+                style={{ borderColor: "#e1ecea", color: "#344545" }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewModal && selectedGig && (
+        <div className="fixed inset-0  bg-transparent flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-gray-300">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
+              Write a Review - {selectedGig.title}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Rating *
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setCurrentReview(prev => ({ ...prev, rating: star }))}
+                      className="text-3xl focus:outline-none"
+                    >
+                      {star <= currentReview.rating ? '⭐' : '☆'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Your Review *
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-3 text-black"
+                  rows={5}
+                  placeholder="Share your experience with this service..."
+                  value={currentReview.review_text}
+                  onChange={(e) => setCurrentReview(prev => ({ ...prev, review_text: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#344545" }}>
+                  Add Image (Optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleReviewImageUpload}
+                  className="w-full border rounded-lg p-2"
+                />
+                {currentReview.image && (
+                  <img src={currentReview.image} alt="Review" className="mt-2 max-h-40 rounded" />
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSubmitReview}
                 disabled={submittingReview}
+                className="flex-1 px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50"
+                style={{ backgroundColor: "#558581" }}
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </button>
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="px-4 py-2 rounded-lg border"
+                style={{ borderColor: "#e1ecea", color: "#344545" }}
               >
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dispute Modal */}
+      {showDisputeModal && selectedGig && (
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-gray-300">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
+              File a Dispute - {selectedGig.title}
+            </h3>
+
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
+              <p className="text-sm text-yellow-700">
+                <strong>Important:</strong> Filing a dispute will notify our admin team and change the booking status.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
+                  Reason for Dispute *
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-3 text-black"
+                  rows={5}
+                  placeholder="Please describe the issue in detail..."
+                  value={disputeData.reason}
+                  onChange={(e) => setDisputeData(prev => ({ ...prev, reason: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#344545" }}>
+                  Evidence (Optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleDisputeImageUpload}
+                  className="w-full border rounded-lg p-2"
+                />
+                {imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {imagePreviews.map((img, idx) => (
+                      <div key={idx} className="relative">
+                        <img src={img} alt={`Evidence ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
+                        <button
+                          type="button"
+                          onClick={() => removeDisputeImage(idx)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
               <button
-                type="button"
-                onClick={handleSubmitReview}
-                disabled={submittingReview || !currentReview.review_text.trim()}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleSubmitDispute}
+                disabled={submittingDispute}
+                className="flex-1 px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50"
+                style={{ backgroundColor: "#dc2626" }}
               >
-                {submittingReview ? 'Submitting...' : 'Submit Review & Complete'}
+                {submittingDispute ? 'Submitting...' : 'Submit Dispute'}
+              </button>
+              <button
+                onClick={() => setShowDisputeModal(false)}
+                className="px-4 py-2 rounded-lg border"
+                style={{ borderColor: "#e1ecea", color: "#344545" }}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -1745,8 +2691,9 @@ const BookedGigs = () => {
       )}
     </div>
   );
-
 };
+
+
 
 
 

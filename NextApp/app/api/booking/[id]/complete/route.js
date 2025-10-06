@@ -31,7 +31,7 @@ export async function PATCH(req, context) {
     console.log("Session user ID:", sellerId);
     console.log("Booking seller ID:", seller_id);
 
-    if (buyer_id!== sellerId) {
+    if (seller_id!== sellerId) {
       return NextResponse.json({ error: "Unauthorized to complete booking" }, { status: 403 });
     }
 

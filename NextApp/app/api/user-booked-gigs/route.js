@@ -26,7 +26,12 @@ export async function GET() {
       g.min_price, 
       g.avg_price,
       s.name AS seller_name,
-      s.email AS seller_email  -- or any other seller fields you want
+      s.email AS seller_email, -- or any other seller fields you want
+      -- Check if user already submitted a review
+          EXISTS (
+            SELECT 1 FROM reviews r
+            WHERE r.gig_id = g.gig_id AND r.user_id = $1
+          ) AS has_review
     FROM bookings b
     JOIN gigs g ON b.gig_id = g.gig_id
     JOIN users s ON g.seller_id = s.user_id
