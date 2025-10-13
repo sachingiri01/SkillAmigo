@@ -582,7 +582,7 @@ const handleDelete = async (gigId: string) => {
   if (!confirm("Are you sure you want to delete this gig?")) return;
 
   try {
-    const res = await fetch(`/api/gigs?id=${gigId}`, { method: "DELETE" });
+    const res = await fetch(`/api/gigs/${gigId}`, { method: "DELETE" });
     const data = await res.json();
 
     if (res.ok) {
