@@ -277,7 +277,7 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
 type UserOverview = {
   
   user: {
-    meritcredits: number;
+    meritCredits: number;
     name?: string;
     balance?: number;
   };
@@ -300,12 +300,14 @@ const Overview = ({ loading }) => {
         const res = await fetch("/api/user_overview");
         if (!res.ok) throw new Error("Failed to fetch overview");
         const data = await res.json();
+        console.log("overview data", data);
         setOverview(data);
       } catch (err) {
         console.error(err);
         
       } 
     };
+   
 
     fetchOverview();
   }, []);
@@ -351,7 +353,7 @@ const Overview = ({ loading }) => {
     },
     {
       title: "Merit Credits",
-      value: user?.meritcredits ?? 0,
+      value: user?.meritCredits ||0,
       icon: Award,
       color: "from-blue-500 to-blue-600",
       change: "+0",
@@ -992,213 +994,6 @@ const MyGigs = () => {
 
 
 
-
-
-// interface Booking {
-//   booking_id: string;
-//   title: string;
-//   client?: string;
-//   buyer_id?: string;
-//   coins_paid: number;
-//   category?: string;
-//   startDate?: string;
-//   booking_date?: string;
-//   status: string;
-
-// }
-
-
-
-// const MyBookings = ({ loading }: { loading: boolean }) => {
-//   const [myBookings, setMyBookings] = useState<Booking[]>([]);
-   
-
-//   const getStatusColor = (status: string) => {
-//     switch (status) {
-//       case "pending":
-//         return { bg: "#fef3c7", text: "#92400e" };
-//       case "confirmed":
-//         return { bg: "#dbeafe", text: "#1d4ed8" };
-//       case "completed":
-//         return { bg: "#dcfce7", text: "#166534" };
-//       case "cancelled":
-//         return { bg: "#fee2e2", text: "#991b1b" };
-//       default:
-//         return { bg: "#f1f5f9", text: "#475569" };
-//     }
-//   };
-//   useEffect(() => {
-//     const fetchBookings = async () => {
-//       try {
-//         const res = await fetch("/api/my-gig-bookings");
-//         if (!res.ok) throw new Error("Failed to fetch bookings");
-//         const data = await res.json();
-//         setMyBookings(data);
-//       } catch (err) {
-//         console.error(err);
-//       }
-//     };
-
-//     fetchBookings();
-//   }, []);
-  
-//   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
-//     try {
-//       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
-//         method: "PATCH",
-//         headers: { "Content-Type": "application/json" },
-//       });
-
-//       if (!res.ok) throw new Error("Failed to update status");
-//       const updated = await res.json();
-
-//       setMyBookings((prev) =>
-//         prev.map((b) =>
-//           b.booking_id === bookingId ? { ...b, status: updated.status } : b
-//         )
-//       );
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   const handleViewReview = (bookingId: string) => {
-//     alert(`Viewing review for booking ${bookingId}`);
-//   };
-
-//   if (loading) return <div>Loading...</div>;
-
-//   return (
-//     <div className="space-y-6">
-//       <div className="flex items-center justify-between">
-//         <h2 className="text-2xl font-bold" style={{ color: "#344545" }}>
-//           My Bookings
-//         </h2>
-//         <span
-//           className="text-sm px-3 py-1 rounded-full"
-//           style={{ backgroundColor: "#e1ecea", color: "#344545" }}
-//         >
-//           {myBookings.length} Active Projects
-//         </span>
-//       </div>
-
-//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-//         {myBookings.map((booking) => {
-//           const statusColors = getStatusColor(booking.status);
-
-//           return (
-//             <div
-//               key={booking.booking_id}
-//               className="bg-white rounded-2xl shadow-md p-4 sm:p-6"
-//             >
-//               <div className="relative z-10">
-//                 <div className="flex items-start justify-between mb-4">
-//                   <h3
-//                     className="text-lg font-semibold flex-1 mr-2"
-//                     style={{ color: "#344545" }}
-//                   >
-//                     {booking.title ?? "No Title"}
-//                   </h3>
-//                   <span
-//                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium flex-shrink-0"
-//                     style={{
-//                       backgroundColor: statusColors.bg,
-//                       color: statusColors.text,
-//                     }}
-//                   >
-//                     {(booking.status?.replace("-", " ") ?? "")
-//                       .replace(/\b\w/g, (l) => l.toUpperCase())}
-
-//                   </span>
-//                 </div>
-
-//                 <div className="space-y-2 mb-4">
-//                   <p className="text-sm" style={{ color: "#405e5e" }}>
-//                     <span className="font-medium">Client:</span>{" "}
-//                     {booking.client ?? booking.buyer_id}
-//                   </p>
-//                   <p className="text-sm" style={{ color: "#405e5e" }}>
-//                     <span className="font-medium">Payment:</span>{" "}
-//                     {booking.coins_paid} coins
-//                   </p>
-//                   <p className="text-sm" style={{ color: "#405e5e" }}>
-//                     <span className="font-medium">Category:</span>{" "}
-//                     {booking.category ?? "N/A"}
-//                   </p>
-//                   <p className="text-sm" style={{ color: "#405e5e" }}>
-//                     <span className="font-medium">Posted:</span> {booking.booking_date ? new Date(booking.booking_date).toLocaleDateString() : 'N/A'}
-//                   </p>
-//                 </div>
-
-//                 <div
-//                   className="flex space-x-3 pt-4 border-t"
-//                   style={{ borderColor: "#e1ecea" }}
-//                 >
-//                   {/* <button
-//                     className="text-sm font-medium hover:underline"
-//                     style={{ color: "#558581" }}
-//                     onClick={()=>hanldegigr(gig.gig_id)}
-//                     // onClick={() => router.push(`/gig/${gig.gig_id}`)}
-//                   >
-//                     View Details
-//                   </button> */}
-
-//                   {/* Pending: Confirm & Cancel */}
-//                   {booking.status === "pending" && (
-//                     <>
-//                       <button
-//                         className="text-sm font-medium hover:underline"
-//                         style={{ color: "#16a34a" }}
-//                         onClick={() =>
-//                           handleUpdateStatus(booking.booking_id, "confirm")
-//                         }
-//                       >
-//                         Confirm
-//                       </button>
-//                       <button
-//                         className="text-sm font-medium hover:underline"
-//                         style={{ color: "#dc2626" }}
-//                         onClick={() =>
-//                           handleUpdateStatus(booking.booking_id, "cancel")
-//                         }
-//                       >
-//                         Cancel
-//                       </button>
-//                     </>
-//                   )}
-
-//                   {/* Confirmed: Only Cancel */}
-//                   {booking.status === "confirmed" && (
-//                     <button
-//                       className="text-sm font-medium hover:underline"
-//                       style={{ color: "#dc2626" }}
-//                       onClick={() =>
-//                         handleUpdateStatus(booking.booking_id, "cancel")
-//                       }
-//                     >
-//                       Cancel
-//                     </button>
-//                   )}
-
-//                   {/* Completed: View Review */}
-//                   {booking.status === "completed" && (
-//                     <button
-//                       className="text-sm font-medium hover:underline"
-//                       style={{ color: "#16a34a" }}
-//                       onClick={() => handleViewReview(booking.booking_id)}
-//                     >
-//                       View Review
-//                     </button>
-//                   )}
-//                 </div>
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// };
 
 
 
@@ -3184,6 +2979,7 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('bank');
   const [loading, setLoading] = useState(false);
+  const [currentBalanceState, setCurrentBalance] = useState(currentBalance);
 
   const redeemOptions = [
     { value: 100, label: '100 Coins = $10', rate: 0.10 },
@@ -3192,20 +2988,55 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
     { value: 2500, label: '2500 Coins = $250', rate: 0.10 }
   ];
 
+  // const handleRedeemCoins = async (coinAmount) => {
+  //   if (coinAmount > currentBalance) {
+  //     alert('Insufficient balance!')
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   await new Promise(resolve => setTimeout(resolve, 2000));
+
+  //   onRedeemCoins(coinAmount);
+  //   setAmount('');
+  //   setLoading(false);
+  // };
+  
+
   const handleRedeemCoins = async (coinAmount) => {
-    if (coinAmount > currentBalance) {
-      alert('Insufficient balance!');
-      return;
+  if (coinAmount > currentBalance) {
+    alert('Insufficient balance!');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await fetch('/api/redeem-coins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount: coinAmount }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to redeem coins');
     }
 
-    setLoading(true);
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
+    const data = await response.json();
+    // Assuming your API returns the updated balance
     onRedeemCoins(coinAmount);
     setAmount('');
+    // Update local balance state with the new balance from backend:
+    setCurrentBalance(data.newBalance);
+  } catch (error) {
+    alert(error.message);
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   const calculateCashValue = (coins) => {
     return (coins * 0.10).toFixed(2);
@@ -3245,61 +3076,16 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
 
         <div className="relative z-10">
           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Redeem</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 text-gray-800">
             {redeemOptions.map((option) => (
-              // <button
-              //   key={option.value}
-              //   onClick={() => handleRedeemCoins(option.value)}
-              //   disabled={loading || option.value > currentBalance}
-              //   className="p-3 sm:p-4 rounded-xl text-center font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base hover:scale-105"
-              //   style={{
-              //     backgroundColor: '#f3f8f8',
-              //     color: '#344545'
-              //   }}
-              //   onMouseEnter={(e) => {
-              //     if (!e.target.disabled) {
-              //       e.target.style.backgroundColor = '#ff6b35';
-              //       e.target.style.color = 'white';
-              //     }
-              //   }}
-              //   onMouseLeave={(e) => {
-              //     if (!e.target.disabled) {
-              //       e.target.style.backgroundColor = '#f3f8f8';
-              //       e.target.style.color = '#344545';
-              //     }
-              //   }}
-              // >
-              //   {option.label}
-              // </button>
+           
               <button
                 key={option.value}
                 onClick={() => handleRedeemCoins(option.value)}
                 disabled={loading || option.value > currentBalance}
                 className="cursor-pointer hover:bg-[#ff6b35]"
-              // className="p-3 sm:p-4 
-              // rounded-xl 
-              // font-semibold text-sm sm:text-base 
-              // bg-[#f3f8f8] text-[#344545] 
-              // hover:bg-[#ff6b35] hover:text-white 
-              // disabled:opacity-50 disabled:cursor-not-allowed 
-              // select-none 
-              // transition-transform duration-200 transform hover:scale-105"
-              // style={{
-              //   backgroundColor: "#f3f8f8",
-              //   color: "#344545",
-              // }}
-              // onMouseEnter={(e) => {
-              //   if (!e.currentTarget.disabled) {
-              //     e.currentTarget.style.backgroundColor = "#ff6b35";
-              //     e.currentTarget.style.color = "white";
-              //   }
-              // }}
-              // onMouseLeave={(e) => {
-              //   if (!e.currentTarget.disabled) {
-              //     e.currentTarget.style.backgroundColor = "#f3f8f8";
-              //     e.currentTarget.style.color = "white";
-              //   }
-              // }}
+            
+          
               >
                 {option.label}
               </button>
@@ -3307,11 +3093,11 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
             ))}
           </div>
 
-          <div className="border-t pt-6 space-y-4" style={{ borderColor: '#e1ecea' }}>
+          <div className="border-t pt-6 space-y-4 text-gray-800 " style={{ borderColor: '#e1ecea' }}>
             <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>Custom Amount</h3>
 
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
+            <div >
+              <label className="block text-sm font-medium mb-2 text-gray-800  " style={{ color: '#405e5e' }}>
                 Redemption Method
               </label>
               <select

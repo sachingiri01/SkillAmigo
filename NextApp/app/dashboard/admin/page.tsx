@@ -7,8 +7,9 @@
 import React, { useState, useEffect } from 'react';
 import { Clock,DollarSign,Menu, X, Bell, User, LogOut, Settings as SettingsIcon, BarChart3, Users, Briefcase, Coins, FileText, ChevronDown, Home, Eye, Check, XCircle, Filter, Calendar, Download, Edit, Trash2, Plus, Search,ArrowUp } from 'lucide-react';
 import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 
-import { useSession } from "next-auth/react";
+
 
   
 
@@ -117,7 +118,8 @@ const Header = ({ currentPage, userProfile }) => {
                   <SettingsIcon className="w-4 h-4" />
                   <span>Change Password</span>
                 </button> */}
-                <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors">
+                <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors"
+                onClick={() => signOut({ callbackUrl: "/" })}>
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
                 </button>
