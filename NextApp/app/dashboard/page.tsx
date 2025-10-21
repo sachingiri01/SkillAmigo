@@ -12,6 +12,8 @@ import {
   Award,
   Home,
   Plus,
+  Activity,
+  PieChart,
   Calendar,
   Settings,
   Coins,
@@ -31,9 +33,11 @@ import {
   Gift,
   ClipboardCheck,
   Briefcase,
+  ShoppingBag, Star,
   BookOpen,
   Factory
 } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,Area, AreaChart, PieChart as RechartsPie, Pie, Cell } from 'recharts';
 import { log } from 'console';
 import { devNull } from 'os';
 import { number } from 'motion';
@@ -72,6 +76,7 @@ const SkeletonLoader = ({ className = "", type = "text" }) => {
 
 // Header Component with Home Button
 const Header = ({ user, onLogout, onHome }) => {
+  const router = useRouter();
   const { data: session } = useSession();
   return (
     <header className="bg-jet-stream-50 shadow-md border-b border-slate-200 w-full fixed top-0 left-0 right-0 z-30"
@@ -90,7 +95,10 @@ const Header = ({ user, onLogout, onHome }) => {
             <div className="flex items-center space-x-1">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #344545 0%, #558581 100%)' }}>
-                <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                <User className="w-4 h-4 sm:w-6 sm:h-6 text-white
+                
+                "
+                  onClick={() => router.push(`/profile/${session.user?.id}`)} />
               </div>
               <div>
                 <h1 className="text-xs sm:text-xl font-bold" style={{ color: '#344545' }}>
@@ -274,8 +282,11 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen }) => {
 };
 
 
+
+
+
+
 type UserOverview = {
-  
   user: {
     meritCredits: number;
     name?: string;
@@ -286,48 +297,78 @@ type UserOverview = {
     gained: number;
     rank: number;
   };
+  monthlyData?: Array<{
+    month: string;
+    spent: number;
+    gained: number;
+  }>;
+  bookingStats?: {
+    pending: number;
+    confirmed: number;
+    completed: number;
+    cancelled: number;
+  };
+  categoryBreakdown?: Array<{
+    category: string;
+    count: number;
+    amount: number;
+  }>;
+  meritTrend?: Array<{
+    month: string;
+    credits: number;
+  }>;
 };
 
-// Overview Component with jet-stream colors
-const Overview = ({ loading }) => {
-  // const [loading, setLoading] = useState(true);
+
+
+const Overview = ({ loading: propLoading = false }) => {
+  const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<UserOverview | null>(null);
-  // const [error, setError] = useState(null);
+
+  const fetchOverview = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/user_overview');
+      if (!res.ok) throw new Error('Failed to fetch overview');
+      const data = await res.json();
+      console.log("overview data", data);
+      setOverview(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOverview = async () => {
-      try {
-        const res = await fetch("/api/user_overview");
-        if (!res.ok) throw new Error("Failed to fetch overview");
-        const data = await res.json();
-        console.log("overview data", data);
-        setOverview(data);
-      } catch (err) {
-        console.error(err);
-        
-      } 
-    };
-   
-
     fetchOverview();
   }, []);
 
-  if (loading) {
+  if (loading || propLoading) {
     return (
       <div className="space-y-6">
         <SkeletonLoader className="h-8 w-48" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <SkeletonLoader key={i} type="card" />
           ))}
         </div>
-        <SkeletonLoader type="chart" className="h-64" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SkeletonLoader type="chart" className="h-80" />
+          <SkeletonLoader type="chart" className="h-80" />
+        </div>
       </div>
     );
   }
 
-  
-  const {  user,stat } = overview|| {  user: {},stat: {} };
+  const { user, stat, monthlyData, bookingStats, categoryBreakdown, meritTrend } = overview || { 
+    user: {}, 
+    stat: {}, 
+    monthlyData: [], 
+    bookingStats: {},
+    categoryBreakdown: [],
+    meritTrend: []
+  };
 
   const stats = [
     {
@@ -335,45 +376,52 @@ const Overview = ({ loading }) => {
       value: stat?.spent != null ? stat.spent.toLocaleString() : "0",
       icon: DollarSign,
       color: "from-red-500 to-red-600",
-      change: "-5.2%",
     },
     {
       title: "Total Gained Coins",
       value: stat?.gained != null ? stat.gained.toLocaleString() : "0",
       icon: TrendingUp,
       color: "from-green-500 to-green-600",
-      change: "+12.3%",
     },
     {
       title: "Leaderboard Rank",
       value: stat?.rank != null ? `#${stat.rank}` : "#—",
       icon: Trophy,
       color: "from-orange-500 to-orange-600",
-      change: "↑3",
     },
     {
       title: "Merit Credits",
-      value: user?.meritCredits ||0,
+      value: user?.meritCredits || 0,
       icon: Award,
       color: "from-blue-500 to-blue-600",
-      change: "+0",
     },
   ];
 
-  
+  const netProfit = (stat?.gained || 0) - (stat?.spent || 0);
+
+  // Booking Status Data for Pie Chart
+  const bookingStatusData = [
+    { name: 'Completed', value: bookingStats?.completed || 0, color: '#22c55e' },
+    { name: 'Confirmed', value: bookingStats?.confirmed || 0, color: '#3b82f6' },
+    { name: 'Pending', value: bookingStats?.pending || 0, color: '#f59e0b' },
+    { name: 'Cancelled', value: bookingStats?.cancelled || 0, color: '#ef4444' },
+  ].filter(item => item.value > 0);
+
+  const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>
         Dashboard Overview
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
             <div key={stat.title}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
-              {/* Card Pattern */}
               <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0" style={{
                   backgroundImage: `radial-gradient(circle at 15px 15px, rgba(85, 133, 129, 0.3) 1px, transparent 0)`,
@@ -386,9 +434,6 @@ const Overview = ({ loading }) => {
                   <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color}`}>
                     <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  {/* <span className={`text-sm font-semibold ${stat.change.startsWith('+') || stat.change.startsWith('↑') ? 'text-green-600' : 'text-red-600'}`}>
-                    {stat.change}
-                  </span> */}
                 </div>
                 <h3 className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>{stat.title}</h3>
                 <p className="text-2xl sm:text-3xl font-bold" style={{ color: '#344545' }}>{stat.value}</p>
@@ -398,33 +443,245 @@ const Overview = ({ loading }) => {
         })}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 relative overflow-hidden">
-        {/* Background Pattern */}
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Transaction Trend Chart */}
+        <div className="bg-white rounded-2xl shadow-md p-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25px 25px, rgba(159, 193, 189, 0.2) 2px, transparent 0)`,
+              backgroundSize: '50px 50px'
+            }} />
+          </div>
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-5 h-5" style={{ color: '#558581' }} />
+              <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>
+                Transaction Trends (Last 6 Months)
+              </h3>
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={monthlyData}>
+                <defs>
+                  <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorGained" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fill: '#719f9a', fontSize: 12 }}
+                  stroke="#9fc1bd"
+                />
+                <YAxis 
+                  tick={{ fill: '#719f9a', fontSize: 12 }}
+                  stroke="#9fc1bd"
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #9fc1bd',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Area 
+                  type="monotone" 
+                  dataKey="spent" 
+                  stroke="#ef4444" 
+                  fillOpacity={1}
+                  fill="url(#colorSpent)"
+                  strokeWidth={2}
+                  name="Spent"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="gained" 
+                  stroke="#22c55e" 
+                  fillOpacity={1}
+                  fill="url(#colorGained)"
+                  strokeWidth={2}
+                  name="Gained"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Booking Status Distribution */}
+        <div className="bg-white rounded-2xl shadow-md p-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25px 25px, rgba(159, 193, 189, 0.2) 2px, transparent 0)`,
+              backgroundSize: '50px 50px'
+            }} />
+          </div>
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <ShoppingBag className="w-5 h-5" style={{ color: '#558581' }} />
+              <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>
+                Booking Status Distribution
+              </h3>
+            </div>
+            {bookingStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <RechartsPie>
+                  <Pie
+                    data={bookingStatusData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={90}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {bookingStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #9fc1bd',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </RechartsPie>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[280px] flex items-center justify-center">
+                <p className="text-gray-400">No booking data available</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Second Row Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-20">
+
+        {/* Category-wise Spending */}
+        <div className="bg-white rounded-2xl shadow-md p-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25px 25px, rgba(159, 193, 189, 0.2) 2px, transparent 0)`,
+              backgroundSize: '50px 50px'
+            }} />
+          </div>
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <PieChart className="w-5 h-5" style={{ color: '#558581' }} />
+              <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>
+                Top Categories by Spending
+              </h3>
+            </div>
+            {categoryBreakdown && categoryBreakdown.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={categoryBreakdown}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="category" 
+                    tick={{ fill: '#719f9a', fontSize: 11 }}
+                    stroke="#9fc1bd"
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis 
+                    tick={{ fill: '#719f9a', fontSize: 12 }}
+                    stroke="#9fc1bd"
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #9fc1bd',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar dataKey="amount" fill="#558581" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[280px] flex items-center justify-center">
+                <p className="text-gray-400">No category data available</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+   
+
+      </div>
+
+      {/* Quick Insights */}
+      <div className="bg-white rounded-2xl shadow-md p-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%),
-              radial-gradient(circle at 25px 25px, rgba(159, 193, 189, 0.2) 2px, transparent 0)
-            `,
-            backgroundSize: '50px 50px, 50px 50px'
+            backgroundImage: `linear-gradient(45deg, transparent 25%, rgba(85, 133, 129, 0.1) 25%, rgba(85, 133, 129, 0.1) 50%, transparent 50%, transparent 75%, rgba(85, 133, 129, 0.1) 75%)`,
+            backgroundSize: '50px 50px'
           }} />
         </div>
 
         <div className="relative z-10">
-          <h3 className="text-lg sm:text-xl font-semibold mb-4" style={{ color: '#344545' }}>
-            Activity Overview
-          </h3>
-          <div className="h-32 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
-            <p className="text-center text-sm sm:text-base" style={{ color: '#719f9a' }}>
-              Chart placeholder - Activity trends would appear here
-            </p>
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="w-5 h-5" style={{ color: '#558581' }} />
+            <h3 className="text-lg font-semibold" style={{ color: '#344545' }}>
+              Quick Insights
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl" style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
+              <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Current Balance</p>
+              <p className="text-xl font-bold" style={{ color: '#344545' }}>
+                {user?.balance?.toLocaleString() || '0'} coins
+              </p>
+            </div>
+            
+            <div className="p-4 rounded-xl" style={{ background: netProfit >= 0 ? 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' : 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' }}>
+              <p className="text-sm font-medium mb-1" style={{ color: '#344545' }}>Net Profit/Loss</p>
+              <p className="text-xl font-bold" style={{ 
+                color: netProfit >= 0 ? '#059669' : '#dc2626' 
+              }}>
+                {netProfit >= 0 ? '+' : ''}{netProfit.toLocaleString()} coins
+              </p>
+            </div>
+            
+            <div className="p-4 rounded-xl" style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
+              <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Profit Margin</p>
+              <p className="text-xl font-bold" style={{ 
+                color: netProfit >= 0 ? '#059669' : '#dc2626' 
+              }}>
+                {stat?.gained ? Math.round((netProfit / stat.gained) * 100) : 0}%
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl" style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
+              <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Total Bookings</p>
+              <p className="text-xl font-bold" style={{ color: '#344545' }}>
+                {Object.values(bookingStats || {}).reduce((a, b) => a + b, 0)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 };
+
+
 
 
 
@@ -785,7 +1042,7 @@ const MyGigs = () => {
         alert(errorData.error || 'Could not delete gig');
         return;
       }
-      
+
       const data = await res.json();
       alert('Gig deleted successfully');
       setMyGigs((prev) => prev.filter((gig) => gig.gig_id !== gigId));
@@ -882,7 +1139,7 @@ const MyGigs = () => {
           const statusColors = getStatusColor(gig.status);
           const hasApplicants = (gig.buyer_count ?? 0) > 0;
           const isShowingApplicants = showApplicants[gig.gig_id];
-          
+
           return (
             <div key={gig.gig_id}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-6 hover:scale-105 transition-transform duration-200 relative overflow-hidden">
@@ -950,8 +1207,8 @@ const MyGigs = () => {
                     </h4>
                     <div className="flex flex-wrap gap-4">
                       {applicants[gig.gig_id].map((user) => (
-                        <div 
-                          key={user.user_id} 
+                        <div
+                          key={user.user_id}
                           className="flex flex-col items-center min-w-[70px] p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                           onClick={() => router.push(`/profile/${user.user_id}`)}>
                           <img
@@ -965,7 +1222,7 @@ const MyGigs = () => {
                           </span>
                           {user.booking_status && (
                             <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 capitalize"
-                              style={{ 
+                              style={{
                                 backgroundColor: user.booking_status === 'confirmed' ? '#dcfce7' : '#fef3c7',
                                 color: user.booking_status === 'confirmed' ? '#166534' : '#92400e'
                               }}>
@@ -977,7 +1234,7 @@ const MyGigs = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {isShowingApplicants && applicants[gig.gig_id]?.length === 0 && (
                   <div className="mt-4 pt-4 border-t text-center" style={{ borderColor: '#e1ecea' }}>
                     <p className="text-sm" style={{ color: '#719f9a' }}>No applicants yet</p>
@@ -1073,7 +1330,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
     fetchBookings();
   }, []);
-  
+
   const handleUpdateStatus = async (bookingId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/booking/${bookingId}/${newStatus}`, {
@@ -1134,7 +1391,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
   const handleSubmitCompletion = async () => {
     if (!selectedBooking) return;
-    
+
     if (!completionData.work_description.trim()) {
       alert('Please provide work description');
       return;
@@ -1156,7 +1413,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
       if (!completionRes.ok) throw new Error('Failed to submit completion details');
 
       await handleUpdateStatus(selectedBooking.booking_id, 'complete');
-      
+
       setShowCompletionModal(false);
       setSelectedBooking(null);
       alert('Work completed successfully! Payment has been processed.');
@@ -1206,7 +1463,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
   const handleSubmitDispute = async () => {
     if (!selectedBooking) return;
-    
+
     if (!disputeData.reason.trim()) {
       alert('Please provide a reason for the dispute');
       return;
@@ -1377,7 +1634,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
             <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
               Complete Work - {selectedBooking.title}
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
@@ -1469,7 +1726,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
                 <strong>Important:</strong> Filing a dispute will notify our admin team and change the booking status.
               </p>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "#344545" }}>
@@ -1648,7 +1905,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 //   };
 //   const handleSubmitReview = async () => {
 //     if (!selectedGig) return;
-    
+
 //     setSubmittingReview(true);
 //     try {
 //       // Submit review first
@@ -1667,7 +1924,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 
 //       // Then mark as complete
 //       await handleUpdateStatus(selectedGig.booking_id, 'complete');
-      
+
 //       // Close modal
 //       setShowReviewModal(false);
 //       setSelectedGig(null);
@@ -1803,7 +2060,7 @@ const MyBookings = ({ loading }: { loading: boolean }) => {
 //             <h3 className="text-xl font-semibold text-gray-900 mb-4">
 //               Review: {selectedGig.title}
 //             </h3>
-            
+
 //             {/* Rating */}
 //             <div className="mb-4">
 //               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1985,7 +2242,7 @@ const BookedGigs = () => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
-      
+
       if (!res.ok) throw new Error("Failed to update status");
       const updated = await res.json();
 
@@ -2037,7 +2294,7 @@ const BookedGigs = () => {
 
   const handleSubmitReview = async () => {
     if (!selectedGig) return;
-    
+
     if (!currentReview.review_text.trim()) {
       alert('Please write a review');
       return;
@@ -2064,7 +2321,7 @@ const BookedGigs = () => {
           g.booking_id === selectedGig.booking_id ? { ...g, has_review: true } : g
         )
       );
-      
+
       setShowReviewModal(false);
       setSelectedGig(null);
       alert('Review submitted successfully!');
@@ -2114,7 +2371,7 @@ const BookedGigs = () => {
 
   const handleSubmitDispute = async () => {
     if (!selectedGig) return;
-    
+
     if (!disputeData.reason.trim()) {
       alert('Please provide a reason for the dispute');
       return;
@@ -2241,7 +2498,7 @@ const BookedGigs = () => {
                       >
                         View Work Details
                       </button>
-                      
+
                       {!gig.has_review && (
                         <button
                           onClick={() => handleWriteReview(gig)}
@@ -2250,7 +2507,7 @@ const BookedGigs = () => {
                           Write Review
                         </button>
                       )}
-                      
+
                       <button
                         onClick={() => handleOpenDispute(gig)}
                         className="text-red-600 text-sm hover:underline"
@@ -2273,7 +2530,7 @@ const BookedGigs = () => {
             <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
               Work Completion Details - {selectedGig.title}
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2" style={{ color: "#344545" }}>
@@ -2338,7 +2595,7 @@ const BookedGigs = () => {
             <h3 className="text-2xl font-bold mb-4" style={{ color: "#344545" }}>
               Write a Review - {selectedGig.title}
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
@@ -2420,7 +2677,7 @@ const BookedGigs = () => {
                 <strong>Important:</strong> Filing a dispute will notify our admin team and change the booking status.
               </p>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-black" style={{ color: "#344545" }}>
@@ -2504,7 +2761,7 @@ interface User {
   phone?: string;
   profile_picture?: string; // URL string
   bio?: string;
-  role?: string;
+  email?: string;
   profile_picture_file?: File | null; // for upload
 }
 
@@ -2521,7 +2778,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
     phone: '',
     profile_picture: '',
     bio: '',
-    role: roles[0],
+    email: '',
     profile_picture_file: null,
   });
   const [loading, setLoading] = useState(false);
@@ -2535,7 +2792,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
         phone: (session.user as any)?.phone || '',
         profile_picture: (session.user as any)?.profile_picture || '',
         bio: (session.user as any)?.bio || '',
-        role: (session.user as any)?.role || roles[0],
+        email: (session.user as any)?.email || '',
         profile_picture_file: null,
       });
     }
@@ -2558,7 +2815,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
       form.append("name", formData.name);
       form.append("phone", formData.phone || '');
       form.append("bio", formData.bio || '');
-      form.append("role", formData.role || '');
+      form.append("email", formData.email || '');
 
       if (formData.profile_picture_file) {
         form.append("profile_picture_file", formData.profile_picture_file);
@@ -2659,22 +2916,14 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onSave }) => {
             {/* Role */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#405e5e' }}>
-                Role
+                Email
               </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-xl transition-all duration-200"
-                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8' }}
-                required
+              <div
+                className="w-full px-4 py-3 border rounded-xl "
+                style={{ borderColor: '#bbd3d0', backgroundColor: '#f3f8f8', color: '#649191ff' }}
               >
-                {roles.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
+                {formData.email}
+              </div>
             </div>
 
             {/* Profile Picture Upload */}
@@ -2775,13 +3024,13 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
         const res = await fetch("/api/get-coin-status/", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to fetch history");
         const data = await res.json();
-     
+
         // normalize array of requests
         const items = Array.isArray(data.requests)
           ? data.requests
           : Array.isArray(data)
-          ? data
-          : [];
+            ? data
+            : [];
 
         const normalized = items.map((item) => ({
           request_id: item.request_id ?? item.id,
@@ -2789,8 +3038,8 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
           status: item.status ?? "pending",
           created_at: item.created_at ?? new Date().toISOString(),
         }));
-        console.log("gg  ",normalized);
-        
+        console.log("gg  ", normalized);
+
         setHistory(normalized);
       } catch (err) {
         console.error("Error fetching coin history:", err);
@@ -2954,13 +3203,12 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
                   <span className="text-xs text-gray-400">{formatDate(req.created_at)}</span>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    req.status === "approved"
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${req.status === "approved"
                       ? "bg-green-100 text-green-600"
                       : req.status === "pending"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
                 >
                   {req.status}
                 </span>
@@ -3002,41 +3250,42 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
   //   setAmount('');
   //   setLoading(false);
   // };
-  
+
 
   const handleRedeemCoins = async (coinAmount) => {
-  if (coinAmount > currentBalance) {
-    alert('Insufficient balance!');
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const response = await fetch('/api/redeem-coins', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount: coinAmount }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to redeem coins');
+    if (coinAmount > currentBalance) {
+      alert('Insufficient balance!');
+      return;
     }
 
-    const data = await response.json();
-    // Assuming your API returns the updated balance
-    onRedeemCoins(coinAmount);
-    setAmount('');
-    // Update local balance state with the new balance from backend:
-    setCurrentBalance(data.newBalance);
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/redeem-coins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: coinAmount }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to redeem coins');
+      }
+
+      const data = await response.json();
+      // Assuming your API returns the updated balance
+      onRedeemCoins(coinAmount);
+      setAmount('');
+      // Update local balance state with the new balance from backend:
+      setCurrentBalance(data.newBalance);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const calculateCashValue = (coins) => {
     return (coins * 0.10).toFixed(2);
@@ -3078,14 +3327,14 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
           <h3 className="text-xl font-semibold mb-6" style={{ color: '#344545' }}>Quick Redeem</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 text-gray-800">
             {redeemOptions.map((option) => (
-           
+
               <button
                 key={option.value}
                 onClick={() => handleRedeemCoins(option.value)}
                 disabled={loading || option.value > currentBalance}
                 className="cursor-pointer hover:bg-[#ff6b35]"
-            
-          
+
+
               >
                 {option.label}
               </button>
@@ -3334,15 +3583,15 @@ const UserDashboard = () => {
     phone: '+1 234 567 8900',
     skills: 'React, Node.js, Python, UI/UX Design'
   });
-  const { data: session ,status} = useSession();
-  const router=useRouter();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [coinBalance, setCoinBalance] = useState(0);
 
   useEffect(() => {
-  if (session?.user?.balance !== undefined) {
-    setCoinBalance(session.user.balance);
-  }
-}, [session]);
+    if (session?.user?.balance !== undefined) {
+      setCoinBalance(session.user.balance);
+    }
+  }, [session]);
   useEffect(() => {
     // Simulate initial data loading
     const timer = setTimeout(() => {
@@ -3353,14 +3602,14 @@ const UserDashboard = () => {
   }, []);
 
 
- useEffect(() => {
+  useEffect(() => {
     if (status === "loading") return;
 
     if (session?.user && session.user.role == "admin") {
       router.push("/dashboard/admin"); // send non-admins to home
-    } 
-  }, [ session, router]);
-if (status === "loading") {
+    }
+  }, [session, router]);
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen bg-jet-stream-100">
         <div className="flex flex-col items-center">
@@ -3370,7 +3619,7 @@ if (status === "loading") {
       </div>
     );
   }
-  if (!session?.user ) {
+  if (!session?.user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <h1 className="text-2xl font-bold text-red-600 mb-4">❌ Access Denied</h1>
@@ -3386,7 +3635,7 @@ if (status === "loading") {
       </div>
     );
   }
-  
+
 
   const handleLogout = () => {
     alert('Logout functionality would be implemented here');
