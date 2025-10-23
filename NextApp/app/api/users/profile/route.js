@@ -96,8 +96,9 @@ export async function PUT(req) {
     const bio = formData.get("bio");
     const role = formData.get("role");
     const profilePictureFile = formData.get("profile_picture_file");
-
-    if (!name || !phone || !bio || !role) {
+    console.log(formData);
+    
+    if (!name || !phone || !bio) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 

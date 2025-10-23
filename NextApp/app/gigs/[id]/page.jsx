@@ -454,9 +454,9 @@ const Rating = ({ rating, reviews = [], reviewCount = 0 }) => {
                   />
                 ))}
               </div>
-              <p className="text-jet-stream-700 text-base sm:text-lg">
+              {/* <p className="text-jet-stream-700 text-base sm:text-lg">
                 {rating ? `Based on ${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}` : 'No ratings yet'}
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
@@ -582,13 +582,13 @@ const CTA = () => (
           </div>
         </button>
         
-        <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-white text-base sm:text-lg font-semibold rounded-xl sm:rounded-2xl border-2 border-white/20 transition-all duration-300 hover:bg-white/20 hover:scale-105">
+        {/* <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-white text-base sm:text-lg font-semibold rounded-xl sm:rounded-2xl border-2 border-white/20 transition-all duration-300 hover:bg-white/20 hover:scale-105">
           <div className="flex items-center justify-center">
             <Calendar className="w-5 sm:w-6 h-5 sm:h-6 mr-2" />
             Book Now
           </div>
           <div className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full"></div>
-        </button>
+        </button> */}
       </div>
     </div>
   </section>
