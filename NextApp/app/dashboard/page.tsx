@@ -37,7 +37,7 @@ import {
   BookOpen,
   Factory
 } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,Area, AreaChart, PieChart as RechartsPie, Pie, Cell } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, PieChart as RechartsPie, Pie, Cell } from 'recharts';
 import { log } from 'console';
 import { devNull } from 'os';
 import { number } from 'motion';
@@ -361,10 +361,10 @@ const Overview = ({ loading: propLoading = false }) => {
     );
   }
 
-  const { user, stat, monthlyData, bookingStats, categoryBreakdown, meritTrend } = overview || { 
-    user: {}, 
-    stat: {}, 
-    monthlyData: [], 
+  const { user, stat, monthlyData, bookingStats, categoryBreakdown, meritTrend } = overview || {
+    user: {},
+    stat: {},
+    monthlyData: [],
     bookingStats: {},
     categoryBreakdown: [],
     meritTrend: []
@@ -445,7 +445,7 @@ const Overview = ({ loading: propLoading = false }) => {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* Transaction Trend Chart */}
         <div className="bg-white rounded-2xl shadow-md p-6 relative overflow-hidden">
           <div className="absolute inset-0 opacity-5">
@@ -466,45 +466,45 @@ const Overview = ({ loading: propLoading = false }) => {
               <AreaChart data={monthlyData}>
                 <defs>
                   <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorGained" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis 
-                  dataKey="month" 
+                <XAxis
+                  dataKey="month"
                   tick={{ fill: '#719f9a', fontSize: 12 }}
                   stroke="#9fc1bd"
                 />
-                <YAxis 
+                <YAxis
                   tick={{ fill: '#719f9a', fontSize: 12 }}
                   stroke="#9fc1bd"
                 />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#fff',
                     border: '1px solid #9fc1bd',
                     borderRadius: '8px'
                   }}
                 />
                 <Legend />
-                <Area 
-                  type="monotone" 
-                  dataKey="spent" 
-                  stroke="#ef4444" 
+                <Area
+                  type="monotone"
+                  dataKey="spent"
+                  stroke="#ef4444"
                   fillOpacity={1}
                   fill="url(#colorSpent)"
                   strokeWidth={2}
                   name="Spent"
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="gained" 
-                  stroke="#22c55e" 
+                <Area
+                  type="monotone"
+                  dataKey="gained"
+                  stroke="#22c55e"
                   fillOpacity={1}
                   fill="url(#colorGained)"
                   strokeWidth={2}
@@ -548,9 +548,9 @@ const Overview = ({ loading: propLoading = false }) => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff', 
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
                       border: '1px solid #9fc1bd',
                       borderRadius: '8px'
                     }}
@@ -590,21 +590,21 @@ const Overview = ({ loading: propLoading = false }) => {
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={categoryBreakdown}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="category" 
+                  <XAxis
+                    dataKey="category"
                     tick={{ fill: '#719f9a', fontSize: 11 }}
                     stroke="#9fc1bd"
                     angle={-45}
                     textAnchor="end"
                     height={80}
                   />
-                  <YAxis 
+                  <YAxis
                     tick={{ fill: '#719f9a', fontSize: 12 }}
                     stroke="#9fc1bd"
                   />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff', 
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
                       border: '1px solid #9fc1bd',
                       borderRadius: '8px'
                     }}
@@ -620,7 +620,7 @@ const Overview = ({ loading: propLoading = false }) => {
           </div>
         </div>
 
-   
+
 
       </div>
 
@@ -640,7 +640,7 @@ const Overview = ({ loading: propLoading = false }) => {
               Quick Insights
             </h3>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl" style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
               <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Current Balance</p>
@@ -648,22 +648,22 @@ const Overview = ({ loading: propLoading = false }) => {
                 {user?.balance?.toLocaleString() || '0'} coins
               </p>
             </div>
-            
+
             <div className="p-4 rounded-xl" style={{ background: netProfit >= 0 ? 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' : 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' }}>
               <p className="text-sm font-medium mb-1" style={{ color: '#344545' }}>Net Profit/Loss</p>
-              <p className="text-xl font-bold" style={{ 
-                color: netProfit >= 0 ? '#059669' : '#dc2626' 
+              <p className="text-xl font-bold" style={{
+                color: netProfit >= 0 ? '#059669' : '#dc2626'
               }}>
                 {netProfit >= 0 ? '+' : ''}{netProfit.toLocaleString()} coins
               </p>
             </div>
-            
+
             <div className="p-4 rounded-xl" style={{ background: 'linear-gradient(135deg, #f3f8f8 0%, #e1ecea 100%)' }}>
-              <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Profit Margin</p>
-              <p className="text-xl font-bold" style={{ 
-                color: netProfit >= 0 ? '#059669' : '#dc2626' 
-              }}>
-                {stat?.gained ? Math.round((netProfit / stat.gained) * 100) : 0}%
+              <p className="text-sm font-medium mb-1" style={{ color: '#719f9a' }}>Avg Spend / Booking</p>
+              <p className="text-xl font-bold" style={{ color: '#344545' }}>
+                {bookingStats?.completed
+                  ? Math.round(stat.spent / bookingStats.completed).toLocaleString()
+                  : 0} coins
               </p>
             </div>
 
@@ -3204,10 +3204,10 @@ const AddCoins = ({ currentBalance, onAddCoins }) => {
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${req.status === "approved"
-                      ? "bg-green-100 text-green-600"
-                      : req.status === "pending"
-                        ? "bg-yellow-100 text-yellow-600"
-                        : "bg-red-100 text-red-600"
+                    ? "bg-green-100 text-green-600"
+                    : req.status === "pending"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-red-100 text-red-600"
                     }`}
                 >
                   {req.status}
@@ -3285,7 +3285,7 @@ const RedeemCoins = ({ currentBalance, onRedeemCoins }) => {
       setLoading(false);
     }
   };
-  
+
 
   const calculateCashValue = (coins) => {
     return (coins * 0.10).toFixed(2);

@@ -30,21 +30,31 @@ export async function GET() {
     // --------------------
     // Total Spent (buyer purchases)
     // --------------------
-    const spentRes = await pool.query(
-      `SELECT COALESCE(SUM(amount),0) AS spent
-       FROM transactions
-       WHERE user_id = $1 AND type = 'purchase'`,
-      [userId]
+    const spentRes = await pool.query(`
+  SELECT COALESCE(SUM(t.amount), 0) AS spent
+  FROM transactions t
+  WHERE t.user_id = $1
+    AND t.type = 'purchase'
+    AND EXISTS (
+      SELECT 1
+      FROM bookings b
+      WHERE b.buyer_id = t.user_id
+        AND b.seller_id = t.seller_id
+        AND b.status = 'completed'
     );
-    const spent = parseFloat(spentRes.rows[0].spent);
+`, [userId]);
+
+const spent = parseFloat(spentRes.rows[0].spent);
+
+
 
     // --------------------
-    // Total Gained (seller from purchases + earnings)
+    // Total Gained (seller from  earnings)
     // --------------------
     const gainedRes = await pool.query(
       `SELECT COALESCE(SUM(amount),0) AS gained
-       FROM transactions
-       WHERE seller_id = $1 AND type IN ('purchase', 'earning')`,
+      FROM transactions
+      WHERE seller_id = $1 AND type = 'earning'`,
       [userId]
     );
     const gained = parseFloat(gainedRes.rows[0].gained);
@@ -64,8 +74,8 @@ export async function GET() {
     // --------------------
     // Monthly Transaction Data (Last 6 months)
     // --------------------
-   // Monthly Transaction Data (Last 6 months)
-//     // --------------------
+    // Monthly Transaction Data (Last 6 months)
+    //     // --------------------
     const monthlyRes = await pool.query(
       `SELECT 
          TO_CHAR(created_at, 'Mon') AS month,
