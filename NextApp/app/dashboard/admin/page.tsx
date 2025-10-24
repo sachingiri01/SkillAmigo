@@ -11,7 +11,528 @@ import { useSession, signIn, signOut } from "next-auth/react";
 
 
 
+ 
+import {  AlertCircle, CheckCircle} from 'lucide-react';
+
+// Types
+interface Dispute {
+  dispute_id: string;
+  booking_id: string;
+  raised_by: string;
+  raised_by_name: string;
+  reason: string;
+  resolution: string | null;
+  status: 'open' | 'in_progress' | 'resolved' | 'rejected';
+  created_at: string;
+}
+
+interface DisputeOverview {
+  total_disputes: number;
+  open_disputes: number;
+  resolved_disputes: number;
+  in_progress_disputes: number;
+}
+
+// Dummy Data - Most disputes are unresolved
+const dummyDisputes: Dispute[] = [
+  {
+    dispute_id: 'DIS-001',
+    booking_id: 'BK-2024-4521',
+    raised_by: 'user-123',
+    raised_by_name: 'Sarah Johnson',
+    reason: 'Service was not provided as described. The freelancer did not deliver the website design according to the agreed specifications.',
+    resolution: null,
+    status: 'open',
+    created_at: '2025-10-23T14:30:00Z'
+  },
+  {
+    dispute_id: 'DIS-002',
+    booking_id: 'BK-2024-4498',
+    raised_by: 'user-456',
+    raised_by_name: 'Michael Chen',
+    reason: 'Payment not received after completing the project. All deliverables were submitted on time.',
+    resolution: null,
+    status: 'in_progress',
+    created_at: '2025-10-22T09:15:00Z'
+  },
+  {
+    dispute_id: 'DIS-003',
+    booking_id: 'BK-2024-4467',
+    raised_by: 'user-789',
+    raised_by_name: 'Emily Rodriguez',
+    reason: 'Quality of work does not match the portfolio samples shown. Requesting partial refund.',
+    resolution: null,
+    status: 'open',
+    created_at: '2025-10-21T16:45:00Z'
+  },
+  {
+    dispute_id: 'DIS-004',
+    booking_id: 'BK-2024-4401',
+    raised_by: 'user-234',
+    raised_by_name: 'David Kumar',
+    reason: 'Project deadline was missed by 2 weeks without proper communication or updates.',
+    resolution: null,
+    status: 'in_progress',
+    created_at: '2025-10-20T11:20:00Z'
+  },
+  {
+    dispute_id: 'DIS-005',
+    booking_id: 'BK-2024-4389',
+    raised_by: 'user-567',
+    raised_by_name: 'Jessica Williams',
+    reason: 'Buyer cancelled booking after work was 80% complete and refusing to pay.',
+    resolution: 'After review, 80% of the payment has been released to the seller as per platform policy.',
+    status: 'resolved',
+    created_at: '2025-10-19T13:10:00Z'
+  },
+  {
+    dispute_id: 'DIS-006',
+    booking_id: 'BK-2024-4356',
+    raised_by: 'user-890',
+    raised_by_name: 'Robert Martinez',
+    reason: 'Delivered files are corrupted and unusable. Seller is not responding to messages.',
+    resolution: null,
+    status: 'open',
+    created_at: '2025-10-18T10:05:00Z'
+  },
+  {
+    dispute_id: 'DIS-007',
+    booking_id: 'BK-2024-4334',
+    raised_by: 'user-345',
+    raised_by_name: 'Amanda Foster',
+    reason: 'False representation of skills. Work quality is far below professional standards.',
+    resolution: 'Full refund issued. Seller account under review.',
+    status: 'resolved',
+    created_at: '2025-10-17T15:30:00Z'
+  },
+  {
+    dispute_id: 'DIS-008',
+    booking_id: 'BK-2024-4312',
+    raised_by: 'user-678',
+    raised_by_name: 'Christopher Lee',
+    reason: 'Scope creep - buyer keeps requesting additional work beyond the original agreement.',
+    resolution: null,
+    status: 'open',
+    created_at: '2025-10-16T12:45:00Z'
+  },
+  {
+    dispute_id: 'DIS-009',
+    booking_id: 'BK-2024-4289',
+    raised_by: 'user-912',
+    raised_by_name: 'Lisa Anderson',
+    reason: 'Communication breakdown. Seller stopped responding after receiving payment.',
+    resolution: null,
+    status: 'open',
+    created_at: '2025-10-15T08:30:00Z'
+  },
+  {
+    dispute_id: 'DIS-010',
+    booking_id: 'BK-2024-4256',
+    raised_by: 'user-445',
+    raised_by_name: 'Thomas Wright',
+    reason: 'Intellectual property concerns. Work appears to be plagiarized from another source.',
+    resolution: null,
+    status: 'in_progress',
+    created_at: '2025-10-14T14:15:00Z'
+  }
+];
+
+const dummyOverview: DisputeOverview = {
+  total_disputes: 10,
+  open_disputes: 5,
+  resolved_disputes: 2,
+  in_progress_disputes: 3
+};
+
+// Helper function for CSV download
+// const downloadCSV = (data: any[], filename: string) => {
+//   const headers = Object.keys(data[0]);
+//   const csv = [
+//     headers.join(','),
+//     ...data.map(row => headers.map(header => JSON.stringify(row[header] || '')).join(','))
+//   ].join('\n');
   
+//   const blob = new Blob([csv], { type: 'text/csv' });
+//   const url = window.URL.createObjectURL(blob);
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = `${filename}.csv`;
+//   a.click();
+//   window.URL.revokeObjectURL(url);
+// };
+
+const DisputesManagement = () => {
+  const [disputes, setDisputes] = useState<Dispute[]>([]);
+  const [overview, setOverview] = useState<DisputeOverview | null>(null);
+  const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+  const [resolutionText, setResolutionText] = useState('');
+  const [newStatus, setNewStatus] = useState<'resolved' | 'rejected'>('resolved');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    // Simulate API fetch
+    setTimeout(() => {
+      setDisputes(dummyDisputes);
+      setOverview(dummyOverview);
+    }, 500);
+  }, []);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'open':
+        return <AlertCircle className="w-5 h-5 text-red-500" />;
+      case 'in_progress':
+        return <Clock className="w-5 h-5 text-yellow-500" />;
+      case 'resolved':
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'rejected':
+        return <XCircle className="w-5 h-5 text-gray-500" />;
+      default:
+        return <AlertCircle className="w-5 h-5 text-gray-500" />;
+    }
+  };
+
+  const getStatusBadgeClasses = (status: string) => {
+    switch (status) {
+      case 'open':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'in_progress':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'resolved':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'rejected':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const handleExportDisputes = () => {
+    const exportData = disputes.map(dispute => ({
+      'Dispute ID': dispute.dispute_id,
+      'Booking ID': dispute.booking_id,
+      'Raised By': dispute.raised_by_name,
+      'Reason': dispute.reason,
+      'Status': dispute.status,
+      'Resolution': dispute.resolution || 'Pending',
+      'Created At': formatDate(dispute.created_at)
+    }));
+    downloadCSV(exportData, 'disputes_data');
+  };
+
+  const handleExportOverview = () => {
+    if (!overview) return;
+    const overviewData = [{
+      'Total Disputes': overview.total_disputes,
+      'Open Disputes': overview.open_disputes,
+      'In Progress': overview.in_progress_disputes,
+      'Resolved Disputes': overview.resolved_disputes
+    }];
+    downloadCSV(overviewData, 'disputes_overview');
+  };
+
+  const handleSaveResolution = async () => {
+    if (!selectedDispute || !resolutionText.trim()) {
+      alert('Please enter a resolution');
+      return;
+    }
+
+    setIsSaving(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      const updatedDisputes = disputes.map(d => 
+        d.dispute_id === selectedDispute.dispute_id
+          ? { ...d, resolution: resolutionText, status: newStatus }
+          : d
+      );
+      
+      setDisputes(updatedDisputes);
+      
+      // Update overview
+      const newOverview = {
+        total_disputes: overview!.total_disputes,
+        open_disputes: updatedDisputes.filter(d => d.status === 'open').length,
+        in_progress_disputes: updatedDisputes.filter(d => d.status === 'in_progress').length,
+        resolved_disputes: updatedDisputes.filter(d => d.status === 'resolved' || d.status === 'rejected').length
+      };
+      setOverview(newOverview);
+      
+      setIsSaving(false);
+      setSelectedDispute(null);
+      setResolutionText('');
+      
+      alert('Resolution saved successfully!');
+    }, 1000);
+  };
+
+  const openDisputeModal = (dispute: Dispute) => {
+    setSelectedDispute(dispute);
+    setResolutionText(dispute.resolution || '');
+    setNewStatus(dispute.status === 'rejected' ? 'rejected' : 'resolved');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Disputes Management</h1>
+            <p className="text-gray-600 mt-1">Review and resolve platform disputes</p>
+          </div>
+          <button
+            onClick={handleExportOverview}
+            className="flex items-center justify-center space-x-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Overview</span>
+          </button>
+        </div>
+
+        {/* Overview Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium opacity-90">Total Disputes</h3>
+              <AlertCircle className="w-5 h-5 opacity-75" />
+            </div>
+            <p className="text-3xl font-bold">{overview?.total_disputes || 0}</p>
+            <p className="text-xs opacity-75 mt-2">All time</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 rounded-xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium opacity-90">Open</h3>
+              <AlertCircle className="w-5 h-5 opacity-75" />
+            </div>
+            <p className="text-3xl font-bold">{overview?.open_disputes || 0}</p>
+            <p className="text-xs opacity-75 mt-2">Needs attention</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium opacity-90">In Progress</h3>
+              <Clock className="w-5 h-5 opacity-75" />
+            </div>
+            <p className="text-3xl font-bold">{overview?.in_progress_disputes || 0}</p>
+            <p className="text-xs opacity-75 mt-2">Under review</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium opacity-90">Resolved</h3>
+              <CheckCircle className="w-5 h-5 opacity-75" />
+            </div>
+            <p className="text-3xl font-bold">{overview?.resolved_disputes || 0}</p>
+            <p className="text-xs opacity-75 mt-2">Completed</p>
+          </div>
+        </div>
+
+        {/* Disputes Grid Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 className="text-xl font-semibold text-gray-900">All Disputes</h2>
+          <button
+            onClick={handleExportDisputes}
+            className="flex items-center justify-center space-x-2 px-4 py-2 bg-jet-stream-600 border border-gray-300 rounded-lg hover:bg-jet-stream-800 transition-colors shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export All</span>
+          </button>
+        </div>
+
+        {/* Disputes Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {disputes.map((dispute) => (
+            <div
+              key={dispute.dispute_id}
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden"
+            >
+              {/* Card Header */}
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    {getStatusIcon(dispute.status)}
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{dispute.dispute_id}</h3>
+                      <p className="text-xs text-gray-600">Booking: {dispute.booking_id}</p>
+                    </div>
+                  </div>
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusBadgeClasses(dispute.status)}`}>
+                    {dispute.status.replace('_', ' ').toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Raised By</p>
+                  <p className="text-gray-900">{dispute.raised_by_name}</p>
+                  <p className="text-xs text-gray-500">{dispute.raised_by}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Reason</p>
+                  <p className="text-sm text-gray-600 line-clamp-2">{dispute.reason}</p>
+                </div>
+
+                {dispute.resolution && (
+                  <div className={`${dispute.status === 'resolved' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'} border rounded-lg p-3`}>
+                    <p className={`text-sm font-medium ${dispute.status === 'resolved' ? 'text-green-800' : 'text-gray-800'} mb-1`}>Resolution</p>
+                    <p className={`text-xs ${dispute.status === 'resolved' ? 'text-green-700' : 'text-gray-700'}`}>{dispute.resolution}</p>
+                  </div>
+                )}
+
+                {!dispute.resolution && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <p className="text-xs text-amber-700 font-medium">⚠️ Awaiting admin resolution</p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-500">{formatDate(dispute.created_at)}</p>
+                  <button
+                    onClick={() => openDisputeModal(dispute)}
+                    className="flex items-center space-x-1 text-teal-600 hover:text-teal-700 text-sm font-medium"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>{dispute.resolution ? 'View' : 'Resolve'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Modal for Dispute Details & Resolution */}
+        {selectedDispute && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-4 flex items-center justify-between sticky top-0">
+                <h3 className="text-xl font-bold">Dispute Details & Resolution</h3>
+                <button
+                  onClick={() => {
+                    setSelectedDispute(null);
+                    setResolutionText('');
+                  }}
+                  className="text-white hover:text-gray-200"
+                >
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-6 space-y-5">
+                <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Dispute ID</p>
+                    <p className="text-lg font-semibold text-gray-900">{selectedDispute.dispute_id}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Booking ID</p>
+                    <p className="text-gray-900">{selectedDispute.booking_id}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Raised By</p>
+                    <p className="text-gray-900">{selectedDispute.raised_by_name}</p>
+                    <p className="text-sm text-gray-500">{selectedDispute.raised_by}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Created At</p>
+                    <p className="text-gray-900">{formatDate(selectedDispute.created_at)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-1">Current Status</p>
+                    <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getStatusBadgeClasses(selectedDispute.status)}`}>
+                      {selectedDispute.status.replace('_', ' ').toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Dispute Reason</p>
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <p className="text-gray-900">{selectedDispute.reason}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                    Admin Resolution {!selectedDispute.resolution && <span className="text-red-500">*</span>}
+                  </label>
+                  <textarea
+                    value={resolutionText}
+                    onChange={(e) => setResolutionText(e.target.value)}
+                    placeholder="Enter your resolution decision and reasoning..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                    rows={5}
+                    disabled={selectedDispute.resolution !== null && selectedDispute.status === 'resolved'}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">Resolution Status</label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="resolved"
+                        checked={newStatus === 'resolved'}
+                        onChange={(e) => setNewStatus(e.target.value as 'resolved' | 'rejected')}
+                        className="w-4 h-4 text-teal-600"
+                        disabled={selectedDispute.resolution !== null && selectedDispute.status === 'resolved'}
+                      />
+                      <span className="text-sm text-gray-700">Resolved (Issue Fixed)</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="rejected"
+                        checked={newStatus === 'rejected'}
+                        onChange={(e) => setNewStatus(e.target.value as 'resolved' | 'rejected')}
+                        className="w-4 h-4 text-teal-600"
+                        disabled={selectedDispute.resolution !== null && selectedDispute.status === 'resolved'}
+                      />
+                      <span className="text-sm text-gray-700">Rejected (Invalid)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {selectedDispute.resolution === null || selectedDispute.status !== 'resolved' ? (
+                  <button
+                    onClick={handleSaveResolution}
+                    disabled={isSaving}
+                    className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    <span>{isSaving ? 'Saving...' : 'Save Resolution'}</span>
+                  </button>
+                ) : (
+                  <div className="bg-green-100 border border-green-300 rounded-lg p-4 text-center">
+                    <p className="text-green-800 font-medium">✓ This dispute has been resolved</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 
 // Utility function for CSV export
 const downloadCSV = (data, filename) => {
@@ -145,7 +666,8 @@ const MobileNavigation = ({ activePage, setActivePage }) => {
     { id: 'gigs', label: 'Gigs', icon: Briefcase },
     { id: 'transactions', label: 'Coins', icon: Coins },
     { id: 'analytics', label: 'Requests', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'settings', label: 'Settings', icon: CheckCircle },
+     { id: 'Disputes', label: 'Disputes', icon: CheckCircle },
   ];
 
   return (
@@ -179,6 +701,7 @@ const DesktopSidebar = ({ activePage, setActivePage }) => {
     { id: 'transactions', label: 'Transactions & Coins', icon: Coins },
     { id: 'analytics', label: 'Coin Requests', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'Disputes', label: 'Disputes', icon: CheckCircle },
   ];
 
   return (
@@ -857,13 +1380,7 @@ interface TransactionOverview {
 
 // Transaction Component
 const TransactionTable = ({ isLoading }) => {
-  // const transactions = [
-  //   { id: 'TXN001', user: 'john_doe', amount: 500, type: 'Credit', date: '2025-08-22', seller: 'Gig completion bonus' },
-  //   { id: 'TXN002', user: 'sarah_smith', amount: 250, type: 'Debit', date: '2025-08-21', seller: 'Service fee' },
-  //   { id: 'TXN003', user: 'mike_jones', amount: 1000, type: 'Credit', date: '2025-08-20', seller: 'Coin purchase' },
-  //   { id: 'TXN004', user: 'emily_davis', amount: 750, type: 'Debit', date: '2025-08-19', seller: 'Withdrawal' },
-  //   { id: 'TXN005', user: 'alex_wilson', amount: 300, type: 'Credit', date: '2025-08-18', seller: 'Referral bonus' },
-  // ];
+ 
     const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [overview, setOverview] = useState<TransactionOverview | null>(null);
 
@@ -1860,6 +2377,8 @@ const renderPageContent = () => {
         return <CoinRequestsManagement isLoading={isLoading} />;
       case 'settings':
         return <PolicyUpdatePanel isLoading={isLoading} />;
+      case 'Disputes':
+        return <DisputesManagement />;
       default:
         return <div>Page not found</div>;
     }
